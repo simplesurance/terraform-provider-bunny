@@ -1,62 +1,74 @@
-# Terraform Provider Scaffolding
+# Bunny.Net Terraform Provider
 
-This repository is a *template* for a [Terraform](https://www.terraform.io) provider. It is intended as a starting point for creating Terraform providers, containing:
+This repository provides a [Terraform](https://terraform.io) provider for the
+[Bunny.net CDN platform](https://bunny.net/). \
+It currently only supports to manage Pull Zones.
 
- - A resource, and a data source (`internal/provider/`),
- - Examples (`examples/`) and generated documentation (`docs/`),
- - Miscellaneous meta files.
- 
-These files contain boilerplate code that you will need to edit to create your own Terraform provider. A full guide to creating Terraform providers can be found at [Writing Custom Providers](https://www.terraform.io/docs/extend/writing-custom-providers.html).
+## Development
 
-Please see the [GitHub template repository documentation](https://help.github.com/en/github/creating-cloning-and-archiving-repositories/creating-a-repository-from-a-template) for how to create a new repository from this template on GitHub.
+### Using the Local Provider with Terraform
 
-Once you've written your provider, you'll want to [publish it on the Terraform Registry](https://www.terraform.io/docs/registry/providers/publishing.html) so that others can use it.
-
-
-## Requirements
-
--	[Terraform](https://www.terraform.io/downloads.html) >= 0.13.x
--	[Go](https://golang.org/doc/install) >= 1.15
-
-## Building The Provider
-
-1. Clone the repository
-1. Enter the repository directory
-1. Build the provider using the Go `install` command: 
+Run:
 ```sh
-$ go install
+make install
 ```
 
-## Adding Dependencies
+to compile and install the provider binary into your local
+`$HOME/.terraform.d/plugins/` directory.
 
-This provider uses [Go modules](https://github.com/golang/go/wiki/Modules).
-Please see the Go documentation for the most up to date information about using Go modules.
+### Running Integration Tests
 
-To add a new dependency `github.com/author/dependency` to your Terraform provider:
+To run the integration tests a bunny.net account is needed.
+The integration tests will create, modify and delete **real** resources.
+Therefore a bunny.net account should be used that does not manage resources
+used in production.
 
-```
-go get github.com/author/dependency
-go mod tidy
-```
-
-Then commit the changes to `go.mod` and `go.sum`.
-
-## Using the provider
-
-Fill this in for each provider
-
-## Developing the Provider
-
-If you wish to work on the provider, you'll first need [Go](http://www.golang.org) installed on your machine (see [Requirements](#requirements) above).
-
-To compile the provider, run `go install`. This will build the provider and put the provider binary in the `$GOPATH/bin` directory.
-
-To generate or update documentation, run `go generate`.
-
-In order to run the full suite of Acceptance tests, run `make testacc`.
-
-*Note:* Acceptance tests create real resources, and often cost money to run.
+To run the integration tests set the `BUNNY_API_KEY` to your bunny.net API
+key:
 
 ```sh
-$ make testacc
+export BUNNY_API_KEY=MY-TOKEN
 ```
+
+Then run:
+
+```sh
+make testacc
+```
+
+#### Sweeper
+
+To cleanup resources that might have been left over by running tests, run:
+
+```sh
+make sweep
+```
+
+### Generating Documentation
+
+```sh
+make docs
+```
+
+
+## Known Issues
+- When destroying a non-existing pull-zone, the operation fails. It should
+  succeed and log a warning instead.
+- testcases are not validating computed field values
+
+### Missing Features
+
+- `terraform import` support
+- Write support is missing for the following fields:
+  - `blocked_referrers`
+  - `access_control_origin_header_extensions`
+  - all `enable_geo_zone_*` fields
+- The following Pull Zone fields are not supported:
+  - `cache_error_response`
+  - `enable_query_string_ordering`
+
+## Status
+
+The provider is under initial development and should be considered as
+unstable. \
+Breaking API changes can happen anytime.

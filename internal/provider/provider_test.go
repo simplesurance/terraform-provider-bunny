@@ -6,23 +6,22 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-// providerFactories are used to instantiate a provider during acceptance testing.
-// The factory function will be invoked for every Terraform CLI command executed
-// to create a provider server to which the CLI can reattach.
-var providerFactories = map[string]func() (*schema.Provider, error){
-	"scaffolding": func() (*schema.Provider, error) {
-		return New("dev")(), nil
-	},
-}
+// resourcePrefix is the prefix that should be used when creating resources at
+// the provider in integration tests.
+const resourcePrefix = "tf-test-"
 
-func TestProvider(t *testing.T) {
-	if err := New("dev")().InternalValidate(); err != nil {
-		t.Fatalf("err: %s", err)
+var testProvider *schema.Provider
+var testProviders map[string]*schema.Provider
+
+func init() {
+	testProvider = New()
+	testProviders = map[string]*schema.Provider{
+		"bunnycdn": testProvider,
 	}
 }
 
-func testAccPreCheck(t *testing.T) {
-	// You can add code here to run prior to any test case execution, for example assertions
-	// about the appropriate environment variables being set are common to see in a pre-check
-	// function.
+func TestProvider(t *testing.T) {
+	if err := New().InternalValidate(); err != nil {
+		t.Fatalf("err: %s", err)
+	}
 }

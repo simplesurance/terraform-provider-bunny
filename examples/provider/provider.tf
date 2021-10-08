@@ -1,3 +1,3 @@
-provider "scaffolding" {
-  # example configuration here
+provider "bunny" {
+  api_key = "API-KEY"
 }
