@@ -1,0 +1,32 @@
+---
+subcategory: "Getting Started"
+page_title: "Provider Configuration"
+description: |-
+	Provider Configuration Reference
+
+# Provider Configuration
+
+## Authentication
+
+To authenticate at the Bunny.net Pull Zone API you need an API Key.
+After you login on the (Bunny.net admin planel)[https://panel.bunny.net/], your API can be
+found on the (Account page)[https://panel.bunny.net/account].
+
+### Per Environment Variable
+
+Your credentials can be provided by setting the `BUNNY_API_KEY` environment
+variable:
+
+```sh
+export BUNNY_API_KEY=API-KEY
+```
+
+### In the Provider Block
+
+The credentials can be configured in the provider block the following way:
+
+```terraform
+provider "bunny" {
+  api_key = "API-KEY"
+}
+```

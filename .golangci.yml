@@ -1,0 +1,27 @@
+linters:
+  disable-all: true
+  enable:
+    - deadcode
+    - errcheck
+    - exportloopref
+    - goimports
+    - gosimple
+    - govet
+    - ineffassign
+    - misspell
+    - prealloc
+    - revive
+    - staticcheck
+    - structcheck
+    - typecheck
+    - unconvert
+    - unused
+    - varcheck
+
+linters-settings:
+  goimports:
+    local-prefixes: github.com/simplesurance/terraform-provider-bunnycdn
+
+
+issues:
+  exclude-use-default: false

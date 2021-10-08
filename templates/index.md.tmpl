@@ -15,24 +15,11 @@ Zones.
 
 Define the bunnycdn provider as a required provider in terraform:
 
-```terraform
-terraform {
-  required_providers {
-    bunny = {
-      source = "registry.terraform.io/simplesurance/bunny"
-    }
-  }
-}
-```
+{{ tffile "examples/provider/main.tf" }}
 
 Create a basic Bunny Pull Zone:
 
-```terraform
-resource "bunny_pullzone" "pullzone-terraform" {
-  name       = "pz-terraform"
-  origin_url = "https://terraform.io"
-}
-```
+{{ tffile "examples/resources/pullzone_resource/minimal.tf" }}
 
 ## Authentication
 
