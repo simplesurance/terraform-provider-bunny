@@ -16,7 +16,7 @@ var testProviders map[string]*schema.Provider
 func init() {
 	testProvider = New()
 	testProviders = map[string]*schema.Provider{
-		"bunnycdn": testProvider,
+		"bunny": testProvider,
 	}
 }
 

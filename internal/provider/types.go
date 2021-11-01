@@ -104,7 +104,15 @@ func setStrSet(d *schema.ResourceData, key string, strSlice []string, opts ...se
 
 // getStrSetAsSlice converts a TypeSet with string elements to a []string
 func getStrSetAsSlice(d *schema.ResourceData, key string) []string {
-	set := d.Get(key).(*schema.Set)
+	return strSetAsSlice(d.Get(key))
+}
+
+func strSetAsSlice(val interface{}) []string {
+	if val == nil {
+		return []string{}
+	}
+
+	set := val.(*schema.Set)
 	return interfaceSlicetoStrSlice(set.List())
 }
 
@@ -188,4 +196,45 @@ func idAsInt64(d *schema.ResourceData) (int64, error) {
 	}
 
 	return int64(id), nil
+}
+
+// strIntMapKeys returns a []string containing the keys of m.
+func strIntMapKeys(m map[string]int) []string {
+	res := make([]string, 0, len(m))
+
+	for key := range m {
+		res = append(res, key)
+	}
+
+	return res
+}
+
+func reverseStrIntMap(m map[string]int) map[int]string {
+	res := make(map[int]string, len(m))
+
+	for k, v := range m {
+		res[v] = k
+	}
+
+	return res
+}
+
+func strIntMapGet(m map[string]int, key string) (int, error) {
+	if v, exists := m[key]; exists {
+		return v, nil
+	}
+
+	return -1, fmt.Errorf("key %q not found", key)
+}
+
+func intStrMapGet(m map[int]string, key *int) (string, error) {
+	if key == nil {
+		return "", errors.New("key is nil")
+	}
+
+	if v, exists := m[*key]; exists {
+		return v, nil
+	}
+
+	return "", fmt.Errorf("key '%d' not found", key)
 }
