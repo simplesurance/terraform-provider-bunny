@@ -2,7 +2,6 @@ package provider
 
 import (
 	"context"
-	"reflect"
 
 	"errors"
 	"fmt"
@@ -11,10 +10,10 @@ import (
 	"strings"
 	"testing"
 
+	ptr "github.com/AlekSi/pointer"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 
-	ptr "github.com/AlekSi/pointer"
 	bunny "github.com/simplesurance/bunny-go"
 )
 
@@ -71,21 +70,12 @@ func checkBasicPullZoneAPIState(wanted *pullZoneWanted) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		clt := newAPIClient()
 
-		resourceState := s.Modules[0].Resources[wanted.TerraformResourceName]
-		if resourceState == nil {
-			return fmt.Errorf("resource %s not found in state", wanted.TerraformResourceName)
+		strID, err := idFromState(s, wanted.TerraformResourceName)
+		if err != nil {
+			return err
 		}
 
-		insState := resourceState.Primary
-		if insState == nil {
-			return fmt.Errorf("resource %s has no primary state", wanted.TerraformResourceName)
-		}
-
-		if insState.ID == "" {
-			return errors.New("ID is empty")
-		}
-
-		id, err := strconv.Atoi(insState.ID)
+		id, err := strconv.Atoi(strID)
 		if err != nil {
 			return fmt.Errorf("could not convert resource ID %q to int64: %w", id, err)
 		}
@@ -600,8 +590,8 @@ func strSliceDiff(a, b []string) string {
 	return ""
 }
 
-// diffIgnoredField contains a list of fieldsnames in a bunny.PullZone struct that are ignored by pzDiff.
-var diffIgnoredField = map[string]struct{}{
+// pullZoneDiffIgnoredFields contains a list of fieldsnames in a bunny.PullZone struct that are ignored by pzDiff.
+var pullZoneDiffIgnoredFields = map[string]struct{}{
 	"AccessControlOriginHeaderExtensions": {}, // computed field
 	"BlockedReferrers":                    {}, // computed field
 	"CnameDomain":                         {}, // computed field
@@ -619,82 +609,7 @@ var diffIgnoredField = map[string]struct{}{
 	"EdgeRules":                           {}, // not used by provider
 }
 
-func pzDiff(t *testing.T, a, b *bunny.PullZone) []string {
+func pzDiff(t *testing.T, a, b interface{}) []string {
 	t.Helper()
-	var res []string
-
-	valStructA := reflect.Indirect(reflect.ValueOf(a))
-	valStructB := reflect.Indirect(reflect.ValueOf(b))
-
-	for i := 0; i < valStructA.NumField(); i++ {
-		typeFieldA := valStructA.Type().Field(i)
-		valFieldA := valStructA.Field(i).Interface()
-		valFieldB := valStructB.Field(i).Interface()
-
-		if _, exists := diffIgnoredField[typeFieldA.Name]; exists {
-			continue
-		}
-
-		switch valFieldA.(type) {
-		case *string:
-			valA := valFieldA.(*string)
-			valB := valFieldB.(*string)
-
-			if d := strDiff(valA, valB); d != "" {
-				res = append(res, fmt.Sprintf("%s: %s", typeFieldA.Name, d))
-			}
-
-		case *bool:
-			valA := valFieldA.(*bool)
-			valB := valFieldB.(*bool)
-
-			if d := boolDiff(valA, valB); d != "" {
-				res = append(res, fmt.Sprintf("%s: %s", typeFieldA.Name, d))
-			}
-
-		case *int:
-			valA := valFieldA.(*int)
-			valB := valFieldB.(*int)
-
-			if d := intDiff(valA, valB); d != "" {
-				res = append(res, fmt.Sprintf("%s: %s", typeFieldA.Name, d))
-			}
-
-		case *int64:
-			valA := valFieldA.(*int64)
-			valB := valFieldB.(*int64)
-
-			if d := int64Diff(valA, valB); d != "" {
-				res = append(res, fmt.Sprintf("%s: %s", typeFieldA.Name, d))
-			}
-
-		case *int32:
-			valA := valFieldA.(*int32)
-			valB := valFieldB.(*int32)
-
-			if d := int32Diff(valA, valB); d != "" {
-				res = append(res, fmt.Sprintf("%s: %s", typeFieldA.Name, d))
-			}
-
-		case *float64:
-			valA := valFieldA.(*float64)
-			valB := valFieldB.(*float64)
-
-			if d := float64Diff(valA, valB); d != "" {
-				res = append(res, fmt.Sprintf("%s: %s", typeFieldA.Name, d))
-			}
-		case []string:
-			valA := valFieldA.([]string)
-			valB := valFieldB.([]string)
-
-			if d := strSliceDiff(valA, valB); d != "" {
-				res = append(res, fmt.Sprintf("%s: %s", typeFieldA.Name, d))
-			}
-
-		default:
-			t.Errorf("can not compare field: %s, unsupported diff type: %T", typeFieldA.Name, valFieldA)
-		}
-	}
-
-	return res
+	return diffStructs(t, a, b, pullZoneDiffIgnoredFields)
 }

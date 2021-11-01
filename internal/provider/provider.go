@@ -34,6 +34,7 @@ func New() *schema.Provider {
 		},
 		ResourcesMap: map[string]*schema.Resource{
 			"bunny_pullzone": resourcePullZone(),
+			"bunny_edgerule": resourceEdgeRule(),
 		},
 		ConfigureContextFunc: newProvider,
 	}
