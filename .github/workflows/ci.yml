@@ -39,6 +39,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-
       - name: golangci-lint
         run: docker run -v $GITHUB_WORKSPACE:/repo -w /repo golangci/golangci-lint:v1.43 golangci-lint run
+
+  gomod-tidy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.17
+
+      - name: Check if go.mod is tidy
+        run: scripts/gomod_is_tidy.sh
