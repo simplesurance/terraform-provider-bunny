@@ -74,16 +74,16 @@ make docs
 ### Missing Features
 
 - `terraform import` support
-- Edge Rules
-- Custom Hostnames
-- Certificates
-- Write support is missing for the following Pull Zone fields:
-  - `blocked_referrers`
-  - `access_control_origin_header_extensions`
-  - all `enable_geo_zone_*` fields
-- The following Pull Zone fields are unsupported:
+- unsupported Pull Zone features:
+  - Edge Rules
+  - Custom Hostnames
+  - Certificates
   - `cache_error_response`
   - `enable_query_string_ordering`
+- Pull Zone fields with missing write support:
+    - `blocked_referrers`
+    - `access_control_origin_header_extensions`
+    - all `enable_geo_zone_*` fields
 
 ## Status
 
