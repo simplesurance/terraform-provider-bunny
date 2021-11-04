@@ -32,7 +32,7 @@ signs:
   - artifacts: checksum
     args:
       - "--local-user"
-      - "{{ .Env:GPG_RELEASE_SIGN_KEY_ID }}"
+      - "{{ .Env.GPG_RELEASE_SIGN_KEY_ID }}"
       - "--output"
       - "${signature}"
       - "--detach-sign"
