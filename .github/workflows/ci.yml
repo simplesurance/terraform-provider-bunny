@@ -47,3 +47,16 @@ jobs:
 
       - name: Check if go.mod is tidy
         run: scripts/gomod_is_tidy.sh
+
+  docs-up2date:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.18
+
+      - name: Check if docs/ are up2date
+        run: scripts/docs_are_up2date.sh
