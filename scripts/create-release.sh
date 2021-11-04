@@ -93,6 +93,7 @@ git commit -m "changelog: release $version" "$changelog_file"
 create_git_tag
 
 GPG_RELEASE_SIGN_KEY_ID="$gpg_sign_key_id" goreleaser release --rm-dist
+git push
 git push --tags
 
 echo "Github draft release created, please finalize and publish it on the webpage"
