@@ -1,4 +1,5 @@
 # Bunny.Net Terraform Provider
+[![terraformregistry](https://img.shields.io/badge/terraform-registry-blueviolet)](https://registry.terraform.io/providers/simplesurance/bunny)
 
 This repository provides a [Terraform](https://terraform.io) provider for the
 [Bunny.net CDN platform](https://bunny.net/). \
