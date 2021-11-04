@@ -50,6 +50,21 @@ make sweep
 make docs
 ```
 
+### Creating a Release
+
+1. Ensure the entry for the version in CHANGELOG.md is uptodate. \
+   (Keep the `(Unreleased)` marker.)
+2. Run:  
+
+    ```sh
+    scripts/create-release.sh VERSION
+    ``` 
+
+    To finalize the CHANGELOG.md file, create a signed git tag, build the
+    release binaries create a GitHub draft release with the binaries.
+
+3. Publish the draft release on github.
+
 
 ## Known Issues
 - When destroying a non-existing pull-zone, the operation fails. It should
