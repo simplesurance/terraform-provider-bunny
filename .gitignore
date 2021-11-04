@@ -36,3 +36,5 @@ website/vendor
 
 *.lock.hcl
 terraform-provider-bunny
+
+dist/
