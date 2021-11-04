@@ -45,6 +45,7 @@ testacc:
 
 .PHONY: docs
 docs:
+	$(info * generating documentation files (docs/))
 	go generate $(BUILDFLAGS)
 
 .PHONY: sweep
