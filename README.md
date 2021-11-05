@@ -1,4 +1,5 @@
 # Bunny.Net Terraform Provider
+
 [![terraformregistry](https://img.shields.io/badge/terraform-registry-blueviolet)](https://registry.terraform.io/providers/simplesurance/bunny)
 
 This repository provides a [Terraform](https://terraform.io) provider for the
@@ -10,6 +11,7 @@ It currently only supports to manage Pull Zones.
 ### Using the Local Provider with Terraform
 
 Run:
+
 ```sh
 make install
 ```
@@ -66,8 +68,8 @@ make docs
 
 3. Publish the draft release on github.
 
-
 ## Known Issues
+
 - When destroying a non-existing pull-zone, the operation fails. It should
   succeed and log a warning instead.
 - testcases are not validating computed field values
@@ -82,9 +84,9 @@ make docs
   - `cache_error_response`
   - `enable_query_string_ordering`
 - Pull Zone fields with missing write support:
-    - `blocked_referrers`
-    - `access_control_origin_header_extensions`
-    - all `enable_geo_zone_*` fields
+  - `blocked_referrers`
+  - `access_control_origin_header_extensions`
+  - all `enable_geo_zone_*` fields
 
 ## Status
 
