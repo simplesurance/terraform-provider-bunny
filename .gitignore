@@ -38,3 +38,4 @@ website/vendor
 terraform-provider-bunny
 
 dist/
+bunny-dev.tftrc
