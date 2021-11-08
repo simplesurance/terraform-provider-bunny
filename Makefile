@@ -1,5 +1,5 @@
 COMMIT := $(shell git describe --tags --always --dirty)
-VERSION := 0.0.1
+VERSION := dev
 
 OS_ARCH :=$(shell go env GOHOSTOS)_$(shell go env GOHOSTARCH)
 BIN := terraform-provider-bunny
