@@ -10,14 +10,31 @@ It currently only supports to manage Pull Zones.
 
 ### Using the Local Provider with Terraform
 
+1. Build and install the provider binary via:
+
+    ```sh
+    make install
+    ```
+
+2. Use the [Development Overrides for Provider
+Developers](https://www.terraform.io/docs/cli/config/config-file.html#development-overrides-for-provider-developers)
+feature to enforce using the local `terraform-provider-bunny` binary. \
 Run:
 
-```sh
-make install
-```
+    ```sh
+    make gen-dev-tftrc
+    ```
 
-to compile and install the provider binary into your local
-`$HOME/.terraform.d/plugins/` directory.
+    to generate a terraform config with `dev_overrides` statement, referencing the
+    directory `make install` installed the binary to.
+
+3. Instruct Terraform to use the new config file instead of the default
+one by setting the `TF_CLI_CONFIG_FILE` to the path of the generated
+`bunny-dev.tftrc` file. For example:
+
+    ```sh
+    export TF_CLI_CONFIG_FILE="/home/fho/tf-provider-bunny-dev.tftrc"
+    ```
 
 ### Running Integration Tests
 
