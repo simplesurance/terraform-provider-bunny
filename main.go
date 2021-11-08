@@ -31,7 +31,7 @@ func main() {
 	flag.Parse()
 
 	if showVersion {
-		fmt.Printf("terraform provider bunny %s (%s)\n", provider.Version, provider.Commit)
+		fmt.Printf("terraform provider bunny, version %s (%s)\n", provider.Version, provider.Commit)
 		os.Exit(0)
 	}
 
