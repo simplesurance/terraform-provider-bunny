@@ -2,6 +2,6 @@ package provider
 
 // Version and Commit can be set during compilation.
 var (
-	Version string
-	Commit  string
+	Version = "version-unset"
+	Commit  = "commit-unset"
 )
