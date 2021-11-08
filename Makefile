@@ -3,12 +3,16 @@ VERSION := dev
 
 OS_ARCH :=$(shell go env GOHOSTOS)_$(shell go env GOHOSTARCH)
 BIN := terraform-provider-bunny
-INSTALLDIR := "$(HOME)/.terraform.d/plugins/registry.terraform.io/simplesurance/bunny/$(VERSION)/$(OS_ARCH)"
+INSTALLDIR := "$(HOME)/.terraform.d/plugins/local/simplesurance/bunny/"
 
 LDFLAGS := "-X github.com/simplesurance/terraform-provider-bunny/internal/provider.Version=$(VERSION) -X github.com/simplesurance/terraform-provider-bunny/internal/provider.Commit=$(COMMIT)"
 BUILDFLAGS := -trimpath -ldflags=$(LDFLAGS)
 
+TFTRC_FILENAME := bunny-dev.tftrc
+
 SWEEPERS := pullzones
+
+REPO_ROOT := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
 
 default: build
 
@@ -24,9 +28,15 @@ check:
 
 .PHONY: install
 install:
+	$(info * installing provider to $(INSTALLDIR)/$(BIN))
 	GOBIN=$(INSTALLDIR) go install $(BUILDFLAGS)
-	@echo
-	@echo Provider installed to $(INSTALLDIR)/$(BIN)
+
+.PHONY: gen-dev-tftrc
+gen-dev-tftrc:
+	$(info * generating $(TFTRC_FILENAME))
+	@scripts/gen-dev-tftrc.sh "$(INSTALLDIR)" > $(TFTRC_FILENAME)
+	$(info run 'export TF_CLI_CONFIG_FILE=$(REPO_ROOT)/$(TFTRC_FILENAME)' to use it)
+
 
 # Run acceptance tests
 .PHONY: testacc
