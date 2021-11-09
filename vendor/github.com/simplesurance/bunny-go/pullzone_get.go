@@ -154,7 +154,8 @@ type Hostname struct {
 	HasCertificate   *bool   `json:"HasCertificate,omitempty"`
 }
 
-// EdgeRule represents an EdgeRule returned from the Get and List Pull Zone API Endpoints.
+// EdgeRule represents an EdgeRule.
+// It is returned from the Get and List Pull Zone and passed to the AddorUpdateEdgeRule API Endpoints.
 type EdgeRule struct {
 	GUID                *string            `json:"Guid,omitempty"`
 	ActionType          *int               `json:"ActionType,omitempty"`

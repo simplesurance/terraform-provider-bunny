@@ -17,3 +17,11 @@ func WithUserAgent(userAgent string) Option {
 		clt.userAgent = userAgent
 	}
 }
+
+// WithLogger is an option to set a log function to which informal and warning
+// messages will be logged.
+func WithLogger(logger Logf) Option {
+	return func(clt *Client) {
+		clt.logf = logger
+	}
+}

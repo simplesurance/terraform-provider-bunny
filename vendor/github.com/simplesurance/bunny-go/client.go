@@ -33,10 +33,13 @@ type Client struct {
 
 	httpClient      http.Client
 	httpRequestLogf Logf
+	logf            Logf
 	userAgent       string
 
 	PullZone *PullZoneService
 }
+
+var discardLogF = func(string, ...interface{}) {}
 
 // NewClient returns a new bunny.net API client.
 // The APIKey can be found in on the Account Settings page.
@@ -48,7 +51,8 @@ func NewClient(APIKey string, opts ...Option) *Client {
 		apiKey:          APIKey,
 		httpClient:      *http.DefaultClient,
 		userAgent:       DefaultUserAgent,
-		httpRequestLogf: func(string, ...interface{}) {},
+		httpRequestLogf: discardLogF,
+		logf:            discardLogF,
 	}
 
 	clt.PullZone = &PullZoneService{client: &clt}
