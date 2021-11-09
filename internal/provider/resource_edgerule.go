@@ -403,7 +403,7 @@ func edgeRuleTriggerToResourceData(triggers []*bunny.EdgeRuleTrigger, d *schema.
 			return fmt.Errorf("%s: %w", triggerType, err)
 		}
 
-		entry := map[string]interface{}{}
+		entry := make(map[string]interface{}, 4)
 		entry[keyTriggerType] = triggerType
 		entry[keyTriggerPatternMatches] = trigger.PatternMatches
 		entry[keyTriggerPatternMatchingType] = patternMatchingType
