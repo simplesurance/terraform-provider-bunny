@@ -85,12 +85,6 @@ make docs
 
 3. Publish the draft release on github.
 
-## Known Issues
-
-- When destroying a non-existing pull-zone, the operation fails. It should
-  succeed and log a warning instead.
-- testcases are not validating computed field values
-
 ### Missing Features
 
 - `terraform import` support
