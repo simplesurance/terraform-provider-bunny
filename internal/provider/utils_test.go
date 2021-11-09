@@ -59,7 +59,6 @@ func diffStructs(t *testing.T, a, b interface{}, ignoredFields map[string]struct
 			}
 
 			for j := 0; j < aLen; j++ {
-				// TODO: change diffStructs to support non-struct types, or move that functionality out to another function and invoke it here.
 				diffs := diffStructs(t, fieldA.Index(j), fieldB.Index(j), nil)
 				for _, d := range diffs {
 					res = append(res, fmt.Sprintf("%s[%d]: %s", typeFieldA.Name, j, d))
