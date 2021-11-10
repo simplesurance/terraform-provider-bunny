@@ -3,6 +3,7 @@ package provider
 import (
 	"context"
 	"fmt"
+	"sort"
 	"strconv"
 	"strings"
 	"testing"
@@ -50,6 +51,9 @@ func checkEdgeRulesState(t *testing.T, wanted *edgeRulesWanted) resource.TestChe
 			)
 		}
 
+		sortEdgeRules(t, wanted.EdgeRules)
+		sortEdgeRules(t, pz.EdgeRules)
+
 		for i := range pz.EdgeRules {
 			diff := edgeRuleDiff(t, wanted.EdgeRules[i], pz.EdgeRules[i])
 			if len(diff) != 0 {
@@ -59,6 +63,24 @@ func checkEdgeRulesState(t *testing.T, wanted *edgeRulesWanted) resource.TestChe
 
 		return nil
 	}
+}
+
+func sortEdgeRules(t *testing.T, rules []*bunny.EdgeRule) {
+	sort.Slice(rules, func(i, j int) bool {
+		a := rules[i]
+		b := rules[j]
+
+		if a.ActionType != nil && b.ActionType != nil && ptr.GetInt(a.ActionType) != ptr.GetInt(b.ActionType) {
+			return ptr.GetInt(a.ActionType) < ptr.GetInt(b.ActionType)
+		}
+
+		if a.Description != nil && b.Description != nil && ptr.GetString(a.Description) != ptr.GetString(b.Description) {
+			return ptr.GetString(a.Description) < ptr.GetString(b.Description)
+		}
+
+		t.Logf("WARN: edge rules slice elements not sorted, found no comparable attributes were equal")
+		return false
+	})
 }
 
 var edgeRuleDiffIgnoredFields = map[string]struct{}{
