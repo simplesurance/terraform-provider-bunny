@@ -64,7 +64,6 @@ func checkEdgeRulesState(t *testing.T, wanted *edgeRulesWanted) resource.TestChe
 var edgeRuleDiffIgnoredFields = map[string]struct{}{
 	"GUID":        {}, // is set as ID in resourceData, GUID does not exist in resourceData
 	"Description": {}, // computed field, used internally by our provider for initial identification
-	"Enabled":     {}, // computed field
 }
 
 func edgeRuleDiff(t *testing.T, a, b interface{}) []string {
@@ -101,6 +100,7 @@ resource "bunny_edgerule" "myer" {
 					TerraformPullZoneResourceName: "bunny_pullzone.mypz",
 					EdgeRules: []*bunny.EdgeRule{
 						{
+							Enabled:             ptr.ToBool(true),
 							ActionType:          ptr.ToInt(bunny.EdgeRuleActionTypeBlockRequest),
 							TriggerMatchingType: ptr.ToInt(bunny.MatchingTypeAll),
 							Triggers: []*bunny.EdgeRuleTrigger{
@@ -138,6 +138,7 @@ resource "bunny_edgerule" "myer" {
 					TerraformPullZoneResourceName: "bunny_pullzone.mypz",
 					EdgeRules: []*bunny.EdgeRule{
 						{
+							Enabled:             ptr.ToBool(true),
 							ActionType:          ptr.ToInt(bunny.EdgeRuleActionTypeBlockRequest),
 							TriggerMatchingType: ptr.ToInt(bunny.MatchingTypeAll),
 							Triggers: []*bunny.EdgeRuleTrigger{
@@ -213,6 +214,7 @@ resource "bunny_edgerule" "er3" {
 					TerraformPullZoneResourceName: "bunny_pullzone.mypz",
 					EdgeRules: []*bunny.EdgeRule{
 						{
+							Enabled:             ptr.ToBool(true),
 							ActionType:          ptr.ToInt(bunny.EdgeRuleActionTypeSetRequestHeader),
 							ActionParameter1:    ptr.ToString("hostname"),
 							ActionParameter2:    ptr.ToString("{{hostname}}"),
@@ -226,6 +228,7 @@ resource "bunny_edgerule" "er3" {
 							},
 						},
 						{
+							Enabled:             ptr.ToBool(true),
 							ActionType:          ptr.ToInt(bunny.EdgeRuleActionTypeOverrideCacheTime),
 							ActionParameter1:    ptr.ToString("10"),
 							TriggerMatchingType: ptr.ToInt(bunny.MatchingTypeAny),
@@ -244,6 +247,7 @@ resource "bunny_edgerule" "er3" {
 							},
 						},
 						{
+							Enabled:             ptr.ToBool(true),
 							ActionType:          ptr.ToInt(bunny.EdgeRuleActionTypeForceDownload),
 							TriggerMatchingType: ptr.ToInt(bunny.MatchingTypeAny),
 							Triggers: []*bunny.EdgeRuleTrigger{
@@ -301,6 +305,7 @@ resource "bunny_edgerule" "myer" {
 					PullZoneName:                  pzName,
 					EdgeRules: []*bunny.EdgeRule{
 						{
+							Enabled:             ptr.ToBool(true),
 							ActionType:          ptr.ToInt(bunny.EdgeRuleActionTypeBlockRequest),
 							TriggerMatchingType: ptr.ToInt(bunny.MatchingTypeAll),
 							Triggers: []*bunny.EdgeRuleTrigger{
@@ -353,6 +358,7 @@ resource "bunny_pullzone" "mypz" {
 					PullZoneName:                  pzName,
 					EdgeRules: []*bunny.EdgeRule{
 						{
+							Enabled:             ptr.ToBool(true),
 							ActionType:          ptr.ToInt(bunny.EdgeRuleActionTypeBlockRequest),
 							TriggerMatchingType: ptr.ToInt(bunny.MatchingTypeAll),
 							Triggers: []*bunny.EdgeRuleTrigger{
@@ -371,6 +377,135 @@ resource "bunny_pullzone" "mypz" {
 				Check: checkEdgeRulesState(t, &edgeRulesWanted{
 					TerraformPullZoneResourceName: "bunny_pullzone.mypz",
 					PullZoneName:                  pzName,
+				}),
+			},
+		},
+	})
+}
+
+func TestAccEdgeRule_enable_disable(t *testing.T) {
+	pzName := randPullZoneName()
+
+	tfPz := fmt.Sprintf(`
+resource "bunny_pullzone" "mypz" {
+	name = "%s"
+	origin_url ="https://bunny.net"
+}`, pzName)
+
+	resource.Test(t, resource.TestCase{
+		Providers: testProviders,
+		Steps: []resource.TestStep{
+			{
+				Config: tfPz + `
+resource "bunny_edgerule" "er1" {
+	pull_zone_id = bunny_pullzone.mypz.id
+	enabled = false
+	action_type = "block_request"
+	trigger_matching_type = "all"
+	trigger {
+		pattern_matching_type = "any"
+		type = "random_chance"
+		pattern_matches = ["30"]
+	}
+}
+resource "bunny_edgerule" "er2" {
+	pull_zone_id = bunny_pullzone.mypz.id
+	enabled = true
+	action_type = "force_download"
+	trigger_matching_type = "all"
+	trigger {
+		pattern_matching_type = "any"
+		type = "random_chance"
+		pattern_matches = ["30"]
+	}
+}
+`,
+				Check: checkEdgeRulesState(t, &edgeRulesWanted{
+					TerraformPullZoneResourceName: "bunny_pullzone.mypz",
+					PullZoneName:                  pzName,
+					EdgeRules: []*bunny.EdgeRule{
+						{
+							ActionType:          ptr.ToInt(bunny.EdgeRuleActionTypeBlockRequest),
+							Enabled:             ptr.ToBool(false),
+							TriggerMatchingType: ptr.ToInt(bunny.MatchingTypeAll),
+							Triggers: []*bunny.EdgeRuleTrigger{
+								{
+									PatternMatchingType: ptr.ToInt(bunny.MatchingTypeAny),
+									Type:                ptr.ToInt(bunny.EdgeRuleTriggerTypeRandomChance),
+									PatternMatches:      []string{"30"},
+								},
+							},
+						},
+						{
+							ActionType:          ptr.ToInt(bunny.EdgeRuleActionTypeForceDownload),
+							Enabled:             ptr.ToBool(true),
+							TriggerMatchingType: ptr.ToInt(bunny.MatchingTypeAll),
+							Triggers: []*bunny.EdgeRuleTrigger{
+								{
+									PatternMatchingType: ptr.ToInt(bunny.MatchingTypeAny),
+									Type:                ptr.ToInt(bunny.EdgeRuleTriggerTypeRandomChance),
+									PatternMatches:      []string{"30"},
+								},
+							},
+						},
+					},
+				}),
+			},
+			// enable the previously disabled edge rule, disable the previously enabled one
+			{
+				Config: tfPz + `
+resource "bunny_edgerule" "er1" {
+	pull_zone_id = bunny_pullzone.mypz.id
+	enabled = true
+	action_type = "block_request"
+	trigger_matching_type = "all"
+	trigger {
+		pattern_matching_type = "any"
+		type = "random_chance"
+		pattern_matches = ["30"]
+	}
+}
+resource "bunny_edgerule" "er2" {
+	pull_zone_id = bunny_pullzone.mypz.id
+	enabled = false
+	action_type = "force_download"
+	trigger_matching_type = "all"
+	trigger {
+		pattern_matching_type = "any"
+		type = "random_chance"
+		pattern_matches = ["30"]
+	}
+}
+`,
+				Check: checkEdgeRulesState(t, &edgeRulesWanted{
+					TerraformPullZoneResourceName: "bunny_pullzone.mypz",
+					PullZoneName:                  pzName,
+					EdgeRules: []*bunny.EdgeRule{
+						{
+							ActionType:          ptr.ToInt(bunny.EdgeRuleActionTypeBlockRequest),
+							Enabled:             ptr.ToBool(true),
+							TriggerMatchingType: ptr.ToInt(bunny.MatchingTypeAll),
+							Triggers: []*bunny.EdgeRuleTrigger{
+								{
+									PatternMatchingType: ptr.ToInt(bunny.MatchingTypeAny),
+									Type:                ptr.ToInt(bunny.EdgeRuleTriggerTypeRandomChance),
+									PatternMatches:      []string{"30"},
+								},
+							},
+						},
+						{
+							ActionType:          ptr.ToInt(bunny.EdgeRuleActionTypeForceDownload),
+							Enabled:             ptr.ToBool(false),
+							TriggerMatchingType: ptr.ToInt(bunny.MatchingTypeAll),
+							Triggers: []*bunny.EdgeRuleTrigger{
+								{
+									PatternMatchingType: ptr.ToInt(bunny.MatchingTypeAny),
+									Type:                ptr.ToInt(bunny.EdgeRuleTriggerTypeRandomChance),
+									PatternMatches:      []string{"30"},
+								},
+							},
+						},
+					},
 				}),
 			},
 		},

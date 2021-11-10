@@ -114,7 +114,8 @@ func resourceEdgeRule() *schema.Resource {
 			keyEdgeRuleEnabled: {
 				Type:        schema.TypeBool,
 				Description: "Determines if the edge rule is currently enabled or not.",
-				Computed:    true,
+				Optional:    true,
+				Default:     true,
 			},
 		},
 	}
@@ -274,6 +275,7 @@ func resourceDataToAddOrUpdateEdgeRuleOptions(d *schema.ResourceData) (*bunny.Ad
 
 	return &bunny.AddOrUpdateEdgeRuleOptions{
 		GUID:                guid,
+		Enabled:             getBoolPtr(d, keyEnabled),
 		ActionType:          &actionType,
 		ActionParameter1:    getStrPtr(d, keyActionParameter1),
 		ActionParameter2:    getStrPtr(d, keyActionParameter2),
