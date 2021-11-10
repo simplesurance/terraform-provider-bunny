@@ -18,7 +18,7 @@ description: |-
 ### Required
 
 - **action_type** (String) The action type of the Edge Rule.
-Valid values: override_cache_time, block_request, set_request_header, enable_token_auth, override_cache_time_public, force_compression, redirect, origin_url, set_response_header, force_download, force_ssl, disable_token_auth, ignore_quiery_string, disable_optimizer
+Valid values: block_request, disable_optimizer, disable_token_auth, enable_token_auth, force_compression, force_download, force_ssl, ignore_quiery_string, origin_url, override_cache_time, override_cache_time_public, redirect, set_request_header, set_response_header
 - **pull_zone_id** (Number) The ID of the Pull Zone to that Edge Rule belongs.
 - **trigger** (Block Set, Min: 1, Max: 5) (see [below for nested schema](#nestedblock--trigger))
 
@@ -28,7 +28,7 @@ Valid values: override_cache_time, block_request, set_request_header, enable_tok
 - **action_parameter_2** (String) The Action parameter 2. The value depends on other parameters of the edge rule.
 - **id** (String) The ID of this resource.
 - **trigger_matching_type** (String) The trigger matching type.
-Valid values: none, any, all
+Valid values: all, any, none
 
 ### Read-Only
 
@@ -41,9 +41,9 @@ Valid values: none, any, all
 Required:
 
 - **pattern_matching_type** (String) The type of pattern matching.
-Valid values: none, any, all
+Valid values: all, any, none
 - **type** (String) The type of the Trigger.
-Valid values: country_code, remote_ip, query_string, random_chance, url, request_header, response_header, url_extensions
+Valid values: country_code, query_string, random_chance, remote_ip, request_header, response_header, url, url_extensions
 
 Optional:
 
