@@ -93,6 +93,10 @@ func edgeRuleDiff(t *testing.T, a, b interface{}) []string {
 	return diffStructs(t, a, b, edgeRuleDiffIgnoredFields)
 }
 
+func defPullZoneHostname(pullzoneName string) string {
+	return fmt.Sprintf("%s.b-cdn.net", pullzoneName)
+}
+
 func TestAccEdgeRule_full(t *testing.T) {
 	pzName := randPullZoneName()
 

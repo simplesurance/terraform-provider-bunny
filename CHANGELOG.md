@@ -1,3 +1,13 @@
+## 0.3.0 (Unreleased)
+
+FEATURES:
+
+* **New Resource** `hostname`
+
+IMPROVEMENTS:
+
+* errors: added additional context to error messages of pullzones and edgerules
+
 ## 0.2.0 (November 12, 2021)
 
 FEATURES:
