@@ -15,4 +15,4 @@ var edgeRuleTriggerTypesStr = map[string]int{
 
 var edgeRuleTriggerTypesInt = reverseStrIntMap(edgeRuleTriggerTypesStr)
 
-var edgeRuleTriggerTypeKeys = strIntMapKeys(edgeRuleTriggerTypesStr)
+var edgeRuleTriggerTypeKeys = strIntMapKeysSorted(edgeRuleTriggerTypesStr)

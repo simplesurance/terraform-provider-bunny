@@ -23,4 +23,4 @@ var edgeRuleActionTypesStr = map[string]int{
 
 var edgeRuleActionTypesInt = reverseStrIntMap(edgeRuleActionTypesStr)
 
-var edgeRuleActionTypeKeys = strIntMapKeys(edgeRuleActionTypesStr)
+var edgeRuleActionTypeKeys = strIntMapKeysSorted(edgeRuleActionTypesStr)

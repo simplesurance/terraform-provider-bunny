@@ -12,4 +12,4 @@ var edgeRuleMatchingTypesStr = map[string]int{
 
 var edgeRuleMatchingTypesInt = reverseStrIntMap(edgeRuleMatchingTypesStr)
 
-var edgeRuleMatchingTypeKeys = strIntMapKeys(edgeRuleMatchingTypesStr)
+var edgeRuleMatchingTypeKeys = strIntMapKeysSorted(edgeRuleMatchingTypesStr)
