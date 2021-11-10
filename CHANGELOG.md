@@ -3,6 +3,7 @@
 FEATURES:
 
 * **New Resource** `edgerule`
+* **New Resource** `hostname`
 
 IMPROVEMENTS:
 

@@ -80,6 +80,7 @@ const (
 	keyOptimizerWatermarkURL                 = "optimizer_watermark_url"
 	keyOriginShieldZoneCode                  = "origin_shield_zone_code"
 	keyOriginURL                             = "origin_url"
+	keyEnabled                               = "enabled"
 	keyPermaCacheStorageZoneID               = "perma_cache_storage_zone_id"
 	keyRequestLimit                          = "request_limit"
 	keyType                                  = "type"
@@ -88,7 +89,6 @@ const (
 	keyZoneSecurityIncludeHashRemoteIP       = "zone_security_include_hash_remote_ip"
 
 	keyBlockedReferrers = "blocked_referrers" // uses different API
-	keyEnabled          = "enabled"
 	keyName             = "name"
 	keyStorageZoneID    = "storage_zone_id"
 	keyZoneSecurityKey  = "zone_security_key"

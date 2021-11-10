@@ -18,3 +18,7 @@ func (l *providerLogger) Debugf(format string, v ...interface{}) {
 func (l *providerLogger) Errorf(format string, v ...interface{}) {
 	l.logger.Printf("[ERROR] "+format, v...)
 }
+
+func (l *providerLogger) Warnf(format string, v ...interface{}) {
+	l.logger.Printf("[WARN] "+format, v...)
+}

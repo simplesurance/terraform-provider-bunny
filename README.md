@@ -89,7 +89,6 @@ make docs
 
 - `terraform import` support
 - unsupported Pull Zone features:
-  - Custom Hostnames
   - Certificates
   - `cache_error_response`
   - `enable_query_string_ordering`
@@ -99,6 +98,8 @@ make docs
   - all `enable_geo_zone_*` fields
 - Edge Rule fields with missing write support:
   - `enabled`
+- Hostname fields with missing write support:
+  - `force_ssl`
 
 ## Status
 
