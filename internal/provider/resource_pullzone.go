@@ -621,7 +621,7 @@ func resourcePullZoneUpdate(ctx context.Context, d *schema.ResourceData, meta in
 		return diagsErrFromErr("converting resource to API type failed", err)
 	}
 
-	id, err := idAsInt64(d)
+	id, err := getIDAsInt64(d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -648,7 +648,7 @@ func resourcePullZoneUpdate(ctx context.Context, d *schema.ResourceData, meta in
 func resourcePullZoneRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	clt := meta.(*bunny.Client)
 
-	id, err := idAsInt64(d)
+	id, err := getIDAsInt64(d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -668,7 +668,7 @@ func resourcePullZoneRead(ctx context.Context, d *schema.ResourceData, meta inte
 func resourcePullZoneDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	clt := meta.(*bunny.Client)
 
-	id, err := idAsInt64(d)
+	id, err := getIDAsInt64(d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
