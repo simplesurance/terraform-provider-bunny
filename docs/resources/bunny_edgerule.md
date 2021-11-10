@@ -26,6 +26,7 @@ Valid values: block_request, disable_optimizer, disable_token_auth, enable_token
 
 - **action_parameter_1** (String) The Action parameter 1. The value depends on other parameters of the edge rule.
 - **action_parameter_2** (String) The Action parameter 2. The value depends on other parameters of the edge rule.
+- **enabled** (Boolean) Determines if the edge rule is currently enabled or not.
 - **id** (String) The ID of this resource.
 - **trigger_matching_type** (String) The trigger matching type.
 Valid values: all, any, none
@@ -33,7 +34,6 @@ Valid values: all, any, none
 ### Read-Only
 
 - **description** (String) The description of the Edge Rule. This field is used internally by Terraform bunny-provider.
-- **enabled** (Boolean) Determines if the edge rule is currently enabled or not.
 
 <a id="nestedblock--trigger"></a>
 ### Nested Schema for `trigger`

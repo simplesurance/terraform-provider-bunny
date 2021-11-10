@@ -97,8 +97,6 @@ make docs
   - `blocked_referrers`
   - `access_control_origin_header_extensions`
   - all `enable_geo_zone_*` fields
-- Edge Rule fields with missing write support:
-  - `enabled`
 
 ## Status
 
