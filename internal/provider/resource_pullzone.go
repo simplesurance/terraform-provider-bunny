@@ -728,7 +728,7 @@ func pullZoneToResourceData(pz *bunny.PullZone, d *schema.ResourceData) error {
 	if err := setStrSet(d, keyBudgetRedirectedCountries, pz.BudgetRedirectedCountries, ignoreOrderOpt, caseInsensitiveOpt); err != nil {
 		return err
 	}
-	if err := d.Set(keyCacheControlBrowserMaxAgeOverride, pz.CacheControlPublicMaxAgeOverride); err != nil {
+	if err := d.Set(keyCacheControlBrowserMaxAgeOverride, pz.CacheControlBrowserMaxAgeOverride); err != nil {
 		return err
 	}
 	if err := d.Set(keyCacheControlMaxAgeOverride, pz.CacheControlMaxAgeOverride); err != nil {
