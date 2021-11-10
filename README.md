@@ -89,7 +89,6 @@ make docs
 
 - `terraform import` support
 - unsupported Pull Zone features:
-  - Edge Rules
   - Custom Hostnames
   - Certificates
   - `cache_error_response`
