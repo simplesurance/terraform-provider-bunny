@@ -198,13 +198,15 @@ func idAsInt64(d *schema.ResourceData) (int64, error) {
 	return int64(id), nil
 }
 
-// strIntMapKeys returns a []string containing the keys of m.
-func strIntMapKeys(m map[string]int) []string {
+// strIntMapKeysSorted returns a sorted []string containing the keys of m.
+func strIntMapKeysSorted(m map[string]int) []string {
 	res := make([]string, 0, len(m))
 
 	for key := range m {
 		res = append(res, key)
 	}
+
+	sort.Strings(res)
 
 	return res
 }
