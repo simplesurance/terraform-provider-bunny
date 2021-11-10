@@ -14,18 +14,18 @@ import (
 )
 
 const (
-	keyActionParameter1           = "action_parameter_1"
-	keyActionParameter2           = "action_parameter_2"
-	keyActionType                 = "action_type"
-	keyDescription                = "description"
-	keyEdgeRuleEnabled            = "enabled"
-	keyPullZoneID                 = "pull_zone_id"
-	keyTriggerMatchingType        = "trigger_matching_type"
-	keyTriggerParameter1          = "parameter_1"
-	keyTriggerPatternMatches      = "pattern_matches"
-	keyTriggerPatternMatchingType = "pattern_matching_type"
-	keyTriggerType                = "type"
-	keyTriggers                   = "trigger"
+	keyEdgeRuleActionParameter1           = "action_parameter_1"
+	keyEdgeRuleActionParameter2           = "action_parameter_2"
+	keyEdgeRuleActionType                 = "action_type"
+	keyEdgeRuleDescription                = "description"
+	keyEdgeRuleEnabled                    = "enabled"
+	keyEdgeRulePullZoneID                 = "pull_zone_id"
+	keyEdgeRuleTriggerMatchingType        = "trigger_matching_type"
+	keyEdgeRuleTriggerParameter1          = "parameter_1"
+	keyEdgeRuleTriggerPatternMatches      = "pattern_matches"
+	keyEdgeRuleTriggerPatternMatchingType = "pattern_matching_type"
+	keyEdgeRuleTriggerType                = "type"
+	keyEdgeRuleTriggers                   = "trigger"
 )
 
 func resourceEdgeRule() *schema.Resource {
@@ -35,12 +35,12 @@ func resourceEdgeRule() *schema.Resource {
 		DeleteContext: resourceEdgeRuleDelete,
 		UpdateContext: resourceEdgeRuleUpdate,
 		Schema: map[string]*schema.Schema{
-			keyPullZoneID: {
+			keyEdgeRulePullZoneID: {
 				Type:        schema.TypeInt,
 				Description: "The ID of the Pull Zone to that Edge Rule belongs.",
 				Required:    true,
 			},
-			keyActionType: {
+			keyEdgeRuleActionType: {
 				Type: schema.TypeString,
 				Description: "The action type of the Edge Rule.\nValid values: " +
 					strings.Join(edgeRuleActionTypeKeys, ", "),
@@ -49,23 +49,23 @@ func resourceEdgeRule() *schema.Resource {
 				),
 				Required: true,
 			},
-			keyActionParameter1: {
+			keyEdgeRuleActionParameter1: {
 				Type:        schema.TypeString,
 				Description: "The Action parameter 1. The value depends on other parameters of the edge rule.",
 				Optional:    true,
 			},
-			keyActionParameter2: {
+			keyEdgeRuleActionParameter2: {
 				Type:        schema.TypeString,
 				Description: "The Action parameter 2. The value depends on other parameters of the edge rule.",
 				Optional:    true,
 			},
-			keyTriggers: {
+			keyEdgeRuleTriggers: {
 				Type:     schema.TypeSet,
 				Required: true,
 				MaxItems: 5, // otherwise the API returns the error: Maximum 5 condition are allowed per rule.
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						keyTriggerType: {
+						keyEdgeRuleTriggerType: {
 							Type: schema.TypeString,
 							Description: "The type of the Trigger.\nValid values: " +
 								strings.Join(edgeRuleTriggerTypeKeys, ", "),
@@ -74,13 +74,13 @@ func resourceEdgeRule() *schema.Resource {
 								validation.StringInSlice(edgeRuleTriggerTypeKeys, false),
 							),
 						},
-						keyTriggerPatternMatches: {
+						keyEdgeRuleTriggerPatternMatches: {
 							Type:        schema.TypeSet,
 							Description: "The list of pattern matches that will trigger the edge rule.",
 							Optional:    true,
 							Elem:        &schema.Schema{Type: schema.TypeString},
 						},
-						keyTriggerPatternMatchingType: {
+						keyEdgeRuleTriggerPatternMatchingType: {
 							Type: schema.TypeString,
 							Description: "The type of pattern matching.\nValid values: " +
 								strings.Join(edgeRuleMatchingTypeKeys, ", "),
@@ -90,7 +90,7 @@ func resourceEdgeRule() *schema.Resource {
 							),
 						},
 
-						keyTriggerParameter1: {
+						keyEdgeRuleTriggerParameter1: {
 							Type:        schema.TypeString,
 							Description: "The trigger parameter 1. The value depends on the type of trigger.",
 							Optional:    true,
@@ -98,7 +98,7 @@ func resourceEdgeRule() *schema.Resource {
 					},
 				},
 			},
-			keyTriggerMatchingType: {
+			keyEdgeRuleTriggerMatchingType: {
 				Type:        schema.TypeString,
 				Description: "The trigger matching type.\nValid values: " + strings.Join(edgeRuleMatchingTypeKeys, ", "),
 				ValidateDiagFunc: validation.ToDiagFunc(
@@ -106,7 +106,7 @@ func resourceEdgeRule() *schema.Resource {
 				),
 				Optional: true,
 			},
-			keyDescription: {
+			keyEdgeRuleDescription: {
 				Type:        schema.TypeString,
 				Description: "The description of the Edge Rule. This field is used internally by Terraform bunny-provider.",
 				Computed:    true,
@@ -151,7 +151,7 @@ func resourceEdgeRuleCreate(ctx context.Context, d *schema.ResourceData, meta in
 	// initially find the created Edge Rule. After it was found the GUID is
 	// used for identification. The description could be safely overwritten
 	internalEdgeRuleID := "terraform-provider-bunny id: " + uuid.New().String()
-	if err := d.Set(keyDescription, internalEdgeRuleID); err != nil {
+	if err := d.Set(keyEdgeRuleDescription, internalEdgeRuleID); err != nil {
 		return diag.FromErr(err)
 	}
 
@@ -160,7 +160,7 @@ func resourceEdgeRuleCreate(ctx context.Context, d *schema.ResourceData, meta in
 		return diagsErrFromErr("setting description failed", err)
 	}
 
-	pullZoneID := int64(d.Get(keyPullZoneID).(int))
+	pullZoneID := int64(d.Get(keyEdgeRulePullZoneID).(int))
 
 	err = clt.PullZone.AddOrUpdateEdgeRule(ctx, pullZoneID, opts)
 	if err != nil {
@@ -186,7 +186,7 @@ func resourceEdgeRuleUpdate(ctx context.Context, d *schema.ResourceData, meta in
 		return diag.FromErr(err)
 	}
 
-	pullZoneID := int64(d.Get(keyPullZoneID).(int))
+	pullZoneID := int64(d.Get(keyEdgeRulePullZoneID).(int))
 
 	err = clt.PullZone.AddOrUpdateEdgeRule(ctx, pullZoneID, opts)
 	if err != nil {
@@ -205,7 +205,7 @@ func edgeRuleTriggerTypeToInt(triggerType string) (int, error) {
 }
 
 func resourceDataToEdgeRuleTriggers(d *schema.ResourceData) ([]*bunny.EdgeRuleTrigger, error) {
-	triggerSet := d.Get(keyTriggers).(*schema.Set)
+	triggerSet := d.Get(keyEdgeRuleTriggers).(*schema.Set)
 	if triggerSet.Len() == 0 {
 		return nil, nil
 	}
@@ -215,24 +215,24 @@ func resourceDataToEdgeRuleTriggers(d *schema.ResourceData) ([]*bunny.EdgeRuleTr
 	for _, item := range triggerSet.List() {
 		i := item.(map[string]interface{})
 
-		triggerType, err := edgeRuleTriggerTypeToInt(i[keyTriggerType].(string))
+		triggerType, err := edgeRuleTriggerTypeToInt(i[keyEdgeRuleTriggerType].(string))
 		if err != nil {
 			return nil, err
 		}
 
 		var patternMatches []string
-		if val := i[keyTriggerPatternMatches]; val != nil {
+		if val := i[keyEdgeRuleTriggerPatternMatches]; val != nil {
 			patternMatches = strSetAsSlice(val)
 		}
 
 		patternMatchingType, err := strIntMapGet(
-			edgeRuleMatchingTypesStr, i[keyTriggerPatternMatchingType].(string),
+			edgeRuleMatchingTypesStr, i[keyEdgeRuleTriggerPatternMatchingType].(string),
 		)
 		if err != nil {
-			return nil, fmt.Errorf("%s: %w", keyTriggerMatchingType, err)
+			return nil, fmt.Errorf("%s: %w", keyEdgeRuleTriggerMatchingType, err)
 		}
 
-		triggerParam1 := i[keyTriggerParameter1].(string)
+		triggerParam1 := i[keyEdgeRuleTriggerParameter1].(string)
 
 		res = append(res, &bunny.EdgeRuleTrigger{
 			Type:                &triggerType,
@@ -253,15 +253,15 @@ func resourceDataToAddOrUpdateEdgeRuleOptions(d *schema.ResourceData) (*bunny.Ad
 
 	actionType, err := strIntMapGet(
 		edgeRuleActionTypesStr,
-		d.Get(keyActionType).(string),
+		d.Get(keyEdgeRuleActionType).(string),
 	)
 	if err != nil {
-		return nil, fmt.Errorf("%s: %w", keyActionType, err)
+		return nil, fmt.Errorf("%s: %w", keyEdgeRuleActionType, err)
 	}
 
 	matchingType, err := strIntMapGet(
 		edgeRuleMatchingTypesStr,
-		d.Get(keyTriggerMatchingType).(string),
+		d.Get(keyEdgeRuleTriggerMatchingType).(string),
 	)
 	if err != nil {
 		return nil, err
@@ -275,11 +275,11 @@ func resourceDataToAddOrUpdateEdgeRuleOptions(d *schema.ResourceData) (*bunny.Ad
 	return &bunny.AddOrUpdateEdgeRuleOptions{
 		GUID:                guid,
 		ActionType:          &actionType,
-		ActionParameter1:    getStrPtr(d, keyActionParameter1),
-		ActionParameter2:    getStrPtr(d, keyActionParameter2),
+		ActionParameter1:    getStrPtr(d, keyEdgeRuleActionParameter1),
+		ActionParameter2:    getStrPtr(d, keyEdgeRuleActionParameter2),
 		Triggers:            triggers,
 		TriggerMatchingType: &matchingType,
-		Description:         getStrPtr(d, keyDescription),
+		Description:         getStrPtr(d, keyEdgeRuleDescription),
 	}, nil
 }
 
@@ -287,7 +287,7 @@ func resourceEdgeRuleDelete(ctx context.Context, d *schema.ResourceData, meta in
 	clt := meta.(*bunny.Client)
 
 	edgeRuleGUID := d.Id()
-	pullZoneID := int64(d.Get(keyPullZoneID).(int))
+	pullZoneID := int64(d.Get(keyEdgeRulePullZoneID).(int))
 
 	err := clt.PullZone.DeleteEdgeRule(ctx, pullZoneID, edgeRuleGUID)
 	if err != nil {
@@ -302,7 +302,7 @@ func resourceEdgeRuleRead(ctx context.Context, d *schema.ResourceData, meta inte
 	clt := meta.(*bunny.Client)
 
 	edgeRuleGUID := d.Id()
-	pullZoneID := int64(d.Get(keyPullZoneID).(int))
+	pullZoneID := int64(d.Get(keyEdgeRulePullZoneID).(int))
 
 	pz, err := clt.PullZone.Get(ctx, pullZoneID)
 	if err != nil {
@@ -349,18 +349,18 @@ func edgeRuleToResourceData(edgeRule *bunny.EdgeRule, d *schema.ResourceData) er
 
 	actionType, err := intStrMapGet(edgeRuleActionTypesInt, edgeRule.ActionType)
 	if err != nil {
-		return fmt.Errorf("%s: %w", keyActionType, err)
+		return fmt.Errorf("%s: %w", keyEdgeRuleActionType, err)
 	}
 
-	if err := d.Set(keyActionType, actionType); err != nil {
+	if err := d.Set(keyEdgeRuleActionType, actionType); err != nil {
 		return err
 	}
 
-	if err := d.Set(keyActionParameter1, edgeRule.ActionParameter1); err != nil {
+	if err := d.Set(keyEdgeRuleActionParameter1, edgeRule.ActionParameter1); err != nil {
 		return err
 	}
 
-	if err := d.Set(keyActionParameter2, edgeRule.ActionParameter2); err != nil {
+	if err := d.Set(keyEdgeRuleActionParameter2, edgeRule.ActionParameter2); err != nil {
 		return err
 	}
 
@@ -371,14 +371,14 @@ func edgeRuleToResourceData(edgeRule *bunny.EdgeRule, d *schema.ResourceData) er
 
 	matchingType, err := intStrMapGet(edgeRuleMatchingTypesInt, edgeRule.TriggerMatchingType)
 	if err != nil {
-		return fmt.Errorf("%s: %w", keyTriggerMatchingType, err)
+		return fmt.Errorf("%s: %w", keyEdgeRuleTriggerMatchingType, err)
 	}
 
-	if err := d.Set(keyTriggerMatchingType, matchingType); err != nil {
+	if err := d.Set(keyEdgeRuleTriggerMatchingType, matchingType); err != nil {
 		return err
 	}
 
-	if err := d.Set(keyDescription, edgeRule.Description); err != nil {
+	if err := d.Set(keyEdgeRuleDescription, edgeRule.Description); err != nil {
 		return err
 	}
 
@@ -404,13 +404,13 @@ func edgeRuleTriggerToResourceData(triggers []*bunny.EdgeRuleTrigger, d *schema.
 		}
 
 		entry := make(map[string]interface{}, 4)
-		entry[keyTriggerType] = triggerType
-		entry[keyTriggerPatternMatches] = trigger.PatternMatches
-		entry[keyTriggerPatternMatchingType] = patternMatchingType
-		entry[keyTriggerParameter1] = trigger.Parameter1
+		entry[keyEdgeRuleTriggerType] = triggerType
+		entry[keyEdgeRuleTriggerPatternMatches] = trigger.PatternMatches
+		entry[keyEdgeRuleTriggerPatternMatchingType] = patternMatchingType
+		entry[keyEdgeRuleTriggerParameter1] = trigger.Parameter1
 
 		res = append(res, entry)
 	}
 
-	return d.Set(keyTriggers, res)
+	return d.Set(keyEdgeRuleTriggers, res)
 }
