@@ -191,7 +191,7 @@ func resourceEdgeRuleUpdate(ctx context.Context, d *schema.ResourceData, meta in
 
 	err = clt.PullZone.AddOrUpdateEdgeRule(ctx, pullZoneID, opts)
 	if err != nil {
-		return diag.FromErr(fmt.Errorf("creating edge rule failed: %w", err))
+		return diag.FromErr(fmt.Errorf("updating edge rule failed: %w", err))
 	}
 
 	return nil
@@ -293,7 +293,7 @@ func resourceEdgeRuleDelete(ctx context.Context, d *schema.ResourceData, meta in
 
 	err := clt.PullZone.DeleteEdgeRule(ctx, pullZoneID, edgeRuleGUID)
 	if err != nil {
-		return diag.FromErr(err)
+		return diagsErrFromErr("deleting edge rule failed", err)
 	}
 
 	d.SetId("")

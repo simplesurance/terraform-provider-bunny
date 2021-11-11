@@ -655,7 +655,7 @@ func resourcePullZoneRead(ctx context.Context, d *schema.ResourceData, meta inte
 
 	pz, err := clt.PullZone.Get(ctx, id)
 	if err != nil {
-		return diag.FromErr(err)
+		return diagsErrFromErr("could not retrieve pull zone", err)
 	}
 
 	if err := pullZoneToResourceData(pz, d); err != nil {
@@ -675,7 +675,7 @@ func resourcePullZoneDelete(ctx context.Context, d *schema.ResourceData, meta in
 
 	err = clt.PullZone.Delete(ctx, id)
 	if err != nil {
-		return diag.FromErr(err)
+		return diagsErrFromErr("could not delete pull zone", err)
 	}
 
 	d.SetId("")
