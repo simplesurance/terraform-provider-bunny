@@ -59,5 +59,6 @@ func newProvider(_ context.Context, d *schema.ResourceData) (interface{}, diag.D
 		apiKey,
 		bunny.WithUserAgent(ua),
 		bunny.WithHTTPRequestLogger(logger.Debugf),
+		bunny.WithHTTPResponseLogger(logger.Debugf),
 	), nil
 }
