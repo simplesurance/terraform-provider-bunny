@@ -318,28 +318,21 @@ func resourceEdgeRuleRead(ctx context.Context, d *schema.ResourceData, meta inte
 		}}
 	}
 
-	var edgeRule *bunny.EdgeRule
 	for _, er := range pz.EdgeRules {
 		if er.GUID != nil && *er.GUID == edgeRuleGUID {
-			edgeRule = er
-			break
+			if err := edgeRuleToResourceData(er, d); err != nil {
+				return diagsErrFromErr("converting edge rule api type to terraform ResourceData failed", err)
+			}
+
+			return nil
 		}
 	}
 
-	if edgeRule == nil {
-		return diag.Diagnostics{{
-			Severity: diag.Error,
-			Summary:  "edge rule not found",
-			Detail:   fmt.Sprintf("pull zone with id %d, has no edge rule with guid: %q", pullZoneID, edgeRuleGUID),
-		}}
-	}
-
-	if err := edgeRuleToResourceData(edgeRule, d); err != nil {
-		return diagsErrFromErr("converting edge rule api type to terraform ResourceData failed", err)
-	}
-
-	return nil
-
+	return diag.Diagnostics{{
+		Severity: diag.Error,
+		Summary:  "edge rule not found",
+		Detail:   fmt.Sprintf("pull zone with id %d, has no edge rule with guid: %q", pullZoneID, edgeRuleGUID),
+	}}
 }
 
 func edgeRuleToResourceData(edgeRule *bunny.EdgeRule, d *schema.ResourceData) error {
