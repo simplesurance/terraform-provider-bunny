@@ -14,3 +14,8 @@ check:
 test:
 	$(info * running tests)
 	go test -race -v ./...
+
+.PHONY: integrationtest
+integrationtest:
+	$(info * running integration tests)
+	go test -tags=integrationtest -race -v ./...

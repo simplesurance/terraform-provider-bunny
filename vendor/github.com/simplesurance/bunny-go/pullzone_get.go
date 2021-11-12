@@ -14,15 +14,15 @@ const (
 // Constants for the values of the PatternMatchingType of EdgeRuleTrigger and
 // TriggerMatchingType of an EdgeRule.
 const (
-	MatchingTypeAny int = 0
-	MatchingTypeAll     = iota
+	MatchingTypeAny int = iota
+	MatchingTypeAll
 	MatchingTypeNone
 )
 
 // Constants for the ActionType fields of an EdgeRule.
 const (
-	EdgeRuleActionTypeForceSSL int = 0
-	EdgeRuleActionTypeRedirect     = iota
+	EdgeRuleActionTypeForceSSL int = iota
+	EdgeRuleActionTypeRedirect
 	EdgeRuleActionTypeOriginURL
 	EdgeRuleActionTypeOverrideCacheTime
 	EdgeRuleActionTypeBlockRequest
@@ -39,8 +39,8 @@ const (
 
 // Constants for the Type field of an EdgeRuleTrigger.
 const (
-	EdgeRuleTriggerTypeURL           int = 0
-	EdgeRuleTriggerTypeRequestHeader     = iota
+	EdgeRuleTriggerTypeURL int = iota
+	EdgeRuleTriggerTypeRequestHeader
 	EdgeRuleTriggerTypeResponseHeader
 	EdgeRuleTriggerTypeURLExtension
 	EdgeRuleTriggerTypeCountryCode
@@ -53,24 +53,27 @@ const (
 //
 // Bunny.net API docs: https://docs.bunny.net/reference/pullzonepublic_index2 https://docs.bunny.net/reference/pullzonepublic_index
 type PullZone struct {
-	ID                                    *int64      `json:"Id,omitempty"`
-	AWSSigningEnabled                     *bool       `json:"AWSSigningEnabled,omitempty"`
-	AWSSigningKey                         *string     `json:"AWSSigningKey,omitempty"`
-	AWSSigningRegionName                  *string     `json:"AWSSigningRegionName,omitempty"`
-	AWSSigningSecret                      *string     `json:"AWSSigningSecret,omitempty"`
-	AccessControlOriginHeaderExtensions   []string    `json:"AccessControlOriginHeaderExtensions,omitempty"`
-	AddCanonicalHeader                    *bool       `json:"AddCanonicalHeader,omitempty"`
-	AddHostHeader                         *bool       `json:"AddHostHeader,omitempty"`
-	AllowedReferrers                      []string    `json:"AllowedReferrers,omitempty"`
-	BlockPostRequests                     *bool       `json:"BlockPostRequests,omitempty"`
-	BlockRootPathAccess                   *bool       `json:"BlockRootPathAccess,omitempty"`
-	BlockedCountries                      []string    `json:"BlockedCountries,omitempty"`
-	BlockedIPs                            []string    `json:"BlockedIps,omitempty"`
-	BlockedReferrers                      []string    `json:"BlockedReferrers,omitempty"`
-	BudgetRedirectedCountries             []string    `json:"BudgetRedirectedCountries,omitempty"`
-	BurstSize                             *int32      `json:"BurstSize,omitempty"`
-	CacheControlMaxAgeOverride            *int64      `json:"CacheControlMaxAgeOverride,omitempty"`
-	CacheControlPublicMaxAgeOverride      *int64      `json:"CacheControlPublicMaxAgeOverride,omitempty"`
+	ID                                  *int64   `json:"Id,omitempty"`
+	AWSSigningEnabled                   *bool    `json:"AWSSigningEnabled,omitempty"`
+	AWSSigningKey                       *string  `json:"AWSSigningKey,omitempty"`
+	AWSSigningRegionName                *string  `json:"AWSSigningRegionName,omitempty"`
+	AWSSigningSecret                    *string  `json:"AWSSigningSecret,omitempty"`
+	AccessControlOriginHeaderExtensions []string `json:"AccessControlOriginHeaderExtensions,omitempty"`
+	AddCanonicalHeader                  *bool    `json:"AddCanonicalHeader,omitempty"`
+	AddHostHeader                       *bool    `json:"AddHostHeader,omitempty"`
+	AllowedReferrers                    []string `json:"AllowedReferrers,omitempty"`
+	BlockPostRequests                   *bool    `json:"BlockPostRequests,omitempty"`
+	BlockRootPathAccess                 *bool    `json:"BlockRootPathAccess,omitempty"`
+	BlockedCountries                    []string `json:"BlockedCountries,omitempty"`
+	BlockedIPs                          []string `json:"BlockedIps,omitempty"`
+	BlockedReferrers                    []string `json:"BlockedReferrers,omitempty"`
+	BudgetRedirectedCountries           []string `json:"BudgetRedirectedCountries,omitempty"`
+	BurstSize                           *int32   `json:"BurstSize,omitempty"`
+	CacheControlMaxAgeOverride          *int64   `json:"CacheControlMaxAgeOverride,omitempty"`
+	// CacheControlBrowserMaxAgeOverride is called
+	// CacheControlPublicMaxAgeOverride in the API. Both names refer to the
+	// same setting.
+	CacheControlBrowserMaxAgeOverride     *int64      `json:"CacheControlPublicMaxAgeOverride,omitempty"`
 	CnameDomain                           *string     `json:"CnameDomain,omitempty"`
 	ConnectionLimitPerIPCount             *int32      `json:"ConnectionLimitPerIPCount,omitempty"`
 	DNSRecordID                           *int64      `json:"DnsRecordId,omitempty"`
