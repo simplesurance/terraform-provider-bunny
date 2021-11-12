@@ -4,10 +4,10 @@ go 1.17
 
 require (
 	github.com/AlekSi/pointer v1.2.0
-	github.com/google/uuid v1.1.2
+	github.com/google/uuid v1.3.0
 	github.com/hashicorp/terraform-plugin-docs v0.5.0
 	github.com/hashicorp/terraform-plugin-sdk/v2 v2.8.0
-	github.com/simplesurance/bunny-go v0.0.0-20211101140846-d5511820412f
+	github.com/simplesurance/bunny-go v0.0.0-20211112111434-1bc8f1c9ba18
 )
 
 require (

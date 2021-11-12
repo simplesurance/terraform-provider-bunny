@@ -31,10 +31,11 @@ type Client struct {
 	baseURL *url.URL
 	apiKey  string
 
-	httpClient      http.Client
-	httpRequestLogf Logf
-	logf            Logf
-	userAgent       string
+	httpClient       http.Client
+	httpRequestLogf  Logf
+	httpResponseLogf Logf
+	logf             Logf
+	userAgent        string
 
 	PullZone *PullZoneService
 }
@@ -47,12 +48,13 @@ var discardLogF = func(string, ...interface{}) {}
 // Bunny.net API docs: https://support.bunny.net/hc/en-us/articles/360012168840-Where-do-I-find-my-API-key-
 func NewClient(APIKey string, opts ...Option) *Client {
 	clt := Client{
-		baseURL:         mustParseURL(BaseURL),
-		apiKey:          APIKey,
-		httpClient:      *http.DefaultClient,
-		userAgent:       DefaultUserAgent,
-		httpRequestLogf: discardLogF,
-		logf:            discardLogF,
+		baseURL:          mustParseURL(BaseURL),
+		apiKey:           APIKey,
+		httpClient:       *http.DefaultClient,
+		userAgent:        DefaultUserAgent,
+		httpRequestLogf:  discardLogF,
+		httpResponseLogf: discardLogF,
+		logf:             discardLogF,
 	}
 
 	clt.PullZone = &PullZoneService{client: &clt}
@@ -113,18 +115,30 @@ func (c *Client) newGetRequest(urlStr string, params interface{}) (*http.Request
 	return c.newRequest(http.MethodGet, urlStr, nil)
 }
 
-// newPostRequest creates a bunny.NET API POST request.
-// If body is not nil, it is encoded as JSON as send as HTTP-Body.
-func (c *Client) newPostRequest(urlStr string, body interface{}) (*http.Request, error) {
+func toJSON(data interface{}) (io.Reader, error) {
 	var buf io.ReadWriter
 
-	if body != nil {
-		buf = &bytes.Buffer{}
-		enc := json.NewEncoder(buf)
-		enc.SetEscapeHTML(false)
-		if err := enc.Encode(body); err != nil {
-			return nil, err
-		}
+	if data == nil {
+		return http.NoBody, nil
+	}
+
+	buf = &bytes.Buffer{}
+	enc := json.NewEncoder(buf)
+	enc.SetEscapeHTML(false)
+
+	if err := enc.Encode(data); err != nil {
+		return nil, err
+	}
+
+	return buf, nil
+}
+
+// newPostRequest creates a bunny.NET API POST request.
+// If body is not nil, it is encoded as JSON and send as HTTP-Body.
+func (c *Client) newPostRequest(urlStr string, body interface{}) (*http.Request, error) {
+	buf, err := toJSON(body)
+	if err != nil {
+		return nil, err
 	}
 
 	req, err := c.newRequest(http.MethodPost, urlStr, buf)
@@ -135,8 +149,15 @@ func (c *Client) newPostRequest(urlStr string, body interface{}) (*http.Request,
 	return req, nil
 }
 
-func (c *Client) newDeleteRequest(urlStr string, params interface{}) (*http.Request, error) {
-	return c.newRequest(http.MethodDelete, urlStr, nil)
+// newDeleteRequest creates a bunny.NET API DELETE request.
+// If body is not nil, it is encoded as JSON and send as HTTP-Body.
+func (c *Client) newDeleteRequest(urlStr string, body interface{}) (*http.Request, error) {
+	buf, err := toJSON(body)
+	if err != nil {
+		return nil, err
+	}
+
+	return c.newRequest(http.MethodDelete, urlStr, buf)
 }
 
 // sendRequest sends a http Request to the bunny API.
@@ -167,6 +188,8 @@ func (c *Client) sendRequest(ctx context.Context, req *http.Request, result inte
 
 		return err
 	}
+
+	c.logResponse(resp)
 
 	defer resp.Body.Close() //nolint: errcheck
 
@@ -233,6 +256,10 @@ func checkResp(req *http.Request, resp *http.Response) error {
 			return &httpErr
 		}
 
+		if len(httpErr.RespBody) == 0 {
+			return &httpErr
+		}
+
 		var apiErr APIError
 
 		if err := json.Unmarshal(httpErr.RespBody, &apiErr); err != nil {
@@ -263,5 +290,19 @@ func (c *Client) logRequest(req *http.Request) {
 		return
 	}
 
-	c.httpRequestLogf(string(debugReq))
+	c.httpRequestLogf("sending http-request: %s", string(debugReq))
+}
+
+func (c *Client) logResponse(resp *http.Response) {
+	if c.httpResponseLogf == nil {
+		return
+	}
+
+	debugResp, err := httputil.DumpResponse(resp, true)
+	if err != nil {
+		c.httpRequestLogf("dumping http response failed: %s", err)
+		return
+	}
+
+	c.httpRequestLogf("received http-response: %s", string(debugResp))
 }

@@ -10,6 +10,13 @@ func WithHTTPRequestLogger(logger Logf) Option {
 	}
 }
 
+// WithHTTPResponseLogger is an option to log all received HTTP-Responses via a log function.
+func WithHTTPResponseLogger(logger Logf) Option {
+	return func(clt *Client) {
+		clt.httpResponseLogf = logger
+	}
+}
+
 // WithUserAgent is an option to specify the value of the User-Agent HTTP
 // Header.
 func WithUserAgent(userAgent string) Option {
