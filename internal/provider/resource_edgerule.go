@@ -321,6 +321,8 @@ func resourceEdgeRuleRead(ctx context.Context, d *schema.ResourceData, meta inte
 			if err := edgeRuleToResourceData(er, d); err != nil {
 				return diagsErrFromErr("converting edge rule api type to terraform ResourceData failed", err)
 			}
+
+			return nil
 		}
 	}
 
