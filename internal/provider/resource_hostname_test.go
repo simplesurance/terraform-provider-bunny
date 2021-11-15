@@ -37,7 +37,7 @@ func checkHostnameState(t *testing.T, wanted *hostnamesWanted) resource.TestChec
 
 		id, err := strconv.Atoi(strID)
 		if err != nil {
-			return fmt.Errorf("could not convert resource ID %q to int64: %w", id, err)
+			return fmt.Errorf("could not convert resource ID %q to int64: %w", strID, err)
 		}
 
 		pz, err := clt.PullZone.Get(context.Background(), int64(id))
