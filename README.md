@@ -89,7 +89,7 @@ make docs
 
 - `terraform import` support
 - unsupported Pull Zone features:
-  - Certificates
+  - Add/Remove custom certificates
   - `cache_error_response`
   - `enable_query_string_ordering`
 - Pull Zone fields with missing write support:

@@ -5,18 +5,26 @@ import (
 	"errors"
 	"fmt"
 	"strconv"
+	"strings"
+	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	bunny "github.com/simplesurance/bunny-go"
 )
 
 const (
-	keyHostnamePullZoneID       = "pull_zone_id"
-	keyHostnameHostname         = "hostname" // yes, that variable name is intentional :-)
-	keyHostnameForceSSL         = "force_ssl"
-	keyHostnameIsSystemHostname = "is_system_hostname"
-	keyHostnameHasCertificate   = "has_certificate"
+	keyHostnamePullZoneID          = "pull_zone_id"
+	keyHostnameHostname            = "hostname" // yes, that variable name is intentional :-)
+	keyHostnameForceSSL            = "force_ssl"
+	keyHostnameIsSystemHostname    = "is_system_hostname"
+	keyHostnameHasCertificate      = "has_certificate"
+	keyHostnameLoadFreeCertificate = "load_free_certificate"
+)
+
+const (
+	loadFreeCertMinDelay = 5 * time.Second
 )
 
 func resourceHostname() *schema.Resource {
@@ -53,6 +61,13 @@ func resourceHostname() *schema.Resource {
 				Description: "Determines if the hostname has an SSL certificate configured.",
 				Computed:    true,
 			},
+			keyHostnameLoadFreeCertificate: {
+				Type:        schema.TypeBool,
+				Description: "Determines if a free SSL certificate should be generated and loaded for the hostname",
+				ForceNew:    true,
+				Optional:    true,
+				Default:     false,
+			},
 		},
 	}
 }
@@ -75,7 +90,51 @@ func resourceHostnameCreate(ctx context.Context, d *schema.ResourceData, meta in
 
 	d.SetId(hostnameID)
 
+	if !d.Get(keyHostnameLoadFreeCertificate).(bool) {
+		return nil
+	}
+
+	if err := loadFreeCertRetry(ctx, clt, d.Timeout(schema.TimeoutCreate), *hostnameOpt.Hostname); err != nil {
+		return diagsErrFromErr("creating hostname succeeded, loading free ssl certificate failed", err)
+	}
+
 	return nil
+}
+
+func loadFreeCertRetry(ctx context.Context, clt *bunny.Client, timeout time.Duration, hostname string) error {
+	const (
+		stateWaitingForDNSRecord = "waiting_for_dns_record"
+		stateDone                = "certificate_loaded"
+	)
+
+	stateConf := resource.StateChangeConf{
+		Pending:    []string{stateWaitingForDNSRecord},
+		Target:     []string{stateDone},
+		Timeout:    timeout,
+		MinTimeout: loadFreeCertMinDelay,
+		Refresh: func() (interface{}, string, error) {
+			err := clt.PullZone.LoadFreeCertificate(ctx, hostname)
+			if err != nil {
+				if apiErr, ok := err.(*bunny.APIError); ok {
+					if strings.Contains(strings.ToLower(apiErr.Message), "is not pointing to our servers") {
+						logger.Infof("cname dns record missing for hostname %q", hostname)
+
+						return "", stateWaitingForDNSRecord, nil
+					}
+
+					return nil, "", err
+				}
+			}
+
+			// StateChangeConf seems to require that a non-nil
+			// result is returned to consider the state change as successful.
+			// Return an "" instead of nil as result.
+			return "", stateDone, nil
+		},
+	}
+
+	_, err := stateConf.WaitForStateContext(ctx)
+	return err
 }
 
 func getHostnameID(ctx context.Context, clt *bunny.Client, pullZoneID int64, hostname string) (string, error) {

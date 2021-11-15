@@ -11,6 +11,10 @@ var logger = providerLogger{
 	logger: log.Default(),
 }
 
+func (l *providerLogger) Infof(format string, v ...interface{}) {
+	l.logger.Printf("[INFO] "+format, v...)
+}
+
 func (l *providerLogger) Debugf(format string, v ...interface{}) {
 	l.logger.Printf("[DEBUG] "+format, v...)
 }

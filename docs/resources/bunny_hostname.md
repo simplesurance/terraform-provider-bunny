@@ -23,6 +23,7 @@ description: |-
 ### Optional
 
 - **id** (String) The ID of this resource.
+- **load_free_certificate** (Boolean) Determines if a free SSL certificate should be generated and loaded for the hostname
 
 ### Read-Only
 
