@@ -6,8 +6,10 @@ import (
 	"strings"
 )
 
-// HTTPError is returned by the Client when the API returned a reply with an
-// unsuccessful status code and the body does not contain a JSON APIError.
+// HTTPError is returned by the Client when an unsuccessful HTTP response was
+// returned or a response could not be processed.
+// If the body of an unsuccessful HTTP response contains an APIError in the
+// body, APIError is returned by the Client instead.
 type HTTPError struct {
 	// RequestURL is the address to which the request was sent that caused the error.
 	RequestURL string
