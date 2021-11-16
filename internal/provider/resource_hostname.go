@@ -90,8 +90,7 @@ func resourceHostnameCreate(ctx context.Context, d *schema.ResourceData, meta in
 
 	d.SetId(hostnameID)
 
-	useFreeSSLCert := d.Get(keyHostnameLoadFreeCertificate).(bool)
-	if !useFreeSSLCert {
+	if !d.Get(keyHostnameLoadFreeCertificate).(bool) {
 		return nil
 	}
 
@@ -104,13 +103,13 @@ func resourceHostnameCreate(ctx context.Context, d *schema.ResourceData, meta in
 
 func loadFreeCertRetry(ctx context.Context, clt *bunny.Client, timeout time.Duration, hostname string) error {
 	const (
-		loadFreeCertStateWaitingForDNSRecord = "waiting_for_dns_record"
-		loadFreeCertDone                     = "certificate_loaded"
+		stateWaitingForDNSRecord = "waiting_for_dns_record"
+		stateDone                = "certificate_loaded"
 	)
 
 	stateConf := resource.StateChangeConf{
-		Pending:    []string{loadFreeCertStateWaitingForDNSRecord},
-		Target:     []string{loadFreeCertDone},
+		Pending:    []string{stateWaitingForDNSRecord},
+		Target:     []string{stateDone},
 		Timeout:    timeout,
 		MinTimeout: loadFreeCertMinDelay,
 		Refresh: func() (interface{}, string, error) {
@@ -120,24 +119,22 @@ func loadFreeCertRetry(ctx context.Context, clt *bunny.Client, timeout time.Dura
 					if strings.Contains(strings.ToLower(apiErr.Message), "is not pointing to our servers") {
 						logger.Infof("cname dns record missing for hostname %q", hostname)
 
-						return nil, loadFreeCertStateWaitingForDNSRecord, nil
+						return nil, stateWaitingForDNSRecord, nil
 					}
 
 					return nil, "", err
 				}
-
 			}
 
 			// StateChangeConf seems to require that a non-nil
 			// result is returned to consider the state change as successful.
 			// Return an "" instead of nil as result.
-			return "", loadFreeCertDone, nil
+			return "", stateDone, nil
 		},
 	}
 
 	_, err := stateConf.WaitForStateContext(ctx)
 	return err
-
 }
 
 func getHostnameID(ctx context.Context, clt *bunny.Client, pullZoneID int64, hostname string) (string, error) {
