@@ -119,7 +119,7 @@ func loadFreeCertRetry(ctx context.Context, clt *bunny.Client, timeout time.Dura
 					if strings.Contains(strings.ToLower(apiErr.Message), "is not pointing to our servers") {
 						logger.Infof("cname dns record missing for hostname %q", hostname)
 
-						return nil, stateWaitingForDNSRecord, nil
+						return "", stateWaitingForDNSRecord, nil
 					}
 
 					return nil, "", err
