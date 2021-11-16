@@ -29,12 +29,12 @@ Endpoints](https://docs.bunny.net/reference/bunnynet-api-overview) are supported
     - [x] Set Edge Rule Enabled
     - [ ] Get Statistics
     - [ ] Purge Cache
-    - [ ] Load Free Certificate
+    - [x] Load Free Certificate
     - [ ] Add Custom Certificate
     - [ ] Remove Certificate
     - [x] Add Custom Hostname
     - [x] Remove Custom Hostname
-    - [ ] Set Force SSL
+    - [x] Set Force SSL
     - [ ] Reset Token Key
     - [ ] Add Allowed Referer
     - [ ] Remove Allowed Referer

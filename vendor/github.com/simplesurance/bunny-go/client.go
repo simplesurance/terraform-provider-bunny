@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"mime"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
@@ -21,6 +22,11 @@ const (
 	AccessKeyHeaderKey = "AccessKey"
 	// DefaultUserAgent is the default value of the sent HTTP User-Agent header.
 	DefaultUserAgent = "bunny-go"
+)
+
+const (
+	hdrContentTypeName = "content-type"
+	contentTypeJSON    = "application/json"
 )
 
 // Logf is a log function signature.
@@ -90,11 +96,11 @@ func (c *Client) newRequest(method, urlStr string, body io.Reader) (*http.Reques
 	}
 
 	req.Header.Set(AccessKeyHeaderKey, c.apiKey)
-	req.Header.Add("Accept", "application/json")
+	req.Header.Add("Accept", contentTypeJSON)
 	req.Header.Set("User-Agent", c.userAgent)
 
 	if body != nil {
-		req.Header.Set("Content-Type", "application/json")
+		req.Header.Set(hdrContentTypeName, contentTypeJSON)
 	}
 
 	return req, nil
@@ -193,29 +199,26 @@ func (c *Client) sendRequest(ctx context.Context, req *http.Request, result inte
 
 	defer resp.Body.Close() //nolint: errcheck
 
-	if err := checkResp(req, resp); err != nil {
+	if err := c.checkResp(req, resp); err != nil {
 		return err
 	}
 
-	buf, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return &HTTPError{
-			RequestURL: req.URL.String(),
-			StatusCode: resp.StatusCode,
-			Errors:     []error{fmt.Errorf("reading response body failed: %w", err)},
-		}
+	return c.unmarshalHTTPJSONBody(resp, req.URL.String(), result)
+}
+
+func ensureJSONContentType(hdr http.Header) error {
+	val := hdr.Get(hdrContentTypeName)
+	if val == "" {
+		return fmt.Errorf("%s header is missing or empty", hdrContentTypeName)
 	}
 
-	if result != nil {
-		err = json.Unmarshal(buf, result)
-		if err != nil {
-			return &HTTPError{
-				RequestURL: req.URL.String(),
-				StatusCode: resp.StatusCode,
-				RespBody:   buf,
-				Errors:     []error{fmt.Errorf("decoding response body into json failed: %w", err)},
-			}
-		}
+	contentType, _, err := mime.ParseMediaType(val)
+	if err != nil {
+		return fmt.Errorf("could not parse %s header value: %w", hdrContentTypeName, err)
+	}
+
+	if contentType != contentTypeJSON {
+		return fmt.Errorf("expected %s to be %q, got: %q", hdrContentTypeName, contentTypeJSON, contentType)
 	}
 
 	return nil
@@ -223,7 +226,7 @@ func (c *Client) sendRequest(ctx context.Context, req *http.Request, result inte
 
 // checkResp checks if the resp indicates that the request was successful.
 // If it wasn't an error is returned.
-func checkResp(req *http.Request, resp *http.Response) error {
+func (c *Client) checkResp(req *http.Request, resp *http.Response) error {
 	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
 		return nil
 	}
@@ -242,34 +245,97 @@ func checkResp(req *http.Request, resp *http.Response) error {
 		}
 
 	default:
-		var err error
-
 		httpErr := HTTPError{
 			RequestURL: req.URL.String(),
 			StatusCode: resp.StatusCode,
 		}
 
-		httpErr.RespBody, err = io.ReadAll(resp.Body)
-		if err != nil {
-			httpErr.Errors = append(httpErr.Errors, fmt.Errorf("reading response body failed: %w", err))
-
-			return &httpErr
-		}
-
-		if len(httpErr.RespBody) == 0 {
-			return &httpErr
-		}
-
-		var apiErr APIError
-
-		if err := json.Unmarshal(httpErr.RespBody, &apiErr); err != nil {
-			httpErr.Errors = append(httpErr.Errors, fmt.Errorf("could not parse body as APIError: %w", err))
-			return &httpErr
-		}
-
-		apiErr.HTTPError = httpErr
-		return &apiErr
+		return c.parseHTTPRespErrBody(resp, &httpErr)
 	}
+}
+
+// parseHTTPRespErrBody processes the body of an http.Response with an non 2xx
+// status code.
+// If the response body is empty, baseErr is returned.
+// If the body could no be parsed because of an error, the occurred errors are
+// added to baseErr and baseErr is returned.
+// If the body contains json data it is parsed and an APIError is returned.
+func (c *Client) parseHTTPRespErrBody(resp *http.Response, baseErr *HTTPError) error {
+	var err error
+
+	baseErr.RespBody, err = io.ReadAll(resp.Body)
+	if err != nil {
+		baseErr.Errors = append(baseErr.Errors, fmt.Errorf("reading response body failed: %w", err))
+		return baseErr
+	}
+
+	if len(baseErr.RespBody) == 0 {
+		return baseErr
+	}
+
+	err = ensureJSONContentType(resp.Header)
+	if err != nil {
+		baseErr.Errors = append(baseErr.Errors, fmt.Errorf("processing response failed: %w", err))
+		return baseErr
+	}
+
+	var apiErr APIError
+	if err := json.Unmarshal(baseErr.RespBody, &apiErr); err != nil {
+		baseErr.Errors = append(baseErr.Errors, fmt.Errorf("could not parse body as APIError: %w", err))
+		return baseErr
+	}
+
+	apiErr.HTTPError = *baseErr
+	return &apiErr
+}
+
+func (c *Client) unmarshalHTTPJSONBody(resp *http.Response, reqURL string, result interface{}) error {
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return &HTTPError{
+			RequestURL: reqURL,
+			StatusCode: resp.StatusCode,
+			Errors:     []error{fmt.Errorf("reading response body failed: %w", err)},
+		}
+	}
+
+	if len(body) == 0 {
+		if result != nil {
+			return &HTTPError{
+				RequestURL: reqURL,
+				StatusCode: resp.StatusCode,
+				Errors:     []error{fmt.Errorf("response has no body, expected a json %T response bod", result)},
+			}
+		}
+
+		return nil
+	}
+
+	if result == nil {
+		c.logf("http-response contains body but none was expected")
+		return nil
+	}
+
+	err = ensureJSONContentType(resp.Header)
+	if err != nil {
+		return &HTTPError{
+			RequestURL: reqURL,
+			RespBody:   body,
+			StatusCode: resp.StatusCode,
+			Errors:     []error{fmt.Errorf("processing response failed: %w", err)},
+		}
+	}
+
+	if err := json.Unmarshal(body, result); err != nil {
+		return &HTTPError{
+			RequestURL: reqURL,
+			RespBody:   body,
+			StatusCode: resp.StatusCode,
+			Errors:     []error{fmt.Errorf("could not parse body as %T: %w", result, err)},
+		}
+	}
+
+	return nil
 }
 
 func (c *Client) logRequest(req *http.Request) {
