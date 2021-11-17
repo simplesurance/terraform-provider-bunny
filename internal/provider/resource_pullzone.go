@@ -95,6 +95,8 @@ const (
 	keyZoneSecurityKey  = "zone_security_key"
 
 	keyLastUpdated = "last_updated"
+
+	keySafeHop = "safehop"
 )
 
 func resourcePullZone() *schema.Resource {
@@ -517,6 +519,13 @@ func resourcePullZone() *schema.Resource {
 				Default:     0,
 				Optional:    true,
 			},
+			keySafeHop: {
+				Type:             schema.TypeList,
+				MaxItems:         1,
+				Optional:         true,
+				Elem:             resourcePullZoneSafeHop,
+				DiffSuppressFunc: diffSupressMissingOptionalBlock,
+			},
 			keyType: {
 				Type:             schema.TypeInt,
 				Optional:         true,
@@ -934,6 +943,10 @@ func pullZoneToResourceData(pz *bunny.PullZone, d *schema.ResourceData) error {
 		return err
 	}
 
+	if err := safeHopToResource(pz, d); err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -1009,6 +1022,8 @@ func resourceDataToPullZoneUpdate(d *schema.ResourceData) (*bunny.PullZoneUpdate
 	res.VerifyOriginSSL = getBoolPtr(d, keyVerifyOriginSSL)
 	res.ZoneSecurityEnabled = getBoolPtr(d, keyZoneSecurityEnabled)
 	res.ZoneSecurityIncludeHashRemoteIP = getBoolPtr(d, keyZoneSecurityIncludeHashRemoteIP)
+
+	safehopPullZoneUpdateOptionsFromResource(&res, d)
 
 	return &res, nil
 }

@@ -6,10 +6,12 @@ FEATURES:
 
 * **New Resource** `hostname`
 
+
 IMPROVEMENTS:
 
 * errors: added additional context to error messages of pullzones and edgerules
 * resource/pullzone: new attribute: `cache_error_responses`
+* resource/pullzone: new block `safehop`
 
 BUG FIXES:
 

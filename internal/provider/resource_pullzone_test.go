@@ -299,6 +299,15 @@ func TestAccPullZone_full(t *testing.T) {
 		Name:                            ptr.ToString(randPullZoneName()),
 		// TODO: Test StorageZoneID
 		ZoneSecurityKey: ptr.ToString("xyz"),
+
+		EnableSafeHop:                ptr.ToBool(true),
+		OriginConnectTimeout:         ptr.ToInt32(3),
+		OriginResponseTimeout:        ptr.ToInt32(45),
+		OriginRetries:                ptr.ToInt32(2),
+		OriginRetry5xxResponses:      ptr.ToBool(true),
+		OriginRetryConnectionTimeout: ptr.ToBool(false),
+		OriginRetryDelay:             ptr.ToInt32(3),
+		OriginRetryResponseTimeout:   ptr.ToBool(false),
 	}
 
 	tf := fmt.Sprintf(`
@@ -379,6 +388,17 @@ resource "bunny_pullzone" "%s" {
 	name = "%s"
 	# storage_zone_id
 	# zone_security_key
+
+	safehop {
+	    enable = %t
+	    origin_connect_timeout = %d
+	    origin_response_timeout  =  %d
+	    origin_retries = %d
+	    origin_retry_5xx_response = %t
+	    origin_retry_connection_timeout = %t
+	    origin_retry_delay = %d
+	    origin_retry_response_timeout = %t
+	}
 }
 `,
 		resourceName,
@@ -448,6 +468,15 @@ resource "bunny_pullzone" "%s" {
 		ptr.GetBool(attrs.ZoneSecurityEnabled),
 		ptr.GetBool(attrs.ZoneSecurityIncludeHashRemoteIP),
 		ptr.GetString(attrs.Name),
+
+		ptr.GetBool(attrs.EnableSafeHop),
+		ptr.GetInt32(attrs.OriginConnectTimeout),
+		ptr.GetInt32(attrs.OriginResponseTimeout),
+		ptr.GetInt32(attrs.OriginRetries),
+		ptr.GetBool(attrs.OriginRetry5xxResponses),
+		ptr.GetBool(attrs.OriginRetryConnectionTimeout),
+		ptr.GetInt32(attrs.OriginRetryDelay),
+		ptr.GetBool(attrs.OriginRetryResponseTimeout),
 	)
 
 	resource.Test(t, resource.TestCase{
@@ -668,16 +697,8 @@ var pullZoneDiffIgnoredFields = map[string]struct{}{
 	"DNSRecordID":                        {},
 	"DNSZoneID":                          {},
 	"EnableCookieVary":                   {},
-	"EnableSafeHop":                      {},
 	"LimitRateAfter":                     {},
 	"LimitRatePerSecond":                 {},
-	"OriginConnectTimeout":               {},
-	"OriginResponseTimeout":              {},
-	"OriginRetries":                      {},
-	"OriginRetry5xxResponses":            {},
-	"OriginRetryConnectionTimeout":       {},
-	"OriginRetryDelay":                   {},
-	"OriginRetryResponseTimeout":         {},
 	"OriginShieldEnableConcurrencyLimit": {},
 	"OriginShieldMaxConcurrentRequests":  {},
 	"OriginShieldMaxQueuedRequests":      {},
