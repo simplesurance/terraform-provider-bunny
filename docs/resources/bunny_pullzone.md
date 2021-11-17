@@ -87,6 +87,7 @@ If disabled, error responses will be set to no-cache.
 - **origin_shield_zone_code** (String) Determines the zone code where the origin shield should be set up.
 - **perma_cache_storage_zone_id** (Number) The ID of the storage zone that should be used as the Perma-Cache.
 - **request_limit** (Number) Determines the maximum number of requests per second that will be allowed to connect to this Pull Zone.
+- **safehop** (Block List, Max: 1) (see [below for nested schema](#nestedblock--safehop))
 - **storage_zone_id** (Number) The ID of the storage zone that the Pull Zone is linked to.
 - **type** (Number) The type of the Pull Zone. Standard = 0, Volume = 1.
 - **verify_origin_ssl** (Boolean) Determines if the SSL certificate should be verified when connecting to the origin.
@@ -105,5 +106,20 @@ If disabled, error responses will be set to no-cache.
 - **last_updated** (String)
 - **video_library_id** (Number) The ID of the video library that the zone is linked to.
 - **zone_security_key** (String, Sensitive)
+
+<a id="nestedblock--safehop"></a>
+### Nested Schema for `safehop`
+
+Optional:
+
+- **enable** (Boolean) If enabled, SafeHop will attempt to retry failed requests to the origin in case of errors or connection failures in a round-robin fashion.
+- **origin_connect_timeout** (Number) The amount of seconds to wait when connecting to the origin. Otherwise the request will fail or retry.
+- **origin_response_timeout** (Number) The amount of seconds to wait when waiting for the origin reply. Otherwise the request will fail or retry.
+- **origin_retries** (Number) Configure how many times bunny.net will re-attempt to connect to the origin before failing with a 502 or a 504 response.
+If multiple IPs are set on the origin hostname, the CDN will automatically cycle between them on subsequent attempts.
+- **origin_retry_5xx_response** (Boolean) Determines if we should retry the request in case of a 5XX response.
+- **origin_retry_connection_timeout** (Boolean) Determines if we should retry the request in case of a connection timeout.
+- **origin_retry_delay** (Number) Determines the amount of time that the CDN should wait before retrying an origin request.
+- **origin_retry_response_timeout** (Boolean) Determines if we should retry the request in case of a response timeout.
 
 
