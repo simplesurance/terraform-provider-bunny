@@ -91,7 +91,6 @@ make docs
 - unsupported Pull Zone features:
   - Add/Remove custom certificates
   - `burst_size`
-  - `cache_error_responses`
   - `dns_record_id`
   - `dns_zone_id`
   - `enable_cookie_vary`

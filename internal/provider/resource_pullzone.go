@@ -28,6 +28,7 @@ const (
 	keyBudgetRedirectedCountries             = "budget_redirected_countries"
 	keyCacheControlBrowserMaxAgeOverride     = "cache_control_browser_max_age_override"
 	keyCacheControlMaxAgeOverride            = "cache_control_max_age_override"
+	keyCacheErrorResponses                   = "cache_error_responses"
 	keyConnectionLimitPerIPCount             = "connection_limit_per_ip_count"
 	keyDisableCookies                        = "disable_cookies"
 	keyEnableAccessControlOriginHeader       = "enable_access_control_origin_header"
@@ -187,6 +188,12 @@ func resourcePullZone() *schema.Resource {
 				Description: "Sets the cache control override setting for this zone.",
 				Optional:    true,
 				Default:     -1,
+			},
+			keyCacheErrorResponses: {
+				Type:        schema.TypeBool,
+				Description: "If enabled, bunny.net will temporarily cache error responses (304+ HTTP status codes) from your servers for 5 seconds to prevent DDoS attacks on your origin.\nIf disabled, error responses will be set to no-cache.",
+				Optional:    true,
+				Default:     false,
 			},
 			keyConnectionLimitPerIPCount: {
 				Type:             schema.TypeInt,
@@ -734,6 +741,9 @@ func pullZoneToResourceData(pz *bunny.PullZone, d *schema.ResourceData) error {
 	if err := d.Set(keyCacheControlMaxAgeOverride, pz.CacheControlMaxAgeOverride); err != nil {
 		return err
 	}
+	if err := d.Set(keyCacheErrorResponses, pz.CacheErrorResponses); err != nil {
+		return err
+	}
 	if err := d.Set(keyConnectionLimitPerIPCount, pz.ConnectionLimitPerIPCount); err != nil {
 		return err
 	}
@@ -947,6 +957,7 @@ func resourceDataToPullZoneUpdate(d *schema.ResourceData) (*bunny.PullZoneUpdate
 	res.BudgetRedirectedCountries = getStrSetAsSlice(d, keyBudgetRedirectedCountries)
 	res.CacheControlBrowserMaxAgeOverride = getInt64Ptr(d, keyCacheControlBrowserMaxAgeOverride)
 	res.CacheControlMaxAgeOverride = getInt64Ptr(d, keyCacheControlMaxAgeOverride)
+	res.CacheErrorResponses = getBoolPtr(d, keyCacheErrorResponses)
 	res.ConnectionLimitPerIPCount = getInt32Ptr(d, keyConnectionLimitPerIPCount)
 	res.DisableCookies = getBoolPtr(d, keyDisableCookies)
 	res.EnableAccessControlOriginHeader = getBoolPtr(d, keyEnableAccessControlOriginHeader)
