@@ -7,6 +7,7 @@ FEATURES:
 IMPROVEMENTS:
 
 * errors: added additional context to error messages of pullzones and edgerules
+* resource/pullzone: new attribute: `cache_error_responses`
 
 ## 0.2.0 (November 12, 2021)
 

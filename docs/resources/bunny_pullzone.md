@@ -38,6 +38,8 @@ description: |-
 - **budget_redirected_countries** (Set of String) Sets the list of two letter Alpha2 country codes that will be redirected to the cheapest possible region.
 - **cache_control_browser_max_age_override** (Number) Sets the browser cache control override setting for this zone.
 - **cache_control_max_age_override** (Number) Sets the cache control override setting for this zone.
+- **cache_error_responses** (Boolean) If enabled, bunny.net will temporarily cache error responses (304+ HTTP status codes) from your servers for 5 seconds to prevent DDoS attacks on your origin.
+If disabled, error responses will be set to no-cache.
 - **connection_limit_per_ip_count** (Number) Determines the maximum number of connections per IP that will be allowed to connect to this Pull Zone.
 - **disable_cookies** (Boolean) Determines if the Pull Zone should automatically remove cookies from the responses.
 - **enable_access_control_origin_header** (Boolean) Determines if CORS headers should be enabled.

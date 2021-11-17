@@ -243,6 +243,7 @@ func TestAccPullZone_full(t *testing.T) {
 		BudgetRedirectedCountries:         []string{"DE", "GB"},
 		CacheControlBrowserMaxAgeOverride: ptr.ToInt64(100),
 		CacheControlMaxAgeOverride:        ptr.ToInt64(3),
+		CacheErrorResponses:               ptr.ToBool(true),
 		ConnectionLimitPerIPCount:         ptr.ToInt32(23),
 		DisableCookies:                    ptr.ToBool(false),
 		EnableAccessControlOriginHeader:   ptr.ToBool(false),
@@ -317,6 +318,7 @@ resource "bunny_pullzone" "%s" {
 	budget_redirected_countries = %s
 	cache_control_browser_max_age_override  = %d
 	cache_control_max_age_override = %d
+	cache_error_responses = %t
 	connection_limit_per_ip_count = %d
 	disable_cookies = %t
 	enable_access_control_origin_header = %t
@@ -395,6 +397,7 @@ resource "bunny_pullzone" "%s" {
 		tfStrList(attrs.BudgetRedirectedCountries),
 		ptr.GetInt64(attrs.CacheControlBrowserMaxAgeOverride),
 		ptr.GetInt64(attrs.CacheControlMaxAgeOverride),
+		ptr.GetBool(attrs.CacheErrorResponses),
 		ptr.GetInt32(attrs.ConnectionLimitPerIPCount),
 		ptr.GetBool(attrs.DisableCookies),
 		ptr.GetBool(attrs.EnableAccessControlOriginHeader),
