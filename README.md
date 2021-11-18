@@ -92,6 +92,11 @@ make docs
   - Add/Remove custom certificates
   - `cache_error_response`
   - `enable_query_string_ordering`
+  - `burst_size`
+  - `dns_record_id`
+  - `dns_zone_id`
+  - `limit_rate_after`
+  - `limit_rate_per_second`
 - Pull Zone fields with missing write support:
   - `blocked_referrers`
   - `access_control_origin_header_extensions`
