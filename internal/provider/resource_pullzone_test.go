@@ -682,7 +682,7 @@ var pullZoneDiffIgnoredFields = map[string]struct{}{
 	"UseStaleWhileOffline":               {},
 	"UseStaleWhileUpdating":              {},
 
-	// The following fields are tested by seperate testcases and ignored in
+	// The following fields are tested by separate testcases and ignored in
 	// pull zone testcases.
 	"Hostnames": {},
 	"EdgeRules": {},
