@@ -535,6 +535,14 @@ func checkPzState(t *testing.T, resourceName string, wanted *bunny.PullZone) res
 }
 
 func strDiff(a, b *string) string {
+	if a == b {
+		return ""
+	}
+
+	if a == nil || b == nil {
+		return fmt.Sprintf("%q (%v) != %q (%v)", ptr.GetString(a), a, ptr.GetString(b), b)
+	}
+
 	if ptr.GetString(a) != ptr.GetString(b) {
 		return fmt.Sprintf("%q (%v) != %q (%v)", ptr.GetString(a), a, ptr.GetString(b), b)
 	}
@@ -543,6 +551,14 @@ func strDiff(a, b *string) string {
 }
 
 func boolDiff(a, b *bool) string {
+	if a == b {
+		return ""
+	}
+
+	if a == nil || b == nil {
+		return fmt.Sprintf("%t (%v) != %t (%v)", ptr.GetBool(a), a, ptr.GetBool(b), b)
+	}
+
 	if ptr.GetBool(a) != ptr.GetBool(b) {
 		return fmt.Sprintf("%t (%v) != %t (%v)", ptr.GetBool(a), a, ptr.GetBool(b), b)
 	}
@@ -551,6 +567,14 @@ func boolDiff(a, b *bool) string {
 }
 
 func intDiff(a, b *int) string {
+	if a == b {
+		return ""
+	}
+
+	if a == nil || b == nil {
+		return fmt.Sprintf("%d (%v) != %d (%v)", ptr.GetInt(a), a, ptr.GetInt(b), b)
+	}
+
 	if ptr.GetInt(a) != ptr.GetInt(b) {
 		return fmt.Sprintf("%d (%v) != %d (%v)", ptr.GetInt(a), a, ptr.GetInt(b), b)
 	}
@@ -559,6 +583,14 @@ func intDiff(a, b *int) string {
 }
 
 func int64Diff(a, b *int64) string {
+	if a == b {
+		return ""
+	}
+
+	if a == nil || b == nil {
+		return fmt.Sprintf("%d (%v) != %d (%v)", ptr.GetInt64(a), a, ptr.GetInt64(b), b)
+	}
+
 	if ptr.GetInt64(a) != ptr.GetInt64(b) {
 		return fmt.Sprintf("%d (%v) != %d (%v)", ptr.GetInt64(a), a, ptr.GetInt64(b), b)
 	}
@@ -567,6 +599,14 @@ func int64Diff(a, b *int64) string {
 }
 
 func int32Diff(a, b *int32) string {
+	if a == b {
+		return ""
+	}
+
+	if a == nil || b == nil {
+		return fmt.Sprintf("%d (%v) != %d (%v)", ptr.GetInt32(a), a, ptr.GetInt32(b), b)
+	}
+
 	if ptr.GetInt32(a) != ptr.GetInt32(b) {
 		return fmt.Sprintf("%d (%v) != %d (%v)", ptr.GetInt32(a), a, ptr.GetInt32(b), b)
 	}
@@ -575,6 +615,14 @@ func int32Diff(a, b *int32) string {
 }
 
 func float64Diff(a, b *float64) string {
+	if a == b {
+		return ""
+	}
+
+	if a == nil || b == nil {
+		return fmt.Sprintf("%f (%v) != %f (%v)", ptr.GetFloat64(a), a, ptr.GetFloat64(b), b)
+	}
+
 	if ptr.GetFloat64(a) != ptr.GetFloat64(b) {
 		return fmt.Sprintf("%f (%v) != %f (%v)", ptr.GetFloat64(a), a, ptr.GetFloat64(b), b)
 	}
