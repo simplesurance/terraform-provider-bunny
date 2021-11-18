@@ -129,6 +129,8 @@ resource "bunny_edgerule" "myer" {
 							Enabled:             ptr.ToBool(true),
 							ActionType:          ptr.ToInt(bunny.EdgeRuleActionTypeBlockRequest),
 							TriggerMatchingType: ptr.ToInt(bunny.MatchingTypeAll),
+							ActionParameter1:    ptr.ToString(""),
+							ActionParameter2:    ptr.ToString(""),
 							Triggers: []*bunny.EdgeRuleTrigger{
 								{
 									PatternMatchingType: ptr.ToInt(bunny.MatchingTypeAny),
@@ -167,6 +169,8 @@ resource "bunny_edgerule" "myer" {
 							Enabled:             ptr.ToBool(true),
 							ActionType:          ptr.ToInt(bunny.EdgeRuleActionTypeBlockRequest),
 							TriggerMatchingType: ptr.ToInt(bunny.MatchingTypeAll),
+							ActionParameter1:    ptr.ToString(""),
+							ActionParameter2:    ptr.ToString(""),
 							Triggers: []*bunny.EdgeRuleTrigger{
 								{
 									PatternMatchingType: ptr.ToInt(bunny.MatchingTypeAny),
@@ -257,6 +261,7 @@ resource "bunny_edgerule" "er3" {
 							Enabled:             ptr.ToBool(true),
 							ActionType:          ptr.ToInt(bunny.EdgeRuleActionTypeOverrideCacheTime),
 							ActionParameter1:    ptr.ToString("10"),
+							ActionParameter2:    ptr.ToString(""),
 							TriggerMatchingType: ptr.ToInt(bunny.MatchingTypeAny),
 							Triggers: []*bunny.EdgeRuleTrigger{
 								{
@@ -276,6 +281,8 @@ resource "bunny_edgerule" "er3" {
 							Enabled:             ptr.ToBool(true),
 							ActionType:          ptr.ToInt(bunny.EdgeRuleActionTypeForceDownload),
 							TriggerMatchingType: ptr.ToInt(bunny.MatchingTypeAny),
+							ActionParameter1:    ptr.ToString(""),
+							ActionParameter2:    ptr.ToString(""),
 							Triggers: []*bunny.EdgeRuleTrigger{
 								{
 									Type:                ptr.ToInt(bunny.EdgeRuleTriggerTypeResponseHeader),
@@ -334,6 +341,8 @@ resource "bunny_edgerule" "myer" {
 							Enabled:             ptr.ToBool(true),
 							ActionType:          ptr.ToInt(bunny.EdgeRuleActionTypeBlockRequest),
 							TriggerMatchingType: ptr.ToInt(bunny.MatchingTypeAll),
+							ActionParameter1:    ptr.ToString(""),
+							ActionParameter2:    ptr.ToString(""),
 							Triggers: []*bunny.EdgeRuleTrigger{
 								{
 									PatternMatchingType: ptr.ToInt(bunny.MatchingTypeAny),
@@ -387,6 +396,8 @@ resource "bunny_pullzone" "mypz" {
 							Enabled:             ptr.ToBool(true),
 							ActionType:          ptr.ToInt(bunny.EdgeRuleActionTypeBlockRequest),
 							TriggerMatchingType: ptr.ToInt(bunny.MatchingTypeAll),
+							ActionParameter1:    ptr.ToString(""),
+							ActionParameter2:    ptr.ToString(""),
 							Triggers: []*bunny.EdgeRuleTrigger{
 								{
 									PatternMatchingType: ptr.ToInt(bunny.MatchingTypeAny),
@@ -454,6 +465,8 @@ resource "bunny_edgerule" "er2" {
 							ActionType:          ptr.ToInt(bunny.EdgeRuleActionTypeBlockRequest),
 							Enabled:             ptr.ToBool(false),
 							TriggerMatchingType: ptr.ToInt(bunny.MatchingTypeAll),
+							ActionParameter1:    ptr.ToString(""),
+							ActionParameter2:    ptr.ToString(""),
 							Triggers: []*bunny.EdgeRuleTrigger{
 								{
 									PatternMatchingType: ptr.ToInt(bunny.MatchingTypeAny),
@@ -466,6 +479,8 @@ resource "bunny_edgerule" "er2" {
 							ActionType:          ptr.ToInt(bunny.EdgeRuleActionTypeForceDownload),
 							Enabled:             ptr.ToBool(true),
 							TriggerMatchingType: ptr.ToInt(bunny.MatchingTypeAll),
+							ActionParameter1:    ptr.ToString(""),
+							ActionParameter2:    ptr.ToString(""),
 							Triggers: []*bunny.EdgeRuleTrigger{
 								{
 									PatternMatchingType: ptr.ToInt(bunny.MatchingTypeAny),
@@ -511,6 +526,8 @@ resource "bunny_edgerule" "er2" {
 							ActionType:          ptr.ToInt(bunny.EdgeRuleActionTypeBlockRequest),
 							Enabled:             ptr.ToBool(true),
 							TriggerMatchingType: ptr.ToInt(bunny.MatchingTypeAll),
+							ActionParameter1:    ptr.ToString(""),
+							ActionParameter2:    ptr.ToString(""),
 							Triggers: []*bunny.EdgeRuleTrigger{
 								{
 									PatternMatchingType: ptr.ToInt(bunny.MatchingTypeAny),
@@ -523,6 +540,8 @@ resource "bunny_edgerule" "er2" {
 							ActionType:          ptr.ToInt(bunny.EdgeRuleActionTypeForceDownload),
 							Enabled:             ptr.ToBool(false),
 							TriggerMatchingType: ptr.ToInt(bunny.MatchingTypeAll),
+							ActionParameter1:    ptr.ToString(""),
+							ActionParameter2:    ptr.ToString(""),
 							Triggers: []*bunny.EdgeRuleTrigger{
 								{
 									PatternMatchingType: ptr.ToInt(bunny.MatchingTypeAny),
