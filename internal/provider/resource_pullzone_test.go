@@ -256,6 +256,7 @@ func TestAccPullZone_full(t *testing.T) {
 		EnableTLS11:                       ptr.ToBool(false),
 		EnableWebPVary:                    ptr.ToBool(true),
 		ErrorPageCustomCode:               ptr.ToString("error"),
+		ErrorPageEnableCustomCode:         ptr.ToBool(true),
 		ErrorPageEnableStatuspageWidget:   ptr.ToBool(true),
 		ErrorPageStatuspageCode:           ptr.ToString("statuspage-error"),
 		ErrorPageWhitelabel:               ptr.ToBool(true),
@@ -332,6 +333,7 @@ resource "bunny_pullzone" "%s" {
 	enable_tls1_1 = %t
 	enable_webp_vary = %t
 	error_page_custom_code = "%s"
+	error_page_enable_custom_code = "%t"
 	error_page_enable_statuspage_widget = %t
 	error_page_statuspage_code = "%s"
 	error_page_whitelabel = "%t"
@@ -404,6 +406,7 @@ resource "bunny_pullzone" "%s" {
 		ptr.GetBool(attrs.EnableTLS11),
 		ptr.GetBool(attrs.EnableWebPVary),
 		ptr.GetString(attrs.ErrorPageCustomCode),
+		ptr.GetBool(attrs.ErrorPageEnableCustomCode),
 		ptr.GetBool(attrs.ErrorPageEnableStatuspageWidget),
 		ptr.GetString(attrs.ErrorPageStatuspageCode),
 		ptr.GetBool(attrs.ErrorPageWhitelabel),
