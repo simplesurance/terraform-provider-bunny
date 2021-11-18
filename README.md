@@ -90,13 +90,27 @@ make docs
 - `terraform import` support
 - unsupported Pull Zone features:
   - Add/Remove custom certificates
-  - `cache_error_response`
-  - `enable_query_string_ordering`
   - `burst_size`
+  - `cache_error_responses`
   - `dns_record_id`
   - `dns_zone_id`
+  - `enable_cookie_vary`
+  - `enable_safe_hop`
+  - `enable_query_string_ordering`
   - `limit_rate_after`
   - `limit_rate_per_second`
+  - `origin_connect_timeout`
+  - `origin_retries`
+  - `origin_retry5xx_responses`
+  - `origin_retry_connection_timeout`
+  - `origin_retry_delay`
+  - `origin_retry_response_timeout`
+  - `origin_shield_enable_concurrent_limit`
+  - `origin_shield_max_concurrent_requests`
+  - `origin_shield_max_queued_requests`
+  - `origin_shield_queue_max_wait_time`
+  - `use_stale_while_offline`
+  - `use_stale_while_updating`
 - Pull Zone fields with missing write support:
   - `blocked_referrers`
   - `access_control_origin_header_extensions`
