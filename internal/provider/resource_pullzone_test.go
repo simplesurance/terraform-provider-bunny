@@ -659,9 +659,6 @@ var pullZoneDiffIgnoredFields = map[string]struct{}{
 	"LoggingIPAnonymizationEnabled":       {}, // can only bet set if DPA agreement was signed in the webinterface
 	"VideoLibraryID":                      {}, // computed field
 	"ZoneSecurityKey":                     {}, // computed field
-	"Hostnames":                           {}, // not used by provider
-	"EdgeRules":                           {}, // not used by provider
-
 	// the following fields are ignored because they are not implemented in the provider
 	"BurstSize":                          {},
 	"CacheErrorResponses":                {},
@@ -684,6 +681,11 @@ var pullZoneDiffIgnoredFields = map[string]struct{}{
 	"OriginShieldQueueMaxWaitTime":       {},
 	"UseStaleWhileOffline":               {},
 	"UseStaleWhileUpdating":              {},
+
+	// The following fields are tested by seperate testcases and ignored in
+	// pull zone testcases.
+	"Hostnames": {},
+	"EdgeRules": {},
 
 	// the following fields are ignored because they export accounting data
 	// and aren't configuration settings:
