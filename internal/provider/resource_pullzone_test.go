@@ -661,11 +661,29 @@ var pullZoneDiffIgnoredFields = map[string]struct{}{
 	"ZoneSecurityKey":                     {}, // computed field
 	"Hostnames":                           {}, // not used by provider
 	"EdgeRules":                           {}, // not used by provider
-	"BurstSize":                           {}, // not implemented
-	"DNSRecordID":                         {}, // not implemented
-	"DNSZoneID":                           {}, // not implemented
-	"LimitRateAfter":                      {}, // not implemented
-	"LimitRatePerSecond":                  {}, // not implemented
+
+	// the following fields are ignored because they are not implemented in the provider
+	"BurstSize":                          {},
+	"CacheErrorResponses":                {},
+	"DNSRecordID":                        {},
+	"DNSZoneID":                          {},
+	"EnableCookieVary":                   {},
+	"EnableSafeHop":                      {},
+	"LimitRateAfter":                     {},
+	"LimitRatePerSecond":                 {},
+	"OriginConnectTimeout":               {},
+	"OriginResponseTimeout":              {},
+	"OriginRetries":                      {},
+	"OriginRetry5xxResponses":            {},
+	"OriginRetryConnectionTimeout":       {},
+	"OriginRetryDelay":                   {},
+	"OriginRetryResponseTimeout":         {},
+	"OriginShieldEnableConcurrencyLimit": {},
+	"OriginShieldMaxConcurrentRequests":  {},
+	"OriginShieldMaxQueuedRequests":      {},
+	"OriginShieldQueueMaxWaitTime":       {},
+	"UseStaleWhileOffline":               {},
+	"UseStaleWhileUpdating":              {},
 
 	// the following fields are ignored because they export accounting data
 	// and aren't configuration settings:
