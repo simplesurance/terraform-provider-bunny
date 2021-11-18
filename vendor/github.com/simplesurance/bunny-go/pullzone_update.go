@@ -25,12 +25,14 @@ type PullZoneUpdateOptions struct {
 	BudgetRedirectedCountries             []string `json:"BudgetRedirectedCountries,omitempty"`
 	CacheControlBrowserMaxAgeOverride     *int64   `json:"CacheControlBrowserMaxAgeOverride,omitempty"`
 	CacheControlMaxAgeOverride            *int64   `json:"CacheControlMaxAgeOverride,omitempty"`
-	CacheErrorResponse                    *bool    `json:"CacheErrorResponse,omitempty"`
+	CacheErrorResponses                   *bool    `json:"CacheErrorResponses,omitempty"`
 	ConnectionLimitPerIPCount             *int32   `json:"ConnectionLimitPerIPCount,omitempty"`
+	CookieVaryParameters                  []string `json:"CookieVaryParameters,omitempty"`
 	DisableCookies                        *bool    `json:"DisableCookies,omitempty"`
 	EnableAccessControlOriginHeader       *bool    `json:"EnableAccessControlOriginHeader,omitempty"`
 	EnableAvifVary                        *bool    `json:"EnableAvifVary,omitempty"`
 	EnableCacheSlice                      *bool    `json:"EnableCacheSlice,omitempty"`
+	EnableCookieVary                      *bool    `json:"EnableCookieVary,omitempty"`
 	EnableCountryCodeVary                 *bool    `json:"EnableCountryCodeVary,omitempty"`
 	EnableGeoZoneAF                       *bool    `json:"EnableGeoZoneAF,omitempty"`
 	EnableGeoZoneAsia                     *bool    `json:"EnableGeoZoneASIA,omitempty"`
@@ -42,6 +44,7 @@ type PullZoneUpdateOptions struct {
 	EnableMobileVary                      *bool    `json:"EnableMobileVary,omitempty"`
 	EnableOriginShield                    *bool    `json:"EnableOriginShield,omitempty"`
 	EnableQueryStringOrdering             *bool    `json:"EnableQueryStringOrdering,omitempty"`
+	EnableSafeHop                         *bool    `json:"EnableSafeHop,omitempty"`
 	EnableTLS1                            *bool    `json:"EnableTLS1,omitempty"`
 	EnableTLS11                           *bool    `json:"EnableTLS1_1,omitempty"`
 	EnableWebPVary                        *bool    `json:"EnableWebPVary,omitempty"`
@@ -75,11 +78,25 @@ type PullZoneUpdateOptions struct {
 	OptimizerWatermarkOffset              *float64 `json:"OptimizerWatermarkOffset,omitempty"`
 	OptimizerWatermarkPosition            *int     `json:"OptimizerWatermarkPosition,omitempty"`
 	OptimizerWatermarkURL                 *string  `json:"OptimizerWatermarkUrl,omitempty"`
+	OriginConnectTimeout                  *int32   `json:"OriginConnectTimeout,omitempty"`
+	OriginResponseTimeout                 *int32   `json:"OriginResponseTimeout,omitempty"`
+	OriginRetries                         *int32   `json:"OriginRetries,omitempty"`
+	OriginRetry5xxResponses               *bool    `json:"OriginRetry5xxResponses,omitempty"`
+	OriginRetryConnectionTimeout          *bool    `json:"OriginRetryConnectionTimeout,omitempty"`
+	OriginRetryDelay                      *int32   `json:"OriginRetryDelay,omitempty"`
+	OriginRetryResponseTimeout            *bool    `json:"OriginRetryResponseTimeout,omitempty"`
+	OriginShieldEnableConcurrencyLimit    *bool    `json:"OriginShieldEnableConcurrencyLimit,omitempty"`
+	OriginShieldMaxConcurrentRequests     *int32   `json:"OriginShieldMaxConcurrentRequests,omitempty"`
+	OriginShieldMaxQueuedRequests         *int32   `json:"OriginShieldMaxQueuedRequests,omitempty"`
+	OriginShieldQueueMaxWaitTime          *int32   `json:"OriginShieldQueueMaxWaitTime,omitempty"`
 	OriginShieldZoneCode                  *string  `json:"OriginShieldZoneCode,omitempty"`
 	OriginURL                             *string  `json:"OriginUrl,omitempty"`
 	PermaCacheStorageZoneID               *int64   `json:"PermaCacheStorageZoneId,omitempty"`
+	QueryStringVaryParameters             []string `json:"QueryStringVaryParameters,omitempty"`
 	RequestLimit                          *int32   `json:"RequestLimit,omitempty"`
 	Type                                  *int     `json:"Type,omitempty"`
+	UseStaleWhileOffline                  *bool    `json:"UseStaleWhileOffline,omitempty"`
+	UseStaleWhileUpdating                 *bool    `json:"UseStaleWhileUpdating,omitempty"`
 	VerifyOriginSSL                       *bool    `json:"VerifyOriginSSL,omitempty"`
 	WAFEnabled                            *bool    `json:"WAFEnabled,omitempty"`
 	WAFEnabledRules                       []int32  `json:"WAFEnabledRules,omitempty"`

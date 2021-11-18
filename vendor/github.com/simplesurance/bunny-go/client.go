@@ -13,6 +13,7 @@ import (
 	"net/url"
 
 	"github.com/google/go-querystring/query"
+	"github.com/google/uuid"
 )
 
 const (
@@ -182,7 +183,7 @@ func (c *Client) sendRequest(ctx context.Context, req *http.Request, result inte
 		req = req.WithContext(ctx)
 	}
 
-	c.logRequest(req)
+	logReqID := c.logRequest(req)
 
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
@@ -195,7 +196,7 @@ func (c *Client) sendRequest(ctx context.Context, req *http.Request, result inte
 		return err
 	}
 
-	c.logResponse(resp)
+	c.logResponse(resp, logReqID)
 
 	defer resp.Body.Close() //nolint: errcheck
 
@@ -338,10 +339,16 @@ func (c *Client) unmarshalHTTPJSONBody(resp *http.Response, reqURL string, resul
 	return nil
 }
 
-func (c *Client) logRequest(req *http.Request) {
+// logRequest dumps the http request to the http request logger and returns a
+// unique request identifier. The identifier can be used when logging the
+// response for the request, to make it easier to associate request and
+// response log messages.
+func (c *Client) logRequest(req *http.Request) string {
 	if c.httpRequestLogf == nil {
-		return
+		return ""
 	}
+
+	logReqID := uuid.New().String()
 
 	// hide the access key in the dumped request
 	accessKey := req.Header.Get(AccessKeyHeaderKey)
@@ -352,23 +359,25 @@ func (c *Client) logRequest(req *http.Request) {
 
 	debugReq, err := httputil.DumpRequestOut(req, true)
 	if err != nil {
-		c.httpRequestLogf("dumping http request failed: %s", err)
-		return
+		c.httpRequestLogf("dumping http request (reqID: %s) failed: %s", logReqID, err)
+		return logReqID
 	}
 
-	c.httpRequestLogf("sending http-request: %s", string(debugReq))
+	c.httpRequestLogf("sending http-request (reqID: %s): %s", logReqID, string(debugReq))
+
+	return logReqID
 }
 
-func (c *Client) logResponse(resp *http.Response) {
+func (c *Client) logResponse(resp *http.Response, logReqID string) {
 	if c.httpResponseLogf == nil {
 		return
 	}
 
 	debugResp, err := httputil.DumpResponse(resp, true)
 	if err != nil {
-		c.httpRequestLogf("dumping http response failed: %s", err)
+		c.httpRequestLogf("dumping http response (reqID: %s) failed: %s", logReqID, err)
 		return
 	}
 
-	c.httpRequestLogf("received http-response: %s", string(debugResp))
+	c.httpRequestLogf("received http-response (reqID: %s): %s", logReqID, string(debugResp))
 }
