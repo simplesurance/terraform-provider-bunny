@@ -53,7 +53,8 @@ const (
 //
 // Bunny.net API docs: https://docs.bunny.net/reference/pullzonepublic_index2 https://docs.bunny.net/reference/pullzonepublic_index
 type PullZone struct {
-	ID                                  *int64   `json:"Id,omitempty"`
+	ID *int64 `json:"Id,omitempty"`
+
 	AWSSigningEnabled                   *bool    `json:"AWSSigningEnabled,omitempty"`
 	AWSSigningKey                       *string  `json:"AWSSigningKey,omitempty"`
 	AWSSigningRegionName                *string  `json:"AWSSigningRegionName,omitempty"`
@@ -69,13 +70,15 @@ type PullZone struct {
 	BlockedReferrers                    []string `json:"BlockedReferrers,omitempty"`
 	BudgetRedirectedCountries           []string `json:"BudgetRedirectedCountries,omitempty"`
 	BurstSize                           *int32   `json:"BurstSize,omitempty"`
-	CacheControlMaxAgeOverride          *int64   `json:"CacheControlMaxAgeOverride,omitempty"`
 	// CacheControlBrowserMaxAgeOverride is called
 	// CacheControlPublicMaxAgeOverride in the API. Both names refer to the
 	// same setting.
 	CacheControlBrowserMaxAgeOverride     *int64      `json:"CacheControlPublicMaxAgeOverride,omitempty"`
+	CacheControlMaxAgeOverride            *int64      `json:"CacheControlMaxAgeOverride,omitempty"`
+	CacheErrorResponses                   *bool       `json:"CacheErrorResponses,omitempty"`
 	CnameDomain                           *string     `json:"CnameDomain,omitempty"`
 	ConnectionLimitPerIPCount             *int32      `json:"ConnectionLimitPerIPCount,omitempty"`
+	CookieVaryParameters                  []string    `json:"CookieVaryParameters,omitempty"`
 	DNSRecordID                           *int64      `json:"DnsRecordId,omitempty"`
 	DNSRecordValue                        *string     `json:"DnsRecordValue,omitempty"`
 	DNSZoneID                             *int64      `json:"DnsZoneId,omitempty"`
@@ -84,6 +87,7 @@ type PullZone struct {
 	EnableAccessControlOriginHeader       *bool       `json:"EnableAccessControlOriginHeader,omitempty"`
 	EnableAvifVary                        *bool       `json:"EnableAvifVary,omitempty"`
 	EnableCacheSlice                      *bool       `json:"EnableCacheSlice,omitempty"`
+	EnableCookieVary                      *bool       `json:"EnableCookieVary,omitempty"`
 	EnableCountryCodeVary                 *bool       `json:"EnableCountryCodeVary,omitempty"`
 	EnableGeoZoneAF                       *bool       `json:"EnableGeoZoneAF,omitempty"`
 	EnableGeoZoneAsia                     *bool       `json:"EnableGeoZoneASIA,omitempty"`
@@ -94,6 +98,7 @@ type PullZone struct {
 	EnableLogging                         *bool       `json:"EnableLogging,omitempty"`
 	EnableMobileVary                      *bool       `json:"EnableMobileVary,omitempty"`
 	EnableOriginShield                    *bool       `json:"EnableOriginShield,omitempty"`
+	EnableSafeHop                         *bool       `json:"EnableSafeHop,omitempty"`
 	EnableTLS1                            *bool       `json:"EnableTLS1,omitempty"`
 	EnableTLS11                           *bool       `json:"EnableTLS1_1,omitempty"`
 	EnableWebPVary                        *bool       `json:"EnableWebPVary,omitempty"`
@@ -134,13 +139,27 @@ type PullZone struct {
 	OptimizerWatermarkOffset              *float64    `json:"OptimizerWatermarkOffset,omitempty"`
 	OptimizerWatermarkPosition            *int        `json:"OptimizerWatermarkPosition,omitempty"`
 	OptimizerWatermarkURL                 *string     `json:"OptimizerWatermarkUrl,omitempty"`
+	OriginConnectTimeout                  *int32      `json:"OriginConnectTimeout,omitempty"`
+	OriginResponseTimeout                 *int32      `json:"OriginResponseTimeout,omitempty"`
+	OriginRetries                         *int32      `json:"OriginRetries,omitempty"`
+	OriginRetry5xxResponses               *bool       `json:"OriginRetry5xxResponses,omitempty"`
+	OriginRetryConnectionTimeout          *bool       `json:"OriginRetryConnectionTimeout,omitempty"`
+	OriginRetryDelay                      *int32      `json:"OriginRetryDelay,omitempty"`
+	OriginRetryResponseTimeout            *bool       `json:"OriginRetryResponseTimeout,omitempty"`
+	OriginShieldEnableConcurrencyLimit    *bool       `json:"OriginShieldEnableConcurrencyLimit,omitempty"`
+	OriginShieldMaxConcurrentRequests     *int32      `json:"OriginShieldMaxConcurrentRequests,omitempty"`
+	OriginShieldMaxQueuedRequests         *int32      `json:"OriginShieldMaxQueuedRequests,omitempty"`
+	OriginShieldQueueMaxWaitTime          *int32      `json:"OriginShieldQueueMaxWaitTime,omitempty"`
 	OriginShieldZoneCode                  *string     `json:"OriginShieldZoneCode,omitempty"`
 	OriginURL                             *string     `json:"OriginUrl,omitempty"`
 	PermaCacheStorageZoneID               *int64      `json:"PermaCacheStorageZoneId,omitempty"`
 	PriceOverride                         *float64    `json:"PriceOverride,omitempty"`
+	QueryStringVaryParameters             []string    `json:"QueryStringVaryParameters,omitempty"`
 	RequestLimit                          *int32      `json:"RequestLimit,omitempty"`
 	StorageZoneID                         *int64      `json:"StorageZoneId,omitempty"`
 	Type                                  *int        `json:"Type,omitempty"`
+	UseStaleWhileOffline                  *bool       `json:"UseStaleWhileOffline,omitempty"`
+	UseStaleWhileUpdating                 *bool       `json:"UseStaleWhileUpdating,omitempty"`
 	VerifyOriginSSL                       *bool       `json:"VerifyOriginSSL,omitempty"`
 	VideoLibraryID                        *int64      `json:"VideoLibraryId,omitempty"`
 	ZoneSecurityEnabled                   *bool       `json:"ZoneSecurityEnabled,omitempty"`
