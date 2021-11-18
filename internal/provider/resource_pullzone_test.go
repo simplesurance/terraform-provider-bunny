@@ -655,6 +655,25 @@ var pullZoneDiffIgnoredFields = map[string]struct{}{
 	"ZoneSecurityKey":                     {}, // computed field
 	"Hostnames":                           {}, // not used by provider
 	"EdgeRules":                           {}, // not used by provider
+	"BurstSize":                           {}, // not implemented
+	"DNSRecordID":                         {}, // not implemented
+	"DNSZoneID":                           {}, // not implemented
+	"LimitRateAfter":                      {}, // not implemented
+	"LimitRatePerSecond":                  {}, // not implemented
+
+	// the following fields are ignored because they export accounting data
+	// and aren't configuration settings:
+	"MonthlyBandwidthUsed": {},
+	"PriceOverride":        {},
+	"MonthlyCharges":       {},
+
+	// the following fields can not be tested because they require a
+	// storage zone, which currently can not be created via the provider
+	"LoggingSaveToStorage":       {},
+	"PermaCacheStorageZoneID":    {},
+	"LoggingSaveToStorageZoneID": {},
+	"StorageZoneID":              {},
+	"LoggingStorageZoneID":       {},
 }
 
 func pzDiff(t *testing.T, a, b interface{}) []string {
