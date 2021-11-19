@@ -9,6 +9,13 @@ IMPROVEMENTS:
 * errors: added additional context to error messages of pullzones and edgerules
 * resource/pullzone: new attribute: `cache_error_responses`
 
+BUG FIXES:
+
+* resource/edgerule: the chance that create/update edgerule operations are lost
+                     because of concurrency is minimized. The issue is not fixed
+                     entirely
+                     ([#20](https://github.com/simplesurance/terraform-provider-bunny/issues/20)).
+
 ## 0.2.0 (November 12, 2021)
 
 FEATURES:
