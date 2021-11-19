@@ -300,14 +300,15 @@ func TestAccPullZone_full(t *testing.T) {
 		// TODO: Test StorageZoneID
 		ZoneSecurityKey: ptr.ToString("xyz"),
 
-		EnableSafeHop:                ptr.ToBool(true),
-		OriginConnectTimeout:         ptr.ToInt32(3),
-		OriginResponseTimeout:        ptr.ToInt32(45),
-		OriginRetries:                ptr.ToInt32(2),
-		OriginRetry5xxResponses:      ptr.ToBool(true),
-		OriginRetryConnectionTimeout: ptr.ToBool(false),
-		OriginRetryDelay:             ptr.ToInt32(3),
-		OriginRetryResponseTimeout:   ptr.ToBool(false),
+		EnableSafeHop:                       ptr.ToBool(true),
+		AccessControlOriginHeaderExtensions: []string{"txt", "exe", "json"},
+		OriginConnectTimeout:                ptr.ToInt32(3),
+		OriginResponseTimeout:               ptr.ToInt32(45),
+		OriginRetries:                       ptr.ToInt32(2),
+		OriginRetry5xxResponses:             ptr.ToBool(true),
+		OriginRetryConnectionTimeout:        ptr.ToBool(false),
+		OriginRetryDelay:                    ptr.ToInt32(3),
+		OriginRetryResponseTimeout:          ptr.ToBool(false),
 	}
 
 	tf := fmt.Sprintf(`
@@ -316,9 +317,6 @@ resource "bunny_pullzone" "%s" {
 	aws_signing_key = "%s"
 	aws_signing_region_name = "%s"
 	aws_signing_secret = "%s"
-	# access_control_origin_header_extensions"
-	add_canonical_header = %t
-	add_host_header = %t
 	allowed_referrers = %s
 	block_post_requests = %t
 	block_root_path_access = %t
@@ -330,7 +328,6 @@ resource "bunny_pullzone" "%s" {
 	cache_error_responses = %t
 	connection_limit_per_ip_count = %d
 	disable_cookies = %t
-	enable_access_control_origin_header = %t
 	enable_avif_vary = %t
 	enable_cache_slice = %t
 	enable_country_code_vary = %t
@@ -390,14 +387,21 @@ resource "bunny_pullzone" "%s" {
 	# zone_security_key
 
 	safehop {
-	    enable = %t
-	    origin_connect_timeout = %d
-	    origin_response_timeout  =  %d
-	    origin_retries = %d
-	    origin_retry_5xx_response = %t
-	    origin_retry_connection_timeout = %t
-	    origin_retry_delay = %d
-	    origin_retry_response_timeout = %t
+		enable = %t
+	    	origin_connect_timeout = %d
+	    	origin_response_timeout  =  %d
+	    	origin_retries = %d
+	    	origin_retry_5xx_response = %t
+	    	origin_retry_connection_timeout = %t
+	    	origin_retry_delay = %d
+	    	origin_retry_response_timeout = %t
+	}
+
+	headers {
+		enable_access_control_origin_header = %t
+		access_control_origin_header_extensions = "%s"
+		add_canonical_header = %t
+		add_host_header = %t
 	}
 }
 `,
@@ -407,8 +411,6 @@ resource "bunny_pullzone" "%s" {
 		ptr.GetString(attrs.AWSSigningKey),
 		ptr.GetString(attrs.AWSSigningRegionName),
 		ptr.GetString(attrs.AWSSigningSecret),
-		ptr.GetBool(attrs.AddCanonicalHeader),
-		ptr.GetBool(attrs.AddHostHeader),
 		tfStrList(attrs.AllowedReferrers),
 		ptr.GetBool(attrs.BlockPostRequests),
 		ptr.GetBool(attrs.BlockRootPathAccess),
@@ -420,7 +422,6 @@ resource "bunny_pullzone" "%s" {
 		ptr.GetBool(attrs.CacheErrorResponses),
 		ptr.GetInt32(attrs.ConnectionLimitPerIPCount),
 		ptr.GetBool(attrs.DisableCookies),
-		ptr.GetBool(attrs.EnableAccessControlOriginHeader),
 		ptr.GetBool(attrs.EnableAvifVary),
 		ptr.GetBool(attrs.EnableCacheSlice),
 		ptr.GetBool(attrs.EnableCountryCodeVary),
@@ -477,6 +478,11 @@ resource "bunny_pullzone" "%s" {
 		ptr.GetBool(attrs.OriginRetryConnectionTimeout),
 		ptr.GetInt32(attrs.OriginRetryDelay),
 		ptr.GetBool(attrs.OriginRetryResponseTimeout),
+
+		ptr.GetBool(attrs.EnableAccessControlOriginHeader),
+		strings.Join(attrs.AccessControlOriginHeaderExtensions, ","),
+		ptr.GetBool(attrs.AddCanonicalHeader),
+		ptr.GetBool(attrs.AddHostHeader),
 	)
 
 	resource.Test(t, resource.TestCase{

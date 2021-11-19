@@ -105,7 +105,6 @@ make docs
   - `use_stale_while_updating`
 - Pull Zone fields with missing write support:
   - `blocked_referrers`
-  - `access_control_origin_header_extensions`
   - all `enable_geo_zone_*` fields
 - Hostname fields with missing write support:
   - `force_ssl`
