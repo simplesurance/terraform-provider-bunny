@@ -17,9 +17,6 @@ const (
 	keyAWSSigningKey                         = "aws_signing_key"
 	keyAWSSigningRegionName                  = "aws_signing_region_name"
 	keyAWSSigningSecret                      = "aws_signing_secret"
-	keyAccessControlOriginHeaderExtensions   = "access_control_origin_header_extensions"
-	keyAddCanonicalHeader                    = "add_canonical_header"
-	keyAddHostHeader                         = "add_host_header"
 	keyAllowedReferrers                      = "allowed_referrers"
 	keyBlockPostRequests                     = "block_post_requests"
 	keyBlockRootPathAccess                   = "block_root_path_access"
@@ -31,7 +28,6 @@ const (
 	keyCacheErrorResponses                   = "cache_error_responses"
 	keyConnectionLimitPerIPCount             = "connection_limit_per_ip_count"
 	keyDisableCookies                        = "disable_cookies"
-	keyEnableAccessControlOriginHeader       = "enable_access_control_origin_header"
 	keyEnableAvifVary                        = "enable_avif_vary"
 	keyEnableCacheSlice                      = "enable_cache_slice"
 	keyEnableCountryCodeVary                 = "enable_country_code_vary"
@@ -97,6 +93,7 @@ const (
 	keyLastUpdated = "last_updated"
 
 	keySafeHop = "safehop"
+	keyHeaders = "headers"
 )
 
 func resourcePullZone() *schema.Resource {
@@ -126,23 +123,6 @@ func resourcePullZone() *schema.Resource {
 				Type:      schema.TypeString,
 				Sensitive: true,
 				Optional:  true,
-			},
-			keyAccessControlOriginHeaderExtensions: {
-				Type:        schema.TypeSet,
-				Elem:        &schema.Schema{Type: schema.TypeString},
-				Description: "List of extensions that will return the CORS headers.",
-				Optional:    true,
-				Computed:    true,
-			},
-			keyAddCanonicalHeader: {
-				Type:        schema.TypeBool,
-				Description: "Determines if the canonical header should be added by this zone.",
-				Optional:    true,
-			},
-			keyAddHostHeader: {
-				Type:        schema.TypeBool,
-				Description: "Determines if the zone should forward the requested host header to the origin.",
-				Optional:    true,
 			},
 			keyAllowedReferrers: {
 				Type:        schema.TypeSet,
@@ -208,12 +188,6 @@ func resourcePullZone() *schema.Resource {
 				Description: "Determines if the Pull Zone should automatically remove cookies from the responses.",
 				Optional:    true,
 				Default:     true,
-			},
-			keyEnableAccessControlOriginHeader: {
-				Type:        schema.TypeBool,
-				Description: "Determines if CORS headers should be enabled.",
-				Default:     true,
-				Optional:    true,
 			},
 			keyEnableAvifVary: {
 				Type:        schema.TypeBool,
@@ -526,6 +500,13 @@ func resourcePullZone() *schema.Resource {
 				Elem:             resourcePullZoneSafeHop,
 				DiffSuppressFunc: diffSupressMissingOptionalBlock,
 			},
+			keyHeaders: {
+				Type:             schema.TypeList,
+				MaxItems:         1,
+				Optional:         true,
+				Elem:             resourcePullZoneHeaders,
+				DiffSuppressFunc: diffSupressMissingOptionalBlock,
+			},
 			keyType: {
 				Type:             schema.TypeInt,
 				Optional:         true,
@@ -717,15 +698,6 @@ func pullZoneToResourceData(pz *bunny.PullZone, d *schema.ResourceData) error {
 	if err := d.Set(keyAWSSigningSecret, pz.AWSSigningSecret); err != nil {
 		return err
 	}
-	if err := setStrSet(d, keyAccessControlOriginHeaderExtensions, pz.AccessControlOriginHeaderExtensions, ignoreOrderOpt, caseInsensitiveOpt); err != nil {
-		return err
-	}
-	if err := d.Set(keyAddCanonicalHeader, pz.AddCanonicalHeader); err != nil {
-		return err
-	}
-	if err := d.Set(keyAddHostHeader, pz.AddHostHeader); err != nil {
-		return err
-	}
 	if err := setStrSet(d, keyAllowedReferrers, pz.AllowedReferrers, ignoreOrderOpt, caseInsensitiveOpt); err != nil {
 		return err
 	}
@@ -757,9 +729,6 @@ func pullZoneToResourceData(pz *bunny.PullZone, d *schema.ResourceData) error {
 		return err
 	}
 	if err := d.Set(keyDisableCookies, pz.DisableCookies); err != nil {
-		return err
-	}
-	if err := d.Set(keyEnableAccessControlOriginHeader, pz.EnableAccessControlOriginHeader); err != nil {
 		return err
 	}
 	if err := d.Set(keyEnableAvifVary, pz.EnableAvifVary); err != nil {
@@ -947,6 +916,10 @@ func pullZoneToResourceData(pz *bunny.PullZone, d *schema.ResourceData) error {
 		return err
 	}
 
+	if err := headersToResource(pz, d); err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -959,9 +932,6 @@ func resourceDataToPullZoneUpdate(d *schema.ResourceData) (*bunny.PullZoneUpdate
 	res.AWSSigningKey = getStrPtr(d, keyAWSSigningKey)
 	res.AWSSigningRegionName = getStrPtr(d, keyAWSSigningRegionName)
 	res.AWSSigningSecret = getStrPtr(d, keyAWSSigningSecret)
-	res.AccessControlOriginHeaderExtensions = getStrSetAsSlice(d, keyAccessControlOriginHeaderExtensions)
-	res.AddCanonicalHeader = getBoolPtr(d, keyAddCanonicalHeader)
-	res.AddHostHeader = getBoolPtr(d, keyAddHostHeader)
 	res.AllowedReferrers = getStrSetAsSlice(d, keyAllowedReferrers)
 	res.BlockPostRequests = getBoolPtr(d, keyBlockPostRequests)
 	res.BlockRootPathAccess = getBoolPtr(d, keyBlockRootPathAccess)
@@ -973,7 +943,6 @@ func resourceDataToPullZoneUpdate(d *schema.ResourceData) (*bunny.PullZoneUpdate
 	res.CacheErrorResponses = getBoolPtr(d, keyCacheErrorResponses)
 	res.ConnectionLimitPerIPCount = getInt32Ptr(d, keyConnectionLimitPerIPCount)
 	res.DisableCookies = getBoolPtr(d, keyDisableCookies)
-	res.EnableAccessControlOriginHeader = getBoolPtr(d, keyEnableAccessControlOriginHeader)
 	res.EnableAvifVary = getBoolPtr(d, keyEnableAvifVary)
 	res.EnableCacheSlice = getBoolPtr(d, keyEnableCacheSlice)
 	res.EnableCountryCodeVary = getBoolPtr(d, keyEnableCountryCodeVary)
@@ -1024,6 +993,7 @@ func resourceDataToPullZoneUpdate(d *schema.ResourceData) (*bunny.PullZoneUpdate
 	res.ZoneSecurityIncludeHashRemoteIP = getBoolPtr(d, keyZoneSecurityIncludeHashRemoteIP)
 
 	safehopPullZoneUpdateOptionsFromResource(&res, d)
+	headersFromResource(&res, d)
 
 	return &res, nil
 }
