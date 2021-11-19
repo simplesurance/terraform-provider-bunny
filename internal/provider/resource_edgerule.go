@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+	"sync"
 
 	"github.com/google/uuid"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -12,6 +13,14 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	bunny "github.com/simplesurance/bunny-go"
 )
+
+// edgeRuleUpdateMu serializes create/update operations of edge rules. The edge
+// rule api endpoint is currently not concurrency safe. If multiple
+// create/update operations are done In Parallel, it might happen that changes
+// get lost.
+// Serializing crete/update operation reduces the chance that concurrency
+// issues occur.
+var edgeRuleUpdateMu sync.Mutex
 
 const (
 	keyEdgeRuleActionParameter1           = "action_parameter_1"
@@ -163,6 +172,8 @@ func resourceEdgeRuleCreate(ctx context.Context, d *schema.ResourceData, meta in
 
 	pullZoneID := int64(d.Get(keyEdgeRulePullZoneID).(int))
 
+	edgeRuleUpdateMu.Lock()
+	defer edgeRuleUpdateMu.Unlock()
 	err = clt.PullZone.AddOrUpdateEdgeRule(ctx, pullZoneID, opts)
 	if err != nil {
 		return diagsErrFromErr("creating edge rule failed", err)
@@ -189,6 +200,8 @@ func resourceEdgeRuleUpdate(ctx context.Context, d *schema.ResourceData, meta in
 
 	pullZoneID := int64(d.Get(keyEdgeRulePullZoneID).(int))
 
+	edgeRuleUpdateMu.Lock()
+	defer edgeRuleUpdateMu.Unlock()
 	err = clt.PullZone.AddOrUpdateEdgeRule(ctx, pullZoneID, opts)
 	if err != nil {
 		return diag.FromErr(fmt.Errorf("updating edge rule failed: %w", err))
