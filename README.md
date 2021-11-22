@@ -103,6 +103,10 @@ make docs
   - `origin_shield_queue_max_wait_time`
   - `use_stale_while_offline`
   - `use_stale_while_updating`
+  - `limits` block:
+    - `limit_rate_per_second`
+    - `limit_rate_after`
+    - `burst_size`
 - Pull Zone fields with missing write support:
   - `blocked_referrers`
   - all `enable_geo_zone_*` fields
