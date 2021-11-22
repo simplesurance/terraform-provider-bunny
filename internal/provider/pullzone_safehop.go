@@ -1,7 +1,6 @@
 package provider
 
 import (
-	ptr "github.com/AlekSi/pointer"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 
@@ -90,18 +89,17 @@ func safeHopToResource(pz *bunny.PullZone, d *schema.ResourceData) error {
 }
 
 func safehopPullZoneUpdateOptionsFromResource(res *bunny.PullZoneUpdateOptions, d *schema.ResourceData) {
-	safeHopList := d.Get(keySafeHop).([]interface{})
-	if len(safeHopList) == 0 {
+	m := structureFromResource(d, keySafeHop)
+	if len(m) == 0 {
 		return
 	}
-	m := safeHopList[0].(map[string]interface{})
 
-	res.EnableSafeHop = ptr.ToBool(m[keySafeHopEnable].(bool))
-	res.OriginConnectTimeout = ptr.ToInt32(int32(m[keySafeHopOriginConnectTimeout].(int)))
-	res.OriginResponseTimeout = ptr.ToInt32(int32(m[keySafeHopOriginResponseTimeout].(int)))
-	res.OriginRetries = ptr.ToInt32(int32(m[keySafeHopOriginRetries].(int)))
-	res.OriginRetry5xxResponses = ptr.ToBool(m[keySafeHopOriginRetry5xxResponses].(bool))
-	res.OriginRetryConnectionTimeout = ptr.ToBool(m[keySafeHopOriginRetryConnectionTimeout].(bool))
-	res.OriginRetryDelay = ptr.ToInt32(int32(m[keySafeHopOriginRetryDelay].(int)))
-	res.OriginRetryResponseTimeout = ptr.ToBool(m[keySafeHopOriginRetryResponseTimeout].(bool))
+	res.EnableSafeHop = m.getBoolPtr(keySafeHopEnable)
+	res.OriginConnectTimeout = m.getInt32Ptr(keySafeHopOriginConnectTimeout)
+	res.OriginResponseTimeout = m.getInt32Ptr(keySafeHopOriginResponseTimeout)
+	res.OriginRetries = m.getInt32Ptr(keySafeHopOriginRetries)
+	res.OriginRetry5xxResponses = m.getBoolPtr(keySafeHopOriginRetry5xxResponses)
+	res.OriginRetryConnectionTimeout = m.getBoolPtr(keySafeHopOriginRetryConnectionTimeout)
+	res.OriginRetryDelay = m.getInt32Ptr(keySafeHopOriginRetryDelay)
+	res.OriginRetryResponseTimeout = m.getBoolPtr(keySafeHopOriginRetryResponseTimeout)
 }
