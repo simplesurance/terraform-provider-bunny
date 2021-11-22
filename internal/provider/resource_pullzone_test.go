@@ -326,7 +326,6 @@ resource "bunny_pullzone" "%s" {
 	cache_control_browser_max_age_override  = %d
 	cache_control_max_age_override = %d
 	cache_error_responses = %t
-	connection_limit_per_ip_count = %d
 	disable_cookies = %t
 	enable_avif_vary = %t
 	enable_cache_slice = %t
@@ -357,7 +356,6 @@ resource "bunny_pullzone" "%s" {
 	# logging_ip_anonymization_enabled // the field can only bet set after signing the dpa-agreement in the webinterface
 	# logging_save_to_storage
 	# logging_storage_zone_id
-	monthly_bandwidth_limit = %d
 	optimizer_automatic_optimization_enabled = %t
 	optimizer_desktop_max_width = %d
 	optimizier_enable_manipulation_engine = %t
@@ -376,7 +374,6 @@ resource "bunny_pullzone" "%s" {
 	origin_shield_zone_code = "%s"
 	origin_url = "%s"
 	# perma_cache_storage_zone_id
-	request_limit = %d
 	type = %d
 	verify_origin_ssl = %t
 	zone_security_enabled = %t
@@ -403,6 +400,12 @@ resource "bunny_pullzone" "%s" {
 		add_canonical_header = %t
 		add_host_header = %t
 	}
+
+	limits {
+		request_limit = %d
+		monthly_bandwidth_limit = %d
+		connection_limit_per_ip_count = %d
+	}
 }
 `,
 		resourceName,
@@ -420,7 +423,6 @@ resource "bunny_pullzone" "%s" {
 		ptr.GetInt64(attrs.CacheControlBrowserMaxAgeOverride),
 		ptr.GetInt64(attrs.CacheControlMaxAgeOverride),
 		ptr.GetBool(attrs.CacheErrorResponses),
-		ptr.GetInt32(attrs.ConnectionLimitPerIPCount),
 		ptr.GetBool(attrs.DisableCookies),
 		ptr.GetBool(attrs.EnableAvifVary),
 		ptr.GetBool(attrs.EnableCacheSlice),
@@ -445,7 +447,6 @@ resource "bunny_pullzone" "%s" {
 		ptr.GetString(attrs.LogForwardingToken),
 		//ptr.GetBool(attrs.LoggingIPAnonymizationEnabled),
 		//ptr.GetBool(attrs.LoggingSaveToStorage),
-		ptr.GetInt64(attrs.MonthlyBandwidthLimit),
 		ptr.GetBool(attrs.OptimizerAutomaticOptimizationEnabled),
 		ptr.GetInt32(attrs.OptimizerDesktopMaxWidth),
 		ptr.GetBool(attrs.OptimizerEnableManipulationEngine),
@@ -463,7 +464,6 @@ resource "bunny_pullzone" "%s" {
 		ptr.GetString(attrs.OptimizerWatermarkURL),
 		ptr.GetString(attrs.OriginShieldZoneCode),
 		ptr.GetString(attrs.OriginURL),
-		ptr.GetInt32(attrs.RequestLimit),
 		ptr.GetInt(attrs.Type),
 		ptr.GetBool(attrs.VerifyOriginSSL),
 		ptr.GetBool(attrs.ZoneSecurityEnabled),
@@ -483,6 +483,10 @@ resource "bunny_pullzone" "%s" {
 		strings.Join(attrs.AccessControlOriginHeaderExtensions, ","),
 		ptr.GetBool(attrs.AddCanonicalHeader),
 		ptr.GetBool(attrs.AddHostHeader),
+
+		ptr.GetInt32(attrs.RequestLimit),
+		ptr.GetInt64(attrs.MonthlyBandwidthLimit),
+		ptr.GetInt32(attrs.ConnectionLimitPerIPCount),
 	)
 
 	resource.Test(t, resource.TestCase{

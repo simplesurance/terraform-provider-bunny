@@ -26,7 +26,6 @@ const (
 	keyCacheControlBrowserMaxAgeOverride     = "cache_control_browser_max_age_override"
 	keyCacheControlMaxAgeOverride            = "cache_control_max_age_override"
 	keyCacheErrorResponses                   = "cache_error_responses"
-	keyConnectionLimitPerIPCount             = "connection_limit_per_ip_count"
 	keyDisableCookies                        = "disable_cookies"
 	keyEnableAvifVary                        = "enable_avif_vary"
 	keyEnableCacheSlice                      = "enable_cache_slice"
@@ -59,7 +58,6 @@ const (
 	keyLoggingIPAnonymizationEnabled         = "logging_ip_anonymization_enabled"
 	keyLoggingSaveToStorage                  = "logging_save_to_storage"
 	keyLoggingStorageZoneID                  = "logging_storage_zone_id"
-	keyMonthlyBandwidthLimit                 = "monthly_bandwidth_limit"
 	keyOptimizerAutomaticOptimizationEnabled = "optimizer_automatic_optimization_enabled"
 	keyOptimizerDesktopMaxWidth              = "optimizer_desktop_max_width"
 	keyOptimizerEnableManipulationEngine     = "optimizier_enable_manipulation_engine"
@@ -79,7 +77,6 @@ const (
 	keyOriginURL                             = "origin_url"
 	keyEnabled                               = "enabled"
 	keyPermaCacheStorageZoneID               = "perma_cache_storage_zone_id"
-	keyRequestLimit                          = "request_limit"
 	keyType                                  = "type"
 	keyVerifyOriginSSL                       = "verify_origin_ssl"
 	keyZoneSecurityEnabled                   = "zone_security_enabled"
@@ -94,6 +91,7 @@ const (
 
 	keySafeHop = "safehop"
 	keyHeaders = "headers"
+	keyLimits  = "limits"
 )
 
 func resourcePullZone() *schema.Resource {
@@ -176,12 +174,6 @@ func resourcePullZone() *schema.Resource {
 				Description: "If enabled, bunny.net will temporarily cache error responses (304+ HTTP status codes) from your servers for 5 seconds to prevent DDoS attacks on your origin.\nIf disabled, error responses will be set to no-cache.",
 				Optional:    true,
 				Default:     false,
-			},
-			keyConnectionLimitPerIPCount: {
-				Type:             schema.TypeInt,
-				Description:      "Determines the maximum number of connections per IP that will be allowed to connect to this Pull Zone.",
-				Optional:         true,
-				ValidateDiagFunc: validateIsInt32,
 			},
 			keyDisableCookies: {
 				Type:        schema.TypeBool,
@@ -367,12 +359,6 @@ func resourcePullZone() *schema.Resource {
 				Default:     0,
 				Optional:    true,
 			},
-			keyMonthlyBandwidthLimit: {
-				Type:        schema.TypeInt,
-				Description: "Sets the monthly limit of bandwidth in bytes that the pullzone is allowed to use.",
-				Default:     0,
-				Optional:    true,
-			},
 			keyOptimizerAutomaticOptimizationEnabled: {
 				Type:        schema.TypeBool,
 				Description: "Determines if the automatic image optimization should be enabled.",
@@ -487,12 +473,6 @@ func resourcePullZone() *schema.Resource {
 				Default:     0,
 				Optional:    true,
 			},
-			keyRequestLimit: {
-				Type:        schema.TypeInt,
-				Description: "Determines the maximum number of requests per second that will be allowed to connect to this Pull Zone.",
-				Default:     0,
-				Optional:    true,
-			},
 			keySafeHop: {
 				Type:             schema.TypeList,
 				MaxItems:         1,
@@ -505,6 +485,13 @@ func resourcePullZone() *schema.Resource {
 				MaxItems:         1,
 				Optional:         true,
 				Elem:             resourcePullZoneHeaders,
+				DiffSuppressFunc: diffSupressMissingOptionalBlock,
+			},
+			keyLimits: {
+				Type:             schema.TypeList,
+				MaxItems:         1,
+				Optional:         true,
+				Elem:             resourcePullZoneLimits,
 				DiffSuppressFunc: diffSupressMissingOptionalBlock,
 			},
 			keyType: {
@@ -725,9 +712,6 @@ func pullZoneToResourceData(pz *bunny.PullZone, d *schema.ResourceData) error {
 	if err := d.Set(keyCacheErrorResponses, pz.CacheErrorResponses); err != nil {
 		return err
 	}
-	if err := d.Set(keyConnectionLimitPerIPCount, pz.ConnectionLimitPerIPCount); err != nil {
-		return err
-	}
 	if err := d.Set(keyDisableCookies, pz.DisableCookies); err != nil {
 		return err
 	}
@@ -827,9 +811,6 @@ func pullZoneToResourceData(pz *bunny.PullZone, d *schema.ResourceData) error {
 	if err := d.Set(keyLoggingStorageZoneID, pz.LoggingStorageZoneID); err != nil {
 		return err
 	}
-	if err := d.Set(keyMonthlyBandwidthLimit, pz.MonthlyBandwidthLimit); err != nil {
-		return err
-	}
 	if err := d.Set(keyOptimizerAutomaticOptimizationEnabled, pz.OptimizerAutomaticOptimizationEnabled); err != nil {
 		return err
 	}
@@ -884,9 +865,6 @@ func pullZoneToResourceData(pz *bunny.PullZone, d *schema.ResourceData) error {
 	if err := d.Set(keyPermaCacheStorageZoneID, pz.PermaCacheStorageZoneID); err != nil {
 		return err
 	}
-	if err := d.Set(keyRequestLimit, pz.RequestLimit); err != nil {
-		return err
-	}
 	if err := d.Set(keyType, pz.Type); err != nil {
 		return err
 	}
@@ -920,6 +898,10 @@ func pullZoneToResourceData(pz *bunny.PullZone, d *schema.ResourceData) error {
 		return err
 	}
 
+	if err := limitsToResource(pz, d); err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -941,7 +923,6 @@ func resourceDataToPullZoneUpdate(d *schema.ResourceData) (*bunny.PullZoneUpdate
 	res.CacheControlBrowserMaxAgeOverride = getInt64Ptr(d, keyCacheControlBrowserMaxAgeOverride)
 	res.CacheControlMaxAgeOverride = getInt64Ptr(d, keyCacheControlMaxAgeOverride)
 	res.CacheErrorResponses = getBoolPtr(d, keyCacheErrorResponses)
-	res.ConnectionLimitPerIPCount = getInt32Ptr(d, keyConnectionLimitPerIPCount)
 	res.DisableCookies = getBoolPtr(d, keyDisableCookies)
 	res.EnableAvifVary = getBoolPtr(d, keyEnableAvifVary)
 	res.EnableCacheSlice = getBoolPtr(d, keyEnableCacheSlice)
@@ -967,7 +948,6 @@ func resourceDataToPullZoneUpdate(d *schema.ResourceData) (*bunny.PullZoneUpdate
 	res.LoggingIPAnonymizationEnabled = getBoolPtr(d, keyLoggingIPAnonymizationEnabled)
 	res.LoggingSaveToStorage = getBoolPtr(d, keyLoggingSaveToStorage)
 	res.LoggingStorageZoneID = getInt64Ptr(d, keyLoggingStorageZoneID)
-	res.MonthlyBandwidthLimit = getInt64Ptr(d, keyMonthlyBandwidthLimit)
 	res.OptimizerAutomaticOptimizationEnabled = getBoolPtr(d, keyOptimizerAutomaticOptimizationEnabled)
 	res.OptimizerDesktopMaxWidth = getInt32Ptr(d, keyOptimizerDesktopMaxWidth)
 	res.OptimizerEnableManipulationEngine = getBoolPtr(d, keyOptimizerEnableManipulationEngine)
@@ -986,7 +966,6 @@ func resourceDataToPullZoneUpdate(d *schema.ResourceData) (*bunny.PullZoneUpdate
 	res.OriginShieldZoneCode = getStrPtr(d, keyOriginShieldZoneCode)
 	res.OriginURL = getStrPtr(d, keyOriginURL)
 	res.PermaCacheStorageZoneID = getInt64Ptr(d, keyPermaCacheStorageZoneID)
-	res.RequestLimit = getInt32Ptr(d, keyRequestLimit)
 	res.Type = getIntPtr(d, keyType)
 	res.VerifyOriginSSL = getBoolPtr(d, keyVerifyOriginSSL)
 	res.ZoneSecurityEnabled = getBoolPtr(d, keyZoneSecurityEnabled)
@@ -994,6 +973,7 @@ func resourceDataToPullZoneUpdate(d *schema.ResourceData) (*bunny.PullZoneUpdate
 
 	safehopPullZoneUpdateOptionsFromResource(&res, d)
 	headersFromResource(&res, d)
+	limitsFromResource(&res, d)
 
 	return &res, nil
 }

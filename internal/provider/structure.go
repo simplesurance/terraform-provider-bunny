@@ -17,7 +17,7 @@ type structure map[string]interface{}
 // d.Get() must return a value of type []interface{} with 0 or 1
 // map[string]interface{} elements. Otherwise the functon will panic.
 func structureFromResource(d *schema.ResourceData, key string) structure {
-	list := d.Get(keyHeaders).([]interface{})
+	list := d.Get(key).([]interface{})
 	if len(list) == 0 {
 		return nil
 	}
@@ -37,4 +37,12 @@ func (m structure) getBoolPtr(key string) *bool {
 // getStr returns the value of the passed key as string.
 func (m structure) getStr(key string) string {
 	return m[key].(string)
+}
+
+func (m structure) getInt32Ptr(key string) *int32 {
+	return ptr.ToInt32(int32(m[key].(int)))
+}
+
+func (m structure) getInt64Ptr(key string) *int64 {
+	return ptr.ToInt64(int64(m[key].(int)))
 }
