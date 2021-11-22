@@ -47,15 +47,6 @@ func getInt64Ptr(d *schema.ResourceData, keyName string) *int64 {
 	v := int64(val.(int))
 	return &v
 }
-func getFloat64Ptr(d *schema.ResourceData, keyName string) *float64 {
-	val := d.Get(keyName)
-	if val == nil {
-		return nil
-	}
-
-	v := val.(float64)
-	return &v
-}
 
 func getIntPtr(d *schema.ResourceData, keyName string) *int {
 	val := d.Get(keyName)

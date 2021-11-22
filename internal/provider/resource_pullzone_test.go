@@ -272,24 +272,9 @@ func TestAccPullZone_full(t *testing.T) {
 		// TODO: can only be set if LoggingStorageZoneId is set to an existing storagezone
 		//LoggingSaveToStorage:             ptr.ToBool(true),
 		// TODO: Test LoggingStorageZoneId
-		MonthlyBandwidthLimit:                 ptr.ToInt64(10240),
-		OptimizerAutomaticOptimizationEnabled: ptr.ToBool(false),
-		OptimizerDesktopMaxWidth:              ptr.ToInt32(1024),
-		OptimizerEnableManipulationEngine:     ptr.ToBool(false),
-		OptimizerEnableWebP:                   ptr.ToBool(false),
-		OptimizerEnabled:                      ptr.ToBool(true),
-		OptimizerImageQuality:                 ptr.ToInt32(81),
-		OptimizerMinifyCSS:                    ptr.ToBool(false),
-		OptimizerMinifyJavaScript:             ptr.ToBool(false),
-		OptimizerMobileImageQuality:           ptr.ToInt32(10),
-		OptimizerMobileMaxWidth:               ptr.ToInt32(200),
-		OptimizerWatermarkEnabled:             ptr.ToBool(true),
-		OptimizerWatermarkMinImageSize:        ptr.ToInt32(150),
-		OptimizerWatermarkOffset:              ptr.ToFloat64(1),
-		OptimizerWatermarkPosition:            ptr.ToInt(150),
-		OptimizerWatermarkURL:                 ptr.ToString("https://via.placeholder.com/150"),
-		OriginShieldZoneCode:                  ptr.ToString("IL"),
-		OriginURL:                             ptr.ToString("http://terraform.io"),
+		MonthlyBandwidthLimit: ptr.ToInt64(10240),
+		OriginShieldZoneCode:  ptr.ToString("IL"),
+		OriginURL:             ptr.ToString("http://terraform.io"),
 		// TODO: Test PermaCacheStorageZoneID
 		RequestLimit:                    ptr.ToInt32(3),
 		Type:                            ptr.ToInt(1),
@@ -309,6 +294,22 @@ func TestAccPullZone_full(t *testing.T) {
 		OriginRetryConnectionTimeout:        ptr.ToBool(false),
 		OriginRetryDelay:                    ptr.ToInt32(3),
 		OriginRetryResponseTimeout:          ptr.ToBool(false),
+
+		OptimizerAutomaticOptimizationEnabled: ptr.ToBool(true),
+		OptimizerDesktopMaxWidth:              ptr.ToInt32(1024),
+		OptimizerEnableManipulationEngine:     ptr.ToBool(false),
+		OptimizerEnableWebP:                   ptr.ToBool(false),
+		OptimizerEnabled:                      ptr.ToBool(true),
+		OptimizerImageQuality:                 ptr.ToInt32(81),
+		OptimizerMinifyCSS:                    ptr.ToBool(false),
+		OptimizerMinifyJavaScript:             ptr.ToBool(false),
+		OptimizerMobileImageQuality:           ptr.ToInt32(10),
+		OptimizerMobileMaxWidth:               ptr.ToInt32(200),
+		OptimizerWatermarkEnabled:             ptr.ToBool(true),
+		OptimizerWatermarkMinImageSize:        ptr.ToInt32(150),
+		OptimizerWatermarkOffset:              ptr.ToFloat64(1),
+		OptimizerWatermarkPosition:            ptr.ToInt(150),
+		OptimizerWatermarkURL:                 ptr.ToString("https://via.placeholder.com/150"),
 	}
 
 	tf := fmt.Sprintf(`
@@ -356,21 +357,6 @@ resource "bunny_pullzone" "%s" {
 	# logging_ip_anonymization_enabled // the field can only bet set after signing the dpa-agreement in the webinterface
 	# logging_save_to_storage
 	# logging_storage_zone_id
-	optimizer_automatic_optimization_enabled = %t
-	optimizer_desktop_max_width = %d
-	optimizier_enable_manipulation_engine = %t
-	optimizer_enable_webp = %t
-	optimizer_enabled = %t
-	optimizer_image_quality = %d
-	optimizer_minify_css = %t
-	optimizer_minify_javascript = %t
-	optimizer_mobile_image_quality = %d
-	optimizer_mobile_max_width = %d
-	optimizer_watermark_enabled = %t
-	optimizer_watermark_min_image_size = %d
-	optimizer_watermark_offset = %f
-	optimizer_watermark_position = %d
-	optimizer_watermark_url = "%s"
 	origin_shield_zone_code = "%s"
 	origin_url = "%s"
 	# perma_cache_storage_zone_id
@@ -405,6 +391,30 @@ resource "bunny_pullzone" "%s" {
 		request_limit = %d
 		monthly_bandwidth_limit = %d
 		connection_limit_per_ip_count = %d
+	}
+
+	optimizer {
+		enabled = %t
+		enable_webp = %t
+		minify_css = %t
+		minify_javascript = %t
+		enable_manipulation_engine = %t
+
+		smart_image_optimization {
+			enabled = %t
+			desktop_max_width = %d
+			image_quality = %d
+			mobile_max_width = %d
+			mobile_image_quality = %d
+		}
+
+		watermark {
+			enabled = %t
+			url = "%s"
+			offset = %f
+			min_image_size = %d
+			position = %d
+		}
 	}
 }
 `,
@@ -447,21 +457,6 @@ resource "bunny_pullzone" "%s" {
 		ptr.GetString(attrs.LogForwardingToken),
 		//ptr.GetBool(attrs.LoggingIPAnonymizationEnabled),
 		//ptr.GetBool(attrs.LoggingSaveToStorage),
-		ptr.GetBool(attrs.OptimizerAutomaticOptimizationEnabled),
-		ptr.GetInt32(attrs.OptimizerDesktopMaxWidth),
-		ptr.GetBool(attrs.OptimizerEnableManipulationEngine),
-		ptr.GetBool(attrs.OptimizerEnableWebP),
-		ptr.GetBool(attrs.OptimizerEnabled),
-		ptr.GetInt32(attrs.OptimizerImageQuality),
-		ptr.GetBool(attrs.OptimizerMinifyCSS),
-		ptr.GetBool(attrs.OptimizerMinifyJavaScript),
-		ptr.GetInt32(attrs.OptimizerMobileImageQuality),
-		ptr.GetInt32(attrs.OptimizerMobileMaxWidth),
-		ptr.GetBool(attrs.OptimizerWatermarkEnabled),
-		ptr.GetInt32(attrs.OptimizerWatermarkMinImageSize),
-		ptr.GetFloat64(attrs.OptimizerWatermarkOffset),
-		ptr.GetInt(attrs.OptimizerWatermarkPosition),
-		ptr.GetString(attrs.OptimizerWatermarkURL),
 		ptr.GetString(attrs.OriginShieldZoneCode),
 		ptr.GetString(attrs.OriginURL),
 		ptr.GetInt(attrs.Type),
@@ -487,6 +482,24 @@ resource "bunny_pullzone" "%s" {
 		ptr.GetInt32(attrs.RequestLimit),
 		ptr.GetInt64(attrs.MonthlyBandwidthLimit),
 		ptr.GetInt32(attrs.ConnectionLimitPerIPCount),
+
+		ptr.GetBool(attrs.OptimizerEnabled),
+		ptr.GetBool(attrs.OptimizerEnableWebP),
+		ptr.GetBool(attrs.OptimizerMinifyCSS),
+		ptr.GetBool(attrs.OptimizerMinifyJavaScript),
+		ptr.GetBool(attrs.OptimizerEnableManipulationEngine),
+
+		ptr.GetBool(attrs.OptimizerAutomaticOptimizationEnabled),
+		ptr.GetInt32(attrs.OptimizerDesktopMaxWidth),
+		ptr.GetInt32(attrs.OptimizerImageQuality),
+		ptr.GetInt32(attrs.OptimizerMobileMaxWidth),
+		ptr.GetInt32(attrs.OptimizerMobileImageQuality),
+
+		ptr.GetBool(attrs.OptimizerWatermarkEnabled),
+		ptr.GetString(attrs.OptimizerWatermarkURL),
+		ptr.GetFloat64(attrs.OptimizerWatermarkOffset),
+		ptr.GetInt32(attrs.OptimizerWatermarkMinImageSize),
+		ptr.GetInt(attrs.OptimizerWatermarkPosition),
 	)
 
 	resource.Test(t, resource.TestCase{

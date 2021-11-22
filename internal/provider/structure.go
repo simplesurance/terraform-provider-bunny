@@ -14,19 +14,29 @@ type structure map[string]interface{}
 
 // structureFromResource returns a new structure from the field with the passed
 // key from ResourceData.
-// d.Get() must return a value of type []interface{} with 0 or 1
-// map[string]interface{} elements. Otherwise the functon will panic.
+// If the key does not exist in d, the type of the value is not []interface{}
+// with elements of type map[string]interface{} or has not a size of 0 or 1,
+// the function panics.
 func structureFromResource(d *schema.ResourceData, key string) structure {
-	list := d.Get(key).([]interface{})
-	if len(list) == 0 {
+	v := d.Get(key)
+	if v == nil {
+		panic(fmt.Sprintf("structureFromResource: key %q is nil in ResourceData", key))
+	}
+
+	return structureFromElem(v.([]interface{}))
+}
+
+func structureFromElem(e []interface{}) structure {
+	if len(e) == 0 {
+		logger.Debugf("structureFromResource: %q slice is empty")
 		return nil
 	}
 
-	if len(list) != 1 {
-		panic(fmt.Sprintf("expected list with length 0 or 1, got length: %d", len(list)))
+	if len(e) != 1 {
+		panic(fmt.Sprintf("expected list with length 0 or 1, got length: %d", len(e)))
 	}
 
-	return list[0].(map[string]interface{})
+	return e[0].(map[string]interface{})
 }
 
 // getBoolPtr returns the value of the passed key as *bool.
@@ -39,10 +49,22 @@ func (m structure) getStr(key string) string {
 	return m[key].(string)
 }
 
+func (m structure) getStrPtr(key string) *string {
+	return ptr.ToString(m[key].(string))
+}
+
+func (m structure) getIntPtr(key string) *int {
+	return ptr.ToInt(m[key].(int))
+}
+
 func (m structure) getInt32Ptr(key string) *int32 {
 	return ptr.ToInt32(int32(m[key].(int)))
 }
 
 func (m structure) getInt64Ptr(key string) *int64 {
 	return ptr.ToInt64(int64(m[key].(int)))
+}
+
+func (m structure) getFloat64Ptr(key string) *float64 {
+	return ptr.ToFloat64(m[key].(float64))
 }
