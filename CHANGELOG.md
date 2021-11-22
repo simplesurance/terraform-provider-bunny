@@ -1,5 +1,9 @@
 ## 0.4.0 (Unreleased)
 
+IMPROVEMENTS:
+* provider: upgrade terraform-plugin-sdk from version 2.8.0 to 2.9.0
+
+
 ## 0.3.0 (November 19, 2021)
 
 FEATURES:
