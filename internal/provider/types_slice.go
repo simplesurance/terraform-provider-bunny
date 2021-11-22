@@ -1,6 +1,9 @@
 package provider
 
-import "strings"
+import (
+	"sort"
+	"strings"
+)
 
 // strSliceEqual returns true if all elements in the slices are equal.
 func strSliceEqual(a, b []string) bool {
@@ -42,4 +45,19 @@ func interfaceSlicetoStrSlice(in []interface{}) []string {
 	}
 
 	return res
+}
+
+func strSliceAsNormalizedStr(in []string, sep string) string {
+	if len(in) == 0 {
+		return ""
+	}
+
+	normalizedSl := make([]string, len(in))
+	for i := range in {
+		normalizedSl[i] = strings.TrimSpace(in[i])
+	}
+
+	sort.Strings(normalizedSl)
+
+	return strings.Join(normalizedSl, sep)
 }

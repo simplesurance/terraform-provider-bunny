@@ -23,10 +23,16 @@ var resourcePullZoneHeaders = &schema.Resource{
 			Optional:    true,
 		},
 		keyAccessControlOriginHeaderExtensions: {
-			Type:        schema.TypeSet,
-			Elem:        &schema.Schema{Type: schema.TypeString},
+			Type:        schema.TypeString,
 			Description: "CORS Headers will be added to all requests of files with the listed extensions.",
+			Default:     "eot, ttf, woff, woff2, css",
 			Optional:    true,
+			DiffSuppressFunc: func(_, old, new string, _ *schema.ResourceData) bool {
+				oldSl := normalizeStrList(old, ',')
+				newSl := normalizeStrList(new, ',')
+
+				return strSliceEqual(oldSl, newSl)
+			},
 		},
 		keyAddCanonicalHeader: {
 			Type:        schema.TypeBool,
@@ -45,7 +51,9 @@ func headersToResource(pz *bunny.PullZone, d *schema.ResourceData) error {
 	m := map[string]interface{}{}
 
 	m[keyEnableAccessControlOriginHeader] = pz.EnableAccessControlOriginHeader
-	m[keyAccessControlOriginHeaderExtensions] = pz.AccessControlOriginHeaderExtensions
+	m[keyAccessControlOriginHeaderExtensions] = strSliceAsNormalizedStr(
+		pz.AccessControlOriginHeaderExtensions, ",",
+	)
 	m[keyAddCanonicalHeader] = pz.AddCanonicalHeader
 	m[keyAddHostHeader] = pz.AddHostHeader
 
@@ -59,7 +67,9 @@ func headersFromResource(res *bunny.PullZoneUpdateOptions, d *schema.ResourceDat
 	}
 
 	res.EnableAccessControlOriginHeader = m.getBoolPtr(keyEnableAccessControlOriginHeader)
-	res.AccessControlOriginHeaderExtensions = strSetAsSlice(m[keyAccessControlOriginHeaderExtensions])
+	res.AccessControlOriginHeaderExtensions = normalizeStrList(
+		m.getStr(keyAccessControlOriginHeaderExtensions), ',',
+	)
 	res.AddCanonicalHeader = m.getBoolPtr(keyAddCanonicalHeader)
 	res.AddHostHeader = m.getBoolPtr(keyAddHostHeader)
 }

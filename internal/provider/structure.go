@@ -33,3 +33,8 @@ func structureFromResource(d *schema.ResourceData, key string) structure {
 func (m structure) getBoolPtr(key string) *bool {
 	return ptr.ToBool(m[key].(bool))
 }
+
+// getStr returns the value of the passed key as string.
+func (m structure) getStr(key string) string {
+	return m[key].(string)
+}
