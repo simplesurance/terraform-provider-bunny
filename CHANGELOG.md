@@ -1,6 +1,7 @@
 ## 0.4.0 (Unreleased)
 
 IMPROVEMENTS:
+* resource/pullzone: new block `safehop`
 * provider: upgrade terraform-plugin-sdk from version 2.8.0 to 2.9.0
 
 
@@ -15,7 +16,6 @@ IMPROVEMENTS:
 
 * errors: added additional context to error messages of pullzones and edgerules
 * resource/pullzone: new attribute: `cache_error_responses`
-* resource/pullzone: new block `safehop`
 
 BUG FIXES:
 
