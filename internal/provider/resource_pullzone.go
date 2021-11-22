@@ -583,7 +583,7 @@ func resourcePullZoneCreate(ctx context.Context, d *schema.ResourceData, meta in
 			Summary:  "setting pull zone attributes via update failed",
 		})
 
-		if err := pullZoneToResourceData(pz, d); err != nil {
+		if err := pullZoneToResource(pz, d); err != nil {
 			diags = append(diags, diag.Diagnostic{
 				Severity: diag.Error,
 				Summary:  "converting api-type to resource data failed: " + err.Error(),
@@ -600,7 +600,7 @@ func resourcePullZoneCreate(ctx context.Context, d *schema.ResourceData, meta in
 func resourcePullZoneUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	clt := meta.(*bunny.Client)
 
-	pullZone, err := resourceDataToPullZoneUpdate(d)
+	pullZone, err := pullZoneFromResource(d)
 	if err != nil {
 		return diagsErrFromErr("converting resource to API type failed", err)
 	}
@@ -615,7 +615,7 @@ func resourcePullZoneUpdate(ctx context.Context, d *schema.ResourceData, meta in
 		return diagsErrFromErr("updating pull zone via API failed", err)
 	}
 
-	if err := pullZoneToResourceData(updatedPullZone, d); err != nil {
+	if err := pullZoneToResource(updatedPullZone, d); err != nil {
 		return diagsErrFromErr("converting api type to resource data after successful update failed: %w", err)
 	}
 
@@ -642,7 +642,7 @@ func resourcePullZoneRead(ctx context.Context, d *schema.ResourceData, meta inte
 		return diagsErrFromErr("could not retrieve pull zone", err)
 	}
 
-	if err := pullZoneToResourceData(pz, d); err != nil {
+	if err := pullZoneToResource(pz, d); err != nil {
 		return diagsErrFromErr("converting api type to resource data after successful read failed: %w", err)
 	}
 
@@ -667,8 +667,8 @@ func resourcePullZoneDelete(ctx context.Context, d *schema.ResourceData, meta in
 	return nil
 }
 
-// pullZoneToResourceData sets fields in d to the values in pz.
-func pullZoneToResourceData(pz *bunny.PullZone, d *schema.ResourceData) error {
+// pullZoneToResource sets fields in d to the values in pz.
+func pullZoneToResource(pz *bunny.PullZone, d *schema.ResourceData) error {
 	if pz.ID != nil {
 		d.SetId(strconv.FormatInt(*pz.ID, 10))
 	}
@@ -905,9 +905,9 @@ func pullZoneToResourceData(pz *bunny.PullZone, d *schema.ResourceData) error {
 	return nil
 }
 
-// resourceDataToPullZoneUpdate returns a PullZoneUpdateOptions API type that
+// pullZoneFromResource returns a PullZoneUpdateOptions API type that
 // has fields set to the values in d.
-func resourceDataToPullZoneUpdate(d *schema.ResourceData) (*bunny.PullZoneUpdateOptions, error) {
+func pullZoneFromResource(d *schema.ResourceData) (*bunny.PullZoneUpdateOptions, error) {
 	var res bunny.PullZoneUpdateOptions
 
 	res.AWSSigningEnabled = getBoolPtr(d, keyAWSSigningEnabled)
@@ -971,7 +971,7 @@ func resourceDataToPullZoneUpdate(d *schema.ResourceData) (*bunny.PullZoneUpdate
 	res.ZoneSecurityEnabled = getBoolPtr(d, keyZoneSecurityEnabled)
 	res.ZoneSecurityIncludeHashRemoteIP = getBoolPtr(d, keyZoneSecurityIncludeHashRemoteIP)
 
-	safehopPullZoneUpdateOptionsFromResource(&res, d)
+	safehopFromResource(&res, d)
 	headersFromResource(&res, d)
 	limitsFromResource(&res, d)
 
