@@ -88,7 +88,7 @@ func safeHopToResource(pz *bunny.PullZone, d *schema.ResourceData) error {
 	return d.Set(keySafeHop, []map[string]interface{}{safeHopSettings})
 }
 
-func safehopPullZoneUpdateOptionsFromResource(res *bunny.PullZoneUpdateOptions, d *schema.ResourceData) {
+func safehopFromResource(res *bunny.PullZoneUpdateOptions, d *schema.ResourceData) {
 	m := structureFromResource(d, keySafeHop)
 	if len(m) == 0 {
 		return

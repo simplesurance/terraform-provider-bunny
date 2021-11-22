@@ -171,12 +171,12 @@ func resourceHostnameDelete(ctx context.Context, d *schema.ResourceData, meta in
 	clt := meta.(*bunny.Client)
 
 	pullZoneID := int64(d.Get(keyHostnamePullZoneID).(int))
-	hostnameOpt := resourceDataToRemoveCustomHostnameOpt(d)
+	hostnameOpt := hostnameFromResource(d)
 
 	return diag.FromErr(clt.PullZone.RemoveCustomHostname(ctx, pullZoneID, hostnameOpt))
 }
 
-func resourceDataToRemoveCustomHostnameOpt(d *schema.ResourceData) *bunny.RemoveCustomHostnameOptions {
+func hostnameFromResource(d *schema.ResourceData) *bunny.RemoveCustomHostnameOptions {
 	hostname := d.Get(keyHostnameHostname).(string)
 	return &bunny.RemoveCustomHostnameOptions{
 		Hostname: &hostname,
@@ -207,7 +207,7 @@ func resourceHostnameRead(ctx context.Context, d *schema.ResourceData, meta inte
 
 	for _, hostname := range pz.Hostnames {
 		if hostname.ID != nil && *hostname.ID == hostnameID {
-			if err := hostnameToResourceData(hostname, d); err != nil {
+			if err := hostnameToResource(hostname, d); err != nil {
 				return diagsErrFromErr("converting api hostname to resource data failed", err)
 			}
 
@@ -222,7 +222,7 @@ func resourceHostnameRead(ctx context.Context, d *schema.ResourceData, meta inte
 	}}
 }
 
-func hostnameToResourceData(hostname *bunny.Hostname, d *schema.ResourceData) error {
+func hostnameToResource(hostname *bunny.Hostname, d *schema.ResourceData) error {
 	if hostname.ID == nil {
 		return errors.New("id is empty")
 	}

@@ -165,7 +165,7 @@ func resourceEdgeRuleCreate(ctx context.Context, d *schema.ResourceData, meta in
 		return diag.FromErr(err)
 	}
 
-	opts, err := resourceDataToAddOrUpdateEdgeRuleOptions(d)
+	opts, err := edgeRuleFromResource(d)
 	if err != nil {
 		return diagsErrFromErr("setting description failed", err)
 	}
@@ -193,7 +193,7 @@ func resourceEdgeRuleCreate(ctx context.Context, d *schema.ResourceData, meta in
 func resourceEdgeRuleUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	clt := meta.(*bunny.Client)
 
-	opts, err := resourceDataToAddOrUpdateEdgeRuleOptions(d)
+	opts, err := edgeRuleFromResource(d)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -218,7 +218,7 @@ func edgeRuleTriggerTypeToInt(triggerType string) (int, error) {
 	return -1, fmt.Errorf("unsupported trigger type type: %q", triggerType)
 }
 
-func resourceDataToEdgeRuleTriggers(d *schema.ResourceData) ([]*bunny.EdgeRuleTrigger, error) {
+func edgeRuleTriggersFromResource(d *schema.ResourceData) ([]*bunny.EdgeRuleTrigger, error) {
 	triggerSet := d.Get(keyEdgeRuleTriggers).(*schema.Set)
 	if triggerSet.Len() == 0 {
 		return nil, nil
@@ -259,7 +259,7 @@ func resourceDataToEdgeRuleTriggers(d *schema.ResourceData) ([]*bunny.EdgeRuleTr
 	return res, nil
 }
 
-func resourceDataToAddOrUpdateEdgeRuleOptions(d *schema.ResourceData) (*bunny.AddOrUpdateEdgeRuleOptions, error) {
+func edgeRuleFromResource(d *schema.ResourceData) (*bunny.AddOrUpdateEdgeRuleOptions, error) {
 	var guid *string
 	if id := d.Id(); id != "" {
 		guid = &id
@@ -281,7 +281,7 @@ func resourceDataToAddOrUpdateEdgeRuleOptions(d *schema.ResourceData) (*bunny.Ad
 		return nil, err
 	}
 
-	triggers, err := resourceDataToEdgeRuleTriggers(d)
+	triggers, err := edgeRuleTriggersFromResource(d)
 	if err != nil {
 		return nil, fmt.Errorf("converting edge rule triggers failed: %w", err)
 	}
@@ -333,7 +333,7 @@ func resourceEdgeRuleRead(ctx context.Context, d *schema.ResourceData, meta inte
 
 	for _, er := range pz.EdgeRules {
 		if er.GUID != nil && *er.GUID == edgeRuleGUID {
-			if err := edgeRuleToResourceData(er, d); err != nil {
+			if err := edgeRuleToResource(er, d); err != nil {
 				return diagsErrFromErr("converting edge rule api type to terraform ResourceData failed", err)
 			}
 
@@ -348,7 +348,7 @@ func resourceEdgeRuleRead(ctx context.Context, d *schema.ResourceData, meta inte
 	}}
 }
 
-func edgeRuleToResourceData(edgeRule *bunny.EdgeRule, d *schema.ResourceData) error {
+func edgeRuleToResource(edgeRule *bunny.EdgeRule, d *schema.ResourceData) error {
 	if edgeRule.GUID == nil || *edgeRule.GUID == "" {
 		return errors.New("guid is empty")
 	}
@@ -372,7 +372,7 @@ func edgeRuleToResourceData(edgeRule *bunny.EdgeRule, d *schema.ResourceData) er
 		return err
 	}
 
-	err = edgeRuleTriggerToResourceData(edgeRule.Triggers, d)
+	err = edgeRuleTriggerToResource(edgeRule.Triggers, d)
 	if err != nil {
 		return fmt.Errorf("converting triggers to resource data failed: %w", err)
 	}
@@ -397,7 +397,7 @@ func edgeRuleToResourceData(edgeRule *bunny.EdgeRule, d *schema.ResourceData) er
 	return nil
 }
 
-func edgeRuleTriggerToResourceData(triggers []*bunny.EdgeRuleTrigger, d *schema.ResourceData) error {
+func edgeRuleTriggerToResource(triggers []*bunny.EdgeRuleTrigger, d *schema.ResourceData) error {
 	res := make([]map[string]interface{}, 0, len(triggers))
 
 	for _, trigger := range triggers {
