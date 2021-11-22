@@ -37,7 +37,6 @@ description: |-
 - **cache_control_max_age_override** (Number) Sets the cache control override setting for this zone.
 - **cache_error_responses** (Boolean) If enabled, bunny.net will temporarily cache error responses (304+ HTTP status codes) from your servers for 5 seconds to prevent DDoS attacks on your origin.
 If disabled, error responses will be set to no-cache.
-- **connection_limit_per_ip_count** (Number) Determines the maximum number of connections per IP that will be allowed to connect to this Pull Zone.
 - **disable_cookies** (Boolean) Determines if the Pull Zone should automatically remove cookies from the responses.
 - **enable_avif_vary** (Boolean) Determines if the AVIF Vary feature should be enabled..
 - **enable_cache_slice** (Boolean) Determines if cache slicing (Optimize for video) should be enabled for this zone.
@@ -58,6 +57,7 @@ If disabled, error responses will be set to no-cache.
 - **headers** (Block List, Max: 1) (see [below for nested schema](#nestedblock--headers))
 - **id** (String) The ID of this resource.
 - **ignore_query_strings** (Boolean) Determines if the Pull Zone should ignore query strings when serving cached objects (Vary by Query String).
+- **limits** (Block List, Max: 1) (see [below for nested schema](#nestedblock--limits))
 - **log_forwarding_enabled** (Boolean)
 - **log_forwarding_hostname** (String) Sets the log forwarding destination hostname for the zone.
 - **log_forwarding_port** (Number) Sets the log forwarding port for the zone.
@@ -65,7 +65,6 @@ If disabled, error responses will be set to no-cache.
 - **logging_ip_anonymization_enabled** (Boolean) Determines if the log anonoymization should be enabled. The field can only be set if the DPA agreement was set in the webinterface.
 - **logging_save_to_storage** (Boolean) Determines if the logging permanent storage should be enabled.
 - **logging_storage_zone_id** (Number) Sets the Storage Zone id that should contain the logs from this Pull Zone.
-- **monthly_bandwidth_limit** (Number) Sets the monthly limit of bandwidth in bytes that the pullzone is allowed to use.
 - **optimizer_automatic_optimization_enabled** (Boolean) Determines if the automatic image optimization should be enabled.
 - **optimizer_desktop_max_width** (Number) Determines if the automatic image optimization should be enabled.
 - **optimizer_enable_webp** (Boolean) Determines if the WebP optimization should be enabled.
@@ -83,7 +82,6 @@ If disabled, error responses will be set to no-cache.
 - **optimizier_enable_manipulation_engine** (Boolean) Determines if the image manipulation should be enabled.
 - **origin_shield_zone_code** (String) Determines the zone code where the origin shield should be set up.
 - **perma_cache_storage_zone_id** (Number) The ID of the storage zone that should be used as the Perma-Cache.
-- **request_limit** (Number) Determines the maximum number of requests per second that will be allowed to connect to this Pull Zone.
 - **safehop** (Block List, Max: 1) (see [below for nested schema](#nestedblock--safehop))
 - **storage_zone_id** (Number) The ID of the storage zone that the Pull Zone is linked to.
 - **type** (Number) The type of the Pull Zone. Standard = 0, Volume = 1.
@@ -113,6 +111,16 @@ Optional:
 - **add_canonical_header** (Boolean) Determines if the canonical header should be added by this zone.
 - **add_host_header** (Boolean) If enabled, the original host header of the request will be forwarded to the origin server.
 - **enable_access_control_origin_header** (Boolean) Determines if the CORS headers listed in the access_control_origin_header_extensions attribute are applied
+
+
+<a id="nestedblock--limits"></a>
+### Nested Schema for `limits`
+
+Optional:
+
+- **connection_limit_per_ip_count** (Number) Limit the maximum number of allowed connections to the zone per IP.Set to 0 for unlimited.
+- **monthly_bandwidth_limit** (Number) Limits the allowed bandwidth used in a month. If the limit is reached the zone will be disabled.
+- **request_limit** (Number) Limit the maximum number of requests per second coming from a single IP. Set to 0 for unlimited.
 
 
 <a id="nestedblock--safehop"></a>

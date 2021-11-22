@@ -7,6 +7,9 @@ BREAKING CHANGES:
   `enable_access_control_origin_header`,
   `access_control_origin_header_extensions`, `add_canonical_header`,
   `add_host_header`.
+* resource/pullzone: all limits related attributes were moved to the block
+  `limits`. The following attributes were moved:
+  `connection_limit_per_ip_count`, `monthly_bandwidth_limit`, `request_limit`.
 * resource/pullzone: The type of `access_control_origin_header_extensions`
   changed from string set to a comma-separated string.
 
