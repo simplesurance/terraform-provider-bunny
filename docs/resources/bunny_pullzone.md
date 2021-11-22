@@ -22,9 +22,6 @@ description: |-
 
 ### Optional
 
-- **access_control_origin_header_extensions** (Set of String) List of extensions that will return the CORS headers.
-- **add_canonical_header** (Boolean) Determines if the canonical header should be added by this zone.
-- **add_host_header** (Boolean) Determines if the zone should forward the requested host header to the origin.
 - **allowed_referrers** (Set of String) Sets the list of referrer hostnames that are allowed to access the Pull Zone. Requests containing the header Referer: hostname that is not on the list will be rejected. If empty, all the referrers are allowed.
 - **aws_signing_enabled** (Boolean) Determines if the AWS signing should be enabled or not.
 - **aws_signing_key** (String) AWS Signing Key
@@ -42,7 +39,6 @@ description: |-
 If disabled, error responses will be set to no-cache.
 - **connection_limit_per_ip_count** (Number) Determines the maximum number of connections per IP that will be allowed to connect to this Pull Zone.
 - **disable_cookies** (Boolean) Determines if the Pull Zone should automatically remove cookies from the responses.
-- **enable_access_control_origin_header** (Boolean) Determines if CORS headers should be enabled.
 - **enable_avif_vary** (Boolean) Determines if the AVIF Vary feature should be enabled..
 - **enable_cache_slice** (Boolean) Determines if cache slicing (Optimize for video) should be enabled for this zone.
 - **enable_country_code_vary** (Boolean) Determines if the Country Code Vary feature should be enabled.
@@ -59,6 +55,7 @@ If disabled, error responses will be set to no-cache.
 - **error_page_statuspage_code** (String) The statuspage code that will be used to build the status widget.
 - **error_page_whitelabel** (Boolean) Determines if the error pages should be whitelabel or not.
 - **follow_redirects** (Boolean) Determines if the zone should follow redirects return by the oprigin and cache the response.
+- **headers** (Block List, Max: 1) (see [below for nested schema](#nestedblock--headers))
 - **id** (String) The ID of this resource.
 - **ignore_query_strings** (Boolean) Determines if the Pull Zone should ignore query strings when serving cached objects (Vary by Query String).
 - **log_forwarding_enabled** (Boolean)
@@ -106,6 +103,17 @@ If disabled, error responses will be set to no-cache.
 - **last_updated** (String)
 - **video_library_id** (Number) The ID of the video library that the zone is linked to.
 - **zone_security_key** (String, Sensitive)
+
+<a id="nestedblock--headers"></a>
+### Nested Schema for `headers`
+
+Optional:
+
+- **access_control_origin_header_extensions** (String) CORS Headers will be added to all requests of files with the listed extensions.
+- **add_canonical_header** (Boolean) Determines if the canonical header should be added by this zone.
+- **add_host_header** (Boolean) If enabled, the original host header of the request will be forwarded to the origin server.
+- **enable_access_control_origin_header** (Boolean) Determines if the CORS headers listed in the access_control_origin_header_extensions attribute are applied
+
 
 <a id="nestedblock--safehop"></a>
 ### Nested Schema for `safehop`
