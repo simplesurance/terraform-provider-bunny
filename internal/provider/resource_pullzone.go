@@ -13,74 +13,59 @@ import (
 )
 
 const (
-	keyAWSSigningEnabled                     = "aws_signing_enabled"
-	keyAWSSigningKey                         = "aws_signing_key"
-	keyAWSSigningRegionName                  = "aws_signing_region_name"
-	keyAWSSigningSecret                      = "aws_signing_secret"
-	keyAllowedReferrers                      = "allowed_referrers"
-	keyBlockPostRequests                     = "block_post_requests"
-	keyBlockRootPathAccess                   = "block_root_path_access"
-	keyBlockedCountries                      = "blocked_countries"
-	keyBlockedIPs                            = "blocked_ips"
-	keyBudgetRedirectedCountries             = "budget_redirected_countries"
-	keyCacheControlBrowserMaxAgeOverride     = "cache_control_browser_max_age_override"
-	keyCacheControlMaxAgeOverride            = "cache_control_max_age_override"
-	keyCacheErrorResponses                   = "cache_error_responses"
-	keyDisableCookies                        = "disable_cookies"
-	keyEnableAvifVary                        = "enable_avif_vary"
-	keyEnableCacheSlice                      = "enable_cache_slice"
-	keyEnableCountryCodeVary                 = "enable_country_code_vary"
-	keyEnableGeoZoneAF                       = "enable_geo_zone_af"
-	keyEnableGeoZoneAsia                     = "enable_geo_zone_asia"
-	keyEnableGeoZoneEU                       = "enable_geo_zone_eu"
-	keyEnableGeoZoneSA                       = "enable_geo_zone_sa"
-	keyEnableGeoZoneUS                       = "enable_geo_zone_us"
-	keyEnableHostnameVary                    = "enable_hostname_vary"
-	keyCnameDomain                           = "cname_domain"
-	keyEnableLogging                         = "enable_logging"
-	keyEnableMobileVary                      = "enable_mobile_vary"
-	keyEnableOriginShield                    = "enable_origin_shield"
-	keyEnableTLS1                            = "enable_tlsv1"
-	keyEnableTLS11                           = "enable_tls1_1"
-	keyEnableWebPVary                        = "enable_webp_vary"
-	keyErrorPageCustomCode                   = "error_page_custom_code"
-	keyErrorPageEnableCustomCode             = "error_page_enable_custom_code"
-	keyErrorPageEnableStatuspageWidget       = "error_page_enable_statuspage_widget"
-	keyErrorPageStatuspageCode               = "error_page_statuspage_code"
-	keyErrorPageWhitelabel                   = "error_page_whitelabel"
-	keyFollowRedirects                       = "follow_redirects"
-	keyVideoLibraryID                        = "video_library_id"
-	keyIgnoreQueryStrings                    = "ignore_query_strings"
-	keyLogForwardingEnabled                  = "log_forwarding_enabled"
-	keyLogForwardingHostname                 = "log_forwarding_hostname"
-	keyLogForwardingPort                     = "log_forwarding_port"
-	keyLogForwardingToken                    = "log_forwarding_token"
-	keyLoggingIPAnonymizationEnabled         = "logging_ip_anonymization_enabled"
-	keyLoggingSaveToStorage                  = "logging_save_to_storage"
-	keyLoggingStorageZoneID                  = "logging_storage_zone_id"
-	keyOptimizerAutomaticOptimizationEnabled = "optimizer_automatic_optimization_enabled"
-	keyOptimizerDesktopMaxWidth              = "optimizer_desktop_max_width"
-	keyOptimizerEnableManipulationEngine     = "optimizier_enable_manipulation_engine"
-	keyOptimizerEnableWebP                   = "optimizer_enable_webp"
-	keyOptimizerEnabled                      = "optimizer_enabled"
-	keyOptimizerImageQuality                 = "optimizer_image_quality"
-	keyOptimizerMinifyCSS                    = "optimizer_minify_css"
-	keyOptimizerMinifyJavaScript             = "optimizer_minify_javascript"
-	keyOptimizerMobileImageQuality           = "optimizer_mobile_image_quality"
-	keyOptimizerMobileMaxWidth               = "optimizer_mobile_max_width"
-	keyOptimizerWatermarkEnabled             = "optimizer_watermark_enabled"
-	keyOptimizerWatermarkMinImageSize        = "optimizer_watermark_min_image_size"
-	keyOptimizerWatermarkOffset              = "optimizer_watermark_offset"
-	keyOptimizerWatermarkPosition            = "optimizer_watermark_position"
-	keyOptimizerWatermarkURL                 = "optimizer_watermark_url"
-	keyOriginShieldZoneCode                  = "origin_shield_zone_code"
-	keyOriginURL                             = "origin_url"
-	keyEnabled                               = "enabled"
-	keyPermaCacheStorageZoneID               = "perma_cache_storage_zone_id"
-	keyType                                  = "type"
-	keyVerifyOriginSSL                       = "verify_origin_ssl"
-	keyZoneSecurityEnabled                   = "zone_security_enabled"
-	keyZoneSecurityIncludeHashRemoteIP       = "zone_security_include_hash_remote_ip"
+	keyAWSSigningEnabled                 = "aws_signing_enabled"
+	keyAWSSigningKey                     = "aws_signing_key"
+	keyAWSSigningRegionName              = "aws_signing_region_name"
+	keyAWSSigningSecret                  = "aws_signing_secret"
+	keyAllowedReferrers                  = "allowed_referrers"
+	keyBlockPostRequests                 = "block_post_requests"
+	keyBlockRootPathAccess               = "block_root_path_access"
+	keyBlockedCountries                  = "blocked_countries"
+	keyBlockedIPs                        = "blocked_ips"
+	keyBudgetRedirectedCountries         = "budget_redirected_countries"
+	keyCacheControlBrowserMaxAgeOverride = "cache_control_browser_max_age_override"
+	keyCacheControlMaxAgeOverride        = "cache_control_max_age_override"
+	keyCacheErrorResponses               = "cache_error_responses"
+	keyDisableCookies                    = "disable_cookies"
+	keyEnableAvifVary                    = "enable_avif_vary"
+	keyEnableCacheSlice                  = "enable_cache_slice"
+	keyEnableCountryCodeVary             = "enable_country_code_vary"
+	keyEnableGeoZoneAF                   = "enable_geo_zone_af"
+	keyEnableGeoZoneAsia                 = "enable_geo_zone_asia"
+	keyEnableGeoZoneEU                   = "enable_geo_zone_eu"
+	keyEnableGeoZoneSA                   = "enable_geo_zone_sa"
+	keyEnableGeoZoneUS                   = "enable_geo_zone_us"
+	keyEnableHostnameVary                = "enable_hostname_vary"
+	keyCnameDomain                       = "cname_domain"
+	keyEnableLogging                     = "enable_logging"
+	keyEnableMobileVary                  = "enable_mobile_vary"
+	keyEnableOriginShield                = "enable_origin_shield"
+	keyEnableTLS1                        = "enable_tlsv1"
+	keyEnableTLS11                       = "enable_tls1_1"
+	keyEnableWebPVary                    = "enable_webp_vary"
+	keyErrorPageCustomCode               = "error_page_custom_code"
+	keyErrorPageEnableCustomCode         = "error_page_enable_custom_code"
+	keyErrorPageEnableStatuspageWidget   = "error_page_enable_statuspage_widget"
+	keyErrorPageStatuspageCode           = "error_page_statuspage_code"
+	keyErrorPageWhitelabel               = "error_page_whitelabel"
+	keyFollowRedirects                   = "follow_redirects"
+	keyVideoLibraryID                    = "video_library_id"
+	keyIgnoreQueryStrings                = "ignore_query_strings"
+	keyLogForwardingEnabled              = "log_forwarding_enabled"
+	keyLogForwardingHostname             = "log_forwarding_hostname"
+	keyLogForwardingPort                 = "log_forwarding_port"
+	keyLogForwardingToken                = "log_forwarding_token"
+	keyLoggingIPAnonymizationEnabled     = "logging_ip_anonymization_enabled"
+	keyLoggingSaveToStorage              = "logging_save_to_storage"
+	keyLoggingStorageZoneID              = "logging_storage_zone_id"
+	keyOriginShieldZoneCode              = "origin_shield_zone_code"
+	keyOriginURL                         = "origin_url"
+	keyEnabled                           = "enabled"
+	keyPermaCacheStorageZoneID           = "perma_cache_storage_zone_id"
+	keyType                              = "type"
+	keyVerifyOriginSSL                   = "verify_origin_ssl"
+	keyZoneSecurityEnabled               = "zone_security_enabled"
+	keyZoneSecurityIncludeHashRemoteIP   = "zone_security_include_hash_remote_ip"
 
 	keyBlockedReferrers = "blocked_referrers" // uses different API
 	keyName             = "name"
@@ -89,9 +74,10 @@ const (
 
 	keyLastUpdated = "last_updated"
 
-	keySafeHop = "safehop"
-	keyHeaders = "headers"
-	keyLimits  = "limits"
+	keySafeHop   = "safehop"
+	keyHeaders   = "headers"
+	keyLimits    = "limits"
+	keyOptimizer = "optimizer"
 )
 
 func resourcePullZone() *schema.Resource {
@@ -359,100 +345,6 @@ func resourcePullZone() *schema.Resource {
 				Default:     0,
 				Optional:    true,
 			},
-			keyOptimizerAutomaticOptimizationEnabled: {
-				Type:        schema.TypeBool,
-				Description: "Determines if the automatic image optimization should be enabled.",
-				Optional:    true,
-				Default:     true,
-			},
-			keyOptimizerDesktopMaxWidth: {
-				Type:             schema.TypeInt,
-				Description:      "Determines if the automatic image optimization should be enabled.",
-				Optional:         true,
-				Default:          1600,
-				ValidateDiagFunc: validateIsInt32,
-			},
-			keyOptimizerEnableManipulationEngine: {
-				Type:        schema.TypeBool,
-				Description: "Determines if the image manipulation should be enabled.",
-				Optional:    true,
-				Default:     true,
-			},
-			keyOptimizerEnableWebP: {
-				Type:        schema.TypeBool,
-				Description: "Determines if the WebP optimization should be enabled.",
-				Default:     true,
-				Optional:    true,
-			},
-			keyOptimizerEnabled: {
-				Type:        schema.TypeBool,
-				Description: "Determines if the optimizer should be enabled for this zone.",
-				Default:     false,
-				Optional:    true,
-			},
-			keyOptimizerImageQuality: {
-				Type:             schema.TypeInt,
-				Description:      "Determines the image quality for desktop clients.",
-				Optional:         true,
-				Default:          85,
-				ValidateDiagFunc: validateIsInt32,
-			},
-			keyOptimizerMinifyCSS: {
-				Type:        schema.TypeBool,
-				Description: "Determines if the CSS minifcation should be enabled.",
-				Default:     true,
-				Optional:    true,
-			},
-			keyOptimizerMinifyJavaScript: {
-				Type:        schema.TypeBool,
-				Description: "Determines if the JavaScript minifcation should be enabled.",
-				Default:     true,
-				Optional:    true,
-			},
-			keyOptimizerMobileImageQuality: {
-				Type:             schema.TypeInt,
-				Description:      "Determines the image quality for mobile clients.",
-				Optional:         true,
-				Default:          70,
-				ValidateDiagFunc: validateIsInt32,
-			},
-			keyOptimizerMobileMaxWidth: {
-				Type:             schema.TypeInt,
-				Description:      "Determines the maximum automatic image size for mobile clients.",
-				Optional:         true,
-				Default:          800,
-				ValidateDiagFunc: validateIsInt32,
-			},
-			keyOptimizerWatermarkEnabled: {
-				Type:        schema.TypeBool,
-				Description: "Determines if image watermarking should be enabled.",
-				Default:     false,
-				Optional:    true,
-			},
-			keyOptimizerWatermarkMinImageSize: {
-				Type:             schema.TypeInt,
-				Description:      "Sets the minimum image size to which the watermark will be added.",
-				Optional:         true,
-				Default:          300,
-				ValidateDiagFunc: validateIsInt32,
-			},
-			keyOptimizerWatermarkOffset: {
-				Type:        schema.TypeFloat,
-				Description: "Sets the offset of the watermark image.",
-				Optional:    true,
-				Default:     3,
-			},
-			keyOptimizerWatermarkPosition: {
-				Type:        schema.TypeInt,
-				Description: "Sets the position of the watermark image.",
-				Optional:    true,
-				Default:     0,
-			},
-			keyOptimizerWatermarkURL: {
-				Type:        schema.TypeString,
-				Description: "Sets the URL of the watermark image.",
-				Optional:    true,
-			},
 			keyOriginShieldZoneCode: {
 				Type:        schema.TypeString,
 				Description: "Determines the zone code where the origin shield should be set up.",
@@ -492,6 +384,13 @@ func resourcePullZone() *schema.Resource {
 				MaxItems:         1,
 				Optional:         true,
 				Elem:             resourcePullZoneLimits,
+				DiffSuppressFunc: diffSupressMissingOptionalBlock,
+			},
+			keyOptimizer: {
+				Type:             schema.TypeList,
+				MaxItems:         1,
+				Optional:         true,
+				Elem:             resourcePullZoneOptimizer,
 				DiffSuppressFunc: diffSupressMissingOptionalBlock,
 			},
 			keyType: {
@@ -811,51 +710,6 @@ func pullZoneToResource(pz *bunny.PullZone, d *schema.ResourceData) error {
 	if err := d.Set(keyLoggingStorageZoneID, pz.LoggingStorageZoneID); err != nil {
 		return err
 	}
-	if err := d.Set(keyOptimizerAutomaticOptimizationEnabled, pz.OptimizerAutomaticOptimizationEnabled); err != nil {
-		return err
-	}
-	if err := d.Set(keyOptimizerDesktopMaxWidth, pz.OptimizerDesktopMaxWidth); err != nil {
-		return err
-	}
-	if err := d.Set(keyOptimizerEnableManipulationEngine, pz.OptimizerEnableManipulationEngine); err != nil {
-		return err
-	}
-	if err := d.Set(keyOptimizerEnableWebP, pz.OptimizerEnableWebP); err != nil {
-		return err
-	}
-	if err := d.Set(keyOptimizerEnabled, pz.OptimizerEnabled); err != nil {
-		return err
-	}
-	if err := d.Set(keyOptimizerImageQuality, pz.OptimizerImageQuality); err != nil {
-		return err
-	}
-	if err := d.Set(keyOptimizerMinifyCSS, pz.OptimizerMinifyCSS); err != nil {
-		return err
-	}
-	if err := d.Set(keyOptimizerMinifyJavaScript, pz.OptimizerMinifyJavaScript); err != nil {
-		return err
-	}
-	if err := d.Set(keyOptimizerMobileImageQuality, pz.OptimizerMobileImageQuality); err != nil {
-		return err
-	}
-	if err := d.Set(keyOptimizerMobileMaxWidth, pz.OptimizerMobileMaxWidth); err != nil {
-		return err
-	}
-	if err := d.Set(keyOptimizerWatermarkEnabled, pz.OptimizerWatermarkEnabled); err != nil {
-		return err
-	}
-	if err := d.Set(keyOptimizerWatermarkMinImageSize, pz.OptimizerWatermarkMinImageSize); err != nil {
-		return err
-	}
-	if err := d.Set(keyOptimizerWatermarkOffset, pz.OptimizerWatermarkOffset); err != nil {
-		return err
-	}
-	if err := d.Set(keyOptimizerWatermarkPosition, pz.OptimizerWatermarkPosition); err != nil {
-		return err
-	}
-	if err := d.Set(keyOptimizerWatermarkURL, pz.OptimizerWatermarkURL); err != nil {
-		return err
-	}
 	if err := d.Set(keyOriginShieldZoneCode, pz.OriginShieldZoneCode); err != nil {
 		return err
 	}
@@ -899,6 +753,10 @@ func pullZoneToResource(pz *bunny.PullZone, d *schema.ResourceData) error {
 	}
 
 	if err := limitsToResource(pz, d); err != nil {
+		return err
+	}
+
+	if err := d.Set(keyOptimizer, optimizerFlatten(pz, d)); err != nil {
 		return err
 	}
 
@@ -948,21 +806,6 @@ func pullZoneFromResource(d *schema.ResourceData) (*bunny.PullZoneUpdateOptions,
 	res.LoggingIPAnonymizationEnabled = getBoolPtr(d, keyLoggingIPAnonymizationEnabled)
 	res.LoggingSaveToStorage = getBoolPtr(d, keyLoggingSaveToStorage)
 	res.LoggingStorageZoneID = getInt64Ptr(d, keyLoggingStorageZoneID)
-	res.OptimizerAutomaticOptimizationEnabled = getBoolPtr(d, keyOptimizerAutomaticOptimizationEnabled)
-	res.OptimizerDesktopMaxWidth = getInt32Ptr(d, keyOptimizerDesktopMaxWidth)
-	res.OptimizerEnableManipulationEngine = getBoolPtr(d, keyOptimizerEnableManipulationEngine)
-	res.OptimizerEnableWebP = getBoolPtr(d, keyOptimizerEnableWebP)
-	res.OptimizerEnabled = getBoolPtr(d, keyOptimizerEnabled)
-	res.OptimizerImageQuality = getInt32Ptr(d, keyOptimizerImageQuality)
-	res.OptimizerMinifyCSS = getBoolPtr(d, keyOptimizerMinifyCSS)
-	res.OptimizerMinifyJavaScript = getBoolPtr(d, keyOptimizerMinifyJavaScript)
-	res.OptimizerMobileImageQuality = getInt32Ptr(d, keyOptimizerMobileImageQuality)
-	res.OptimizerMobileMaxWidth = getInt32Ptr(d, keyOptimizerMobileMaxWidth)
-	res.OptimizerWatermarkEnabled = getBoolPtr(d, keyOptimizerWatermarkEnabled)
-	res.OptimizerWatermarkMinImageSize = getInt32Ptr(d, keyOptimizerWatermarkMinImageSize)
-	res.OptimizerWatermarkOffset = getFloat64Ptr(d, keyOptimizerWatermarkOffset)
-	res.OptimizerWatermarkPosition = getIntPtr(d, keyOptimizerWatermarkPosition)
-	res.OptimizerWatermarkURL = getStrPtr(d, keyOptimizerWatermarkURL)
 	res.OriginShieldZoneCode = getStrPtr(d, keyOriginShieldZoneCode)
 	res.OriginURL = getStrPtr(d, keyOriginURL)
 	res.PermaCacheStorageZoneID = getInt64Ptr(d, keyPermaCacheStorageZoneID)
@@ -974,6 +817,7 @@ func pullZoneFromResource(d *schema.ResourceData) (*bunny.PullZoneUpdateOptions,
 	safehopFromResource(&res, d)
 	headersFromResource(&res, d)
 	limitsFromResource(&res, d)
+	optimizerFromResource(&res, d)
 
 	return &res, nil
 }

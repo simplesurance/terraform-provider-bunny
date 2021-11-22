@@ -65,21 +65,7 @@ If disabled, error responses will be set to no-cache.
 - **logging_ip_anonymization_enabled** (Boolean) Determines if the log anonoymization should be enabled. The field can only be set if the DPA agreement was set in the webinterface.
 - **logging_save_to_storage** (Boolean) Determines if the logging permanent storage should be enabled.
 - **logging_storage_zone_id** (Number) Sets the Storage Zone id that should contain the logs from this Pull Zone.
-- **optimizer_automatic_optimization_enabled** (Boolean) Determines if the automatic image optimization should be enabled.
-- **optimizer_desktop_max_width** (Number) Determines if the automatic image optimization should be enabled.
-- **optimizer_enable_webp** (Boolean) Determines if the WebP optimization should be enabled.
-- **optimizer_enabled** (Boolean) Determines if the optimizer should be enabled for this zone.
-- **optimizer_image_quality** (Number) Determines the image quality for desktop clients.
-- **optimizer_minify_css** (Boolean) Determines if the CSS minifcation should be enabled.
-- **optimizer_minify_javascript** (Boolean) Determines if the JavaScript minifcation should be enabled.
-- **optimizer_mobile_image_quality** (Number) Determines the image quality for mobile clients.
-- **optimizer_mobile_max_width** (Number) Determines the maximum automatic image size for mobile clients.
-- **optimizer_watermark_enabled** (Boolean) Determines if image watermarking should be enabled.
-- **optimizer_watermark_min_image_size** (Number) Sets the minimum image size to which the watermark will be added.
-- **optimizer_watermark_offset** (Number) Sets the offset of the watermark image.
-- **optimizer_watermark_position** (Number) Sets the position of the watermark image.
-- **optimizer_watermark_url** (String) Sets the URL of the watermark image.
-- **optimizier_enable_manipulation_engine** (Boolean) Determines if the image manipulation should be enabled.
+- **optimizer** (Block List, Max: 1) (see [below for nested schema](#nestedblock--optimizer))
 - **origin_shield_zone_code** (String) Determines the zone code where the origin shield should be set up.
 - **perma_cache_storage_zone_id** (Number) The ID of the storage zone that should be used as the Perma-Cache.
 - **safehop** (Block List, Max: 1) (see [below for nested schema](#nestedblock--safehop))
@@ -119,8 +105,46 @@ Optional:
 Optional:
 
 - **connection_limit_per_ip_count** (Number) Limit the maximum number of allowed connections to the zone per IP.Set to 0 for unlimited.
-- **monthly_bandwidth_limit** (Number) Limits the allowed bandwidth used in a month. If the limit is reached the zone will be disabled.
+- **monthly_bandwidth_limit** (Number) Limits the allowed bandwidth used in a month, in Bytes. If the limit is reached the zone will be disabled.
 - **request_limit** (Number) Limit the maximum number of requests per second coming from a single IP. Set to 0 for unlimited.
+
+
+<a id="nestedblock--optimizer"></a>
+### Nested Schema for `optimizer`
+
+Optional:
+
+- **enable_manipulation_engine** (Boolean) Enable on the fly image manipulation engine for dynamic URL based image manipulation.
+- **enable_webp** (Boolean) If enabled, images will be automatically converted into an efficient WebP format when supported by the client to greatly reduce file size and improve load times.
+- **enabled** (Boolean) Determines if the optimizer should be enabled for this zone.
+- **minify_css** (Boolean) If enabled, CSS files will be automatically minified to reduce their file size without modifying the functionality.
+- **minify_javascript** (Boolean) Determines if the JavaScript minifcation should be enabled.
+- **smart_image_optimization** (Block List, Max: 1) (see [below for nested schema](#nestedblock--optimizer--smart_image_optimization))
+- **watermark** (Block List, Max: 1) (see [below for nested schema](#nestedblock--optimizer--watermark))
+
+<a id="nestedblock--optimizer--smart_image_optimization"></a>
+### Nested Schema for `optimizer.smart_image_optimization`
+
+Optional:
+
+- **desktop_max_width** (Number) Determines if the automatic image optimization should be enabled.
+- **enabled** (Boolean) If enabled, Bunny Optimizer will automatically resize and compress images for desktop and mobile devices.
+- **image_quality** (Number) Determines the image quality for desktop clients.
+- **mobile_image_quality** (Number) Determines the image quality for mobile clients.
+- **mobile_max_width** (Number) Determines the maximum automatic image size for mobile clients.
+
+
+<a id="nestedblock--optimizer--watermark"></a>
+### Nested Schema for `optimizer.watermark`
+
+Optional:
+
+- **enabled** (Boolean) Determines if image watermarking should be enabled.
+- **min_image_size** (Number) Sets the minimum image size to which the watermark will be added.
+- **offset** (Number) Sets the offset of the watermark image.
+- **position** (Number) Sets the position of the watermark image.
+- **url** (String) Sets the URL of the watermark image.
+
 
 
 <a id="nestedblock--safehop"></a>
