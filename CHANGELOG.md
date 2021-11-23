@@ -10,15 +10,22 @@ BREAKING CHANGES:
 * resource/pullzone: all limits related attributes were moved to the block
   `limits`. The following attributes were moved:
   `connection_limit_per_ip_count`, `monthly_bandwidth_limit`, `request_limit`.
+* resource/pullzone: all optimizer related attributes were moved to the block
+  `optimizer`.
 * resource/pullzone: The type of `access_control_origin_header_extensions`
   changed from string set to a comma-separated string.
 
 IMPROVEMENTS:
+
 * resource/pullzone: new block `safehop`
 * resource/pullzone: `access_control_origin_header_extensions` is not a computed
                      field anymore
 * provider: upgrade terraform-plugin-sdk from version 2.8.0 to 2.9.0
 
+BUG FIXES:
+
+* resource/pullzone: removed raw, unused format string specifiers from some
+                     error messages
 
 ## 0.3.0 (November 19, 2021)
 
