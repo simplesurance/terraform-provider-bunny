@@ -515,7 +515,7 @@ func resourcePullZoneUpdate(ctx context.Context, d *schema.ResourceData, meta in
 	}
 
 	if err := pullZoneToResource(updatedPullZone, d); err != nil {
-		return diagsErrFromErr("converting api type to resource data after successful update failed: %w", err)
+		return diagsErrFromErr("converting api type to resource data after successful update failed", err)
 	}
 
 	if err := d.Set(keyLastUpdated, time.Now().Format(time.RFC850)); err != nil {
@@ -542,7 +542,7 @@ func resourcePullZoneRead(ctx context.Context, d *schema.ResourceData, meta inte
 	}
 
 	if err := pullZoneToResource(pz, d); err != nil {
-		return diagsErrFromErr("converting api type to resource data after successful read failed: %w", err)
+		return diagsErrFromErr("converting api type to resource data after successful read failed", err)
 	}
 
 	return nil
