@@ -3,13 +3,9 @@
 BREAKING CHANGES:
 
 * resource/pullzone: All header related attributes were moved to a new block
-  called `headers`. The following attributes were moved: `headers`:
-  `enable_access_control_origin_header`,
-  `access_control_origin_header_extensions`, `add_canonical_header`,
-  `add_host_header`.
+  called `headers`.
 * resource/pullzone: all limits related attributes were moved to the block
-  `limits`. The following attributes were moved:
-  `connection_limit_per_ip_count`, `monthly_bandwidth_limit`, `request_limit`.
+  `limits`.
 * resource/pullzone: all optimizer related attributes were moved to the block
   `optimizer`.
 * resource/pullzone: The type of `access_control_origin_header_extensions`
@@ -19,7 +15,7 @@ IMPROVEMENTS:
 
 * resource/pullzone: new block `safehop`
 * resource/pullzone: `access_control_origin_header_extensions` is not a computed
-                     field anymore
+                     field anymore and can be set.
 * provider: upgrade terraform-plugin-sdk from version 2.8.0 to 2.9.0
 
 BUG FIXES:
