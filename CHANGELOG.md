@@ -1,3 +1,5 @@
+## 0.5.0 (Unreleased)
+
 ## 0.4.0 (November 26, 2021)
 
 BREAKING CHANGES:
