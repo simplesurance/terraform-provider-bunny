@@ -98,7 +98,7 @@ echo "Github draft release created, please finalize and publish it on the webpag
 
 add_new_release_line
 echo "Entry in $changelog_file created for next release"
-git commit -m "changelog: add entry for next version"
+git commit -m "changelog: add entry for next version" "$changelog_file"
 
 git push
 git push --tags
