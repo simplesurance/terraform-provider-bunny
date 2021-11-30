@@ -11,6 +11,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+
 	bunny "github.com/simplesurance/bunny-go"
 )
 
@@ -30,6 +31,7 @@ const (
 func resourceHostname() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceHostnameCreate,
+		UpdateContext: resourceHostnameUpdate,
 		ReadContext:   resourceHostnameRead,
 		DeleteContext: resourceHostnameDelete,
 
@@ -49,7 +51,8 @@ func resourceHostname() *schema.Resource {
 			keyHostnameForceSSL: {
 				Type:        schema.TypeBool,
 				Description: "Determines if the Force SSL feature is enabled.",
-				Computed:    true,
+				Optional:    true,
+				Default:     false,
 			},
 			keyHostnameIsSystemHostname: {
 				Type:        schema.TypeBool,
@@ -90,15 +93,25 @@ func resourceHostnameCreate(ctx context.Context, d *schema.ResourceData, meta in
 
 	d.SetId(hostnameID)
 
-	if !d.Get(keyHostnameLoadFreeCertificate).(bool) {
-		return nil
+	var diag diag.Diagnostics
+
+	if d.Get(keyHostnameLoadFreeCertificate).(bool) {
+		if err := loadFreeCertRetry(ctx, clt, d.Timeout(schema.TimeoutCreate), *hostnameOpt.Hostname); err != nil {
+			diag = diagsErrFromErr("creating hostname succeeded, loading free ssl certificate failed", err)
+		}
 	}
 
-	if err := loadFreeCertRetry(ctx, clt, d.Timeout(schema.TimeoutCreate), *hostnameOpt.Hostname); err != nil {
-		return diagsErrFromErr("creating hostname succeeded, loading free ssl certificate failed", err)
+	if forceSSL := d.Get(keyHostnameForceSSL).(bool); forceSSL {
+		err = clt.PullZone.SetForceSSL(ctx, pullZoneID, &bunny.SetForceSSLOptions{
+			Hostname: hostnameOpt.Hostname,
+			ForceSSL: &forceSSL,
+		})
+		if err != nil {
+			diag = append(diag, diagsErrFromErr("creating hostname succeeded, enabling force_ssl failed", err)...)
+		}
 	}
 
-	return nil
+	return diag
 }
 
 func loadFreeCertRetry(ctx context.Context, clt *bunny.Client, timeout time.Duration, hostname string) error {
@@ -211,16 +224,13 @@ func resourceHostnameRead(ctx context.Context, d *schema.ResourceData, meta inte
 			continue
 		}
 
-		if *hostname.ID == *hostname.ID {
-			logger.Warnf("got hostname with empty ID for pull zone: %d", pullZoneID)
-			continue
-		}
+		if *hostname.ID == hostnameID {
+			if err := hostnameToResource(hostname, d); err != nil {
+				return diagsErrFromErr("converting api hostname to resource data failed", err)
+			}
 
-		if err := hostnameToResource(hostname, d); err != nil {
-			return diagsErrFromErr("converting api hostname to resource data failed", err)
+			return nil
 		}
-
-		return nil
 	}
 
 	return diag.Diagnostics{{
@@ -240,6 +250,7 @@ func hostnameToResource(hostname *bunny.Hostname, d *schema.ResourceData) error 
 	if err := d.Set(keyHostnameHostname, hostname.Value); err != nil {
 		return err
 	}
+	logger.Debugf("hostnameToResource %d, forcessl: %v", *hostname.ID, *hostname.ForceSSL)
 	if err := d.Set(keyHostnameForceSSL, hostname.ForceSSL); err != nil {
 		return err
 	}
@@ -248,6 +259,30 @@ func hostnameToResource(hostname *bunny.Hostname, d *schema.ResourceData) error 
 	}
 	if err := d.Set(keyHostnameHasCertificate, hostname.HasCertificate); err != nil {
 		return err
+	}
+
+	return nil
+}
+
+func resourceHostnameUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	if !d.HasChange(keyHostnameForceSSL) {
+		// nothing to do, all other attributes have ForceNew enabled
+		return nil
+	}
+
+	clt := meta.(*bunny.Client)
+
+	pullZoneID := int64(d.Get(keyHostnamePullZoneID).(int))
+	hostname := d.Get(keyHostnameHostname).(string)
+	forceSSL := d.Get(keyHostnameForceSSL).(bool)
+
+	err := clt.PullZone.SetForceSSL(ctx, pullZoneID, &bunny.SetForceSSLOptions{
+		Hostname: &hostname,
+		ForceSSL: &forceSSL,
+	})
+
+	if err != nil {
+		return diagsErrFromErr("setting force ssl failed", err)
 	}
 
 	return nil

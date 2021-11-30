@@ -1,5 +1,10 @@
 ## 0.5.0 (Unreleased)
 
+IMPROVEMENTS:
+
+* resource/hostname: the `force_ssl` attribute is not a computed field anymore
+                     and can be set
+
 ## 0.4.0 (November 26, 2021)
 
 BREAKING CHANGES:
