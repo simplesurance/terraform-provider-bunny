@@ -86,13 +86,6 @@ func resourceHostnameCreate(ctx context.Context, d *schema.ResourceData, meta in
 		return diagsErrFromErr("could not add hostname", err)
 	}
 
-	hostnameID, err := getHostnameID(ctx, clt, pullZoneID, *hostnameOpt.Hostname)
-	if err != nil {
-		return diagsErrFromErr("creating hostname succeeded, retrieving it's ID afterwards failed", err)
-	}
-
-	d.SetId(hostnameID)
-
 	var diag diag.Diagnostics
 
 	if d.Get(keyHostnameLoadFreeCertificate).(bool) {
@@ -109,6 +102,15 @@ func resourceHostnameCreate(ctx context.Context, d *schema.ResourceData, meta in
 		if err != nil {
 			diag = append(diag, diagsErrFromErr("creating hostname succeeded, enabling force_ssl failed", err)...)
 		}
+	}
+
+	hostname, err := resourceHostnameGetByName(ctx, clt, pullZoneID, *hostnameOpt.Hostname)
+	if err != nil {
+		return append(diag, diagsErrFromErr("creating hostname succeeded, retrieving it from api failed", err)...)
+	}
+
+	if err := hostnameToResource(hostname, d); err != nil {
+		return append(diag, diagsErrFromErr("converting hostname api type to terraform resource failed", err)...)
 	}
 
 	return diag
@@ -150,10 +152,10 @@ func loadFreeCertRetry(ctx context.Context, clt *bunny.Client, timeout time.Dura
 	return err
 }
 
-func getHostnameID(ctx context.Context, clt *bunny.Client, pullZoneID int64, hostname string) (string, error) {
+func resourceHostnameGetByName(ctx context.Context, clt *bunny.Client, pullZoneID int64, hostname string) (*bunny.Hostname, error) {
 	pz, err := clt.PullZone.Get(ctx, pullZoneID)
 	if err != nil {
-		return "", fmt.Errorf("retrieving pull zone failed: %w", err)
+		return nil, fmt.Errorf("retrieving pull zone failed: %w", err)
 	}
 
 	for _, pzHostname := range pz.Hostnames {
@@ -161,16 +163,17 @@ func getHostnameID(ctx context.Context, clt *bunny.Client, pullZoneID int64, hos
 			logger.Warnf("bunny.net api returned pull zone (%d) with an hostname element with nil value", pullZoneID)
 			continue
 		}
+
 		if *pzHostname.Value == hostname {
 			if pzHostname.ID == nil {
-				return "", errors.New("found hostname entry id is nil")
+				return nil, fmt.Errorf("found hostname with name %q of pull zone (%d) but id is nil", hostname, pullZoneID)
 			}
 
-			return strconv.FormatInt(*pzHostname.ID, 10), nil
+			return pzHostname, nil
 		}
 	}
 
-	return "", errors.New("hostname not found")
+	return nil, errors.New("hostname not found")
 }
 
 func resourceDataToAddCustomHostnameOption(d *schema.ResourceData) *bunny.AddCustomHostnameOptions {
@@ -206,38 +209,36 @@ func resourceHostnameRead(ctx context.Context, d *schema.ResourceData, meta inte
 
 	pullZoneID := int64(d.Get(keyHostnamePullZoneID).(int))
 
-	pz, err := clt.PullZone.Get(ctx, pullZoneID)
+	hostname, err := resourceHostnameGetByID(ctx, clt, pullZoneID, hostnameID)
 	if err != nil {
-		return diagsErrFromErr("retrieving pull zone failed", err)
+		diagsErrFromErr("could not fetch hostname from provider", err)
 	}
 
-	if len(pz.Hostnames) == 0 {
-		return diag.Diagnostics{{
-			Severity: diag.Error,
-			Summary:  "pull zone has an empty hostname list",
-		}}
+	if err := hostnameToResource(hostname, d); err != nil {
+		return diagsErrFromErr("converting api hostname to resource data failed", err)
+	}
+
+	return nil
+}
+
+func resourceHostnameGetByID(ctx context.Context, clt *bunny.Client, pullZoneID, hostnameID int64) (*bunny.Hostname, error) {
+	pz, err := clt.PullZone.Get(ctx, pullZoneID)
+	if err != nil {
+		return nil, fmt.Errorf("retrieving pull zone failed: %w", err)
 	}
 
 	for _, hostname := range pz.Hostnames {
 		if hostname.ID == nil {
-			logger.Warnf("got hostname with nil ID for pull zone: %d", pullZoneID)
+			logger.Warnf("bunny.net api returned hostname with nil ID for pull zone: %d", pullZoneID)
 			continue
 		}
 
 		if *hostname.ID == hostnameID {
-			if err := hostnameToResource(hostname, d); err != nil {
-				return diagsErrFromErr("converting api hostname to resource data failed", err)
-			}
-
-			return nil
+			return hostname, nil
 		}
 	}
 
-	return diag.Diagnostics{{
-		Severity: diag.Error,
-		Summary:  "hostname not found",
-		Detail:   fmt.Sprintf("pull zone with id %d, has no hostname with id: %d", pullZoneID, hostnameID),
-	}}
+	return nil, fmt.Errorf("pull zone with id %d, has no hostname with id: %d", pullZoneID, hostnameID)
 }
 
 func hostnameToResource(hostname *bunny.Hostname, d *schema.ResourceData) error {
