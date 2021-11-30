@@ -182,6 +182,7 @@ resource "bunny_hostname" "h3" {
 					},
 				}),
 			},
+
 			// Change all 3 hostname
 			{
 				Config: tfPz + `
@@ -279,7 +280,6 @@ resource "bunny_hostname" "h1" {
 	pull_zone_id = bunny_pullzone.pz.id
 	hostname = "%s"
 }
-
 `, pzName, defPullZoneHostname(pzName))
 
 	resource.Test(t, resource.TestCase{

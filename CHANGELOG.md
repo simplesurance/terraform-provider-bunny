@@ -5,6 +5,10 @@ IMPROVEMENTS:
 * resource/hostname: the `force_ssl` attribute is not a computed field anymore
                      and can be set
 
+BUG FIXES:
+
+* resource/hostname: fix: plan was not empty after hostname creation
+
 ## 0.4.0 (November 26, 2021)
 
 BREAKING CHANGES:
