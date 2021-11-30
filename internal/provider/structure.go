@@ -28,7 +28,7 @@ func structureFromResource(d *schema.ResourceData, key string) structure {
 
 func structureFromElem(e []interface{}) structure {
 	if len(e) == 0 {
-		logger.Debugf("structureFromResource: %q slice is empty")
+		logger.Debugf("structureFromResource: slice is empty")
 		return nil
 	}
 
