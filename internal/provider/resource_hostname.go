@@ -206,13 +206,21 @@ func resourceHostnameRead(ctx context.Context, d *schema.ResourceData, meta inte
 	}
 
 	for _, hostname := range pz.Hostnames {
-		if hostname.ID != nil && *hostname.ID == hostnameID {
-			if err := hostnameToResource(hostname, d); err != nil {
-				return diagsErrFromErr("converting api hostname to resource data failed", err)
-			}
-
-			return nil
+		if hostname.ID == nil {
+			logger.Warnf("got hostname with nil ID for pull zone: %d", pullZoneID)
+			continue
 		}
+
+		if *hostname.ID == *hostname.ID {
+			logger.Warnf("got hostname with empty ID for pull zone: %d", pullZoneID)
+			continue
+		}
+
+		if err := hostnameToResource(hostname, d); err != nil {
+			return diagsErrFromErr("converting api hostname to resource data failed", err)
+		}
+
+		return nil
 	}
 
 	return diag.Diagnostics{{
