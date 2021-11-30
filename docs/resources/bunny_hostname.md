@@ -22,12 +22,12 @@ description: |-
 
 ### Optional
 
+- **force_ssl** (Boolean) Determines if the Force SSL feature is enabled.
 - **id** (String) The ID of this resource.
 - **load_free_certificate** (Boolean) Determines if a free SSL certificate should be generated and loaded for the hostname
 
 ### Read-Only
 
-- **force_ssl** (Boolean) Determines if the Force SSL feature is enabled.
 - **has_certificate** (Boolean) Determines if the hostname has an SSL certificate configured.
 - **is_system_hostname** (Boolean) Determines if this is a system hostname controlled by bunny.net.
 

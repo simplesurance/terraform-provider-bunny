@@ -110,8 +110,6 @@ make docs
 - Pull Zone fields with missing write support:
   - `blocked_referrers`
   - all `enable_geo_zone_*` fields
-- Hostname fields with missing write support:
-  - `force_ssl`
 
 ## Status
 

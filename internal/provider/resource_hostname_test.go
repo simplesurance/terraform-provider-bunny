@@ -137,6 +137,7 @@ resource "bunny_pullzone" "pz" {
 resource "bunny_hostname" "h1" {
 	pull_zone_id = bunny_pullzone.pz.id
 	hostname = "google.de"
+	force_ssl = true
 }
 
 resource "bunny_hostname" "h2" {
@@ -162,7 +163,7 @@ resource "bunny_hostname" "h3" {
 						},
 						{
 							Value:            ptr.ToString("google.de"),
-							ForceSSL:         ptr.ToBool(false),
+							ForceSSL:         ptr.ToBool(true),
 							IsSystemHostname: ptr.ToBool(false),
 							HasCertificate:   ptr.ToBool(false),
 						},
