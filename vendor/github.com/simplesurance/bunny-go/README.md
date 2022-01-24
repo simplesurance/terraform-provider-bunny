@@ -30,7 +30,7 @@ Endpoints](https://docs.bunny.net/reference/bunnynet-api-overview) are supported
     - [ ] Get Statistics
     - [ ] Purge Cache
     - [x] Load Free Certificate
-    - [ ] Add Custom Certificate
+    - [x] Add Custom Certificate
     - [ ] Remove Certificate
     - [x] Add Custom Hostname
     - [x] Remove Custom Hostname
