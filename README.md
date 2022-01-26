@@ -89,7 +89,6 @@ make docs
 
 - `terraform import` support
 - unsupported Pull Zone features:
-  - Add/Remove custom certificates
   - `burst_size`
   - `dns_record_id`
   - `dns_zone_id`

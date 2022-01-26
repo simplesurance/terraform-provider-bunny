@@ -1,4 +1,9 @@
-## 0.5.1 (Unreleased)
+## 0.6.0 (Unreleased)
+
+IMPROVEMENTS:
+
+* resource/hostname: new block `certificate`, for providing custom SSL
+                     certificates
 
 ## 0.5.0 (Dezember 03, 2021)
 

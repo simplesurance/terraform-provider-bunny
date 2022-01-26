@@ -22,6 +22,7 @@ const (
 	keyHostnameIsSystemHostname    = "is_system_hostname"
 	keyHostnameHasCertificate      = "has_certificate"
 	keyHostnameLoadFreeCertificate = "load_free_certificate"
+	keyHostnameCertificate         = "certificate"
 )
 
 const (
@@ -65,11 +66,21 @@ func resourceHostname() *schema.Resource {
 				Computed:    true,
 			},
 			keyHostnameLoadFreeCertificate: {
-				Type:        schema.TypeBool,
-				Description: "Determines if a free SSL certificate should be generated and loaded for the hostname",
-				ForceNew:    true,
-				Optional:    true,
-				Default:     false,
+				Type:          schema.TypeBool,
+				Description:   "Determines if a free SSL certificate should be generated and loaded for the hostname",
+				ForceNew:      true,
+				Optional:      true,
+				Default:       false,
+				ConflictsWith: []string{keyHostnameCertificate},
+			},
+			keyHostnameCertificate: {
+				Type:          schema.TypeList,
+				Description:   "Specifies a custom SSL certificate for the hostname.",
+				MaxItems:      1,
+				Optional:      true,
+				Elem:          resourceHostnameCertificate,
+				ForceNew:      true,
+				ConflictsWith: []string{keyHostnameLoadFreeCertificate},
 			},
 		},
 	}
@@ -94,6 +105,12 @@ func resourceHostnameCreate(ctx context.Context, d *schema.ResourceData, meta in
 		}
 	}
 
+	if m := structureFromResource(d, keyHostnameCertificate); len(m) != 0 {
+		if err := uploadCertificate(ctx, clt, pullZoneID, *hostnameOpt.Hostname, m); err != nil {
+			return append(diag, diagsErrFromErr("uploading certificate failed", err)...)
+		}
+	}
+
 	if forceSSL := d.Get(keyHostnameForceSSL).(bool); forceSSL {
 		err = clt.PullZone.SetForceSSL(ctx, pullZoneID, &bunny.SetForceSSLOptions{
 			Hostname: hostnameOpt.Hostname,
@@ -114,6 +131,16 @@ func resourceHostnameCreate(ctx context.Context, d *schema.ResourceData, meta in
 	}
 
 	return diag
+}
+
+func uploadCertificate(ctx context.Context, clt *bunny.Client, pullZoneID int64, hostname string, m structure) error {
+	msg := bunny.PullZoneAddCustomCertificateOptions{
+		Hostname:       hostname,
+		Certificate:    []byte(m.getStr(keyCertificateCertificateData)),
+		CertificateKey: []byte(m.getStr(keyCertificatePrivateKeyData)),
+	}
+
+	return clt.PullZone.AddCustomCertificate(ctx, pullZoneID, &msg)
 }
 
 func loadFreeCertRetry(ctx context.Context, clt *bunny.Client, timeout time.Duration, hostname string) error {
