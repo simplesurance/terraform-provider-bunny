@@ -51,7 +51,7 @@ func checkHostnameState(t *testing.T, wanted *hostnamesWanted) resource.TestChec
 
 		if len(pz.Hostnames) != len(wanted.Hostnames) {
 			return fmt.Errorf("api returned pull request with %d hostnames, expected %d",
-				len(pz.EdgeRules), len(wanted.Hostnames),
+				len(pz.Hostnames), len(wanted.Hostnames),
 			)
 		}
 
@@ -288,6 +288,157 @@ resource "bunny_hostname" "h1" {
 			{
 				Config:      tf,
 				ExpectError: regexp.MustCompile(".*"), // TODO: match a more specific error string :-)
+			},
+		},
+	})
+}
+
+func TestAccCertificateOneof(t *testing.T) {
+	pzName := randPullZoneName()
+	tf := fmt.Sprintf(`
+resource "bunny_pullzone" "pz" {
+	name = "%s"
+	origin_url ="https://bunny.net"
+}
+
+resource "bunny_hostname" "h1" {
+	pull_zone_id = bunny_pullzone.pz.id
+	hostname = "abcde.test"
+	load_free_certificate = true
+
+	certificate {
+		certificate_data = "123"
+		private_key_data = "456"
+	}
+
+}
+`, pzName)
+
+	resource.Test(t, resource.TestCase{
+		Providers: testProviders,
+		Steps: []resource.TestStep{
+			{
+				Config: tf,
+				//ExpectError: regexp.MustCompile(".*only one of `certificate,load_free_certificate` can be specified.*"),
+				ExpectError: regexp.MustCompile(`.*"certificate": conflicts with load_free_certificate.*`),
+				PlanOnly:    true,
+			},
+		},
+	})
+}
+
+func TestAccCertificates(t *testing.T) {
+	pzName := randPullZoneName()
+
+	resource.Test(t, resource.TestCase{
+		Providers: testProviders,
+		Steps: []resource.TestStep{
+			{
+				Config: fmt.Sprintf(`
+resource "bunny_pullzone" "pz" {
+	name = "%s"
+	origin_url ="https://bunny.net"
+}
+
+resource "bunny_hostname" "h1" {
+	pull_zone_id = bunny_pullzone.pz.id
+	hostname = "abcde.test"
+
+	certificate {
+		certificate_data = file("testdata/ssl.crt")
+		private_key_data = file("testdata/ssl.key")
+	}
+}
+`, pzName),
+				Check: checkHostnameState(t, &hostnamesWanted{
+					TerraformPullZoneResourceName: "bunny_pullzone.pz",
+					PullZoneName:                  pzName,
+					Hostnames: []*bunny.Hostname{
+						{
+							Value:            ptr.ToString(defPullZoneHostname(pzName)),
+							ForceSSL:         ptr.ToBool(false),
+							IsSystemHostname: ptr.ToBool(true),
+							HasCertificate:   ptr.ToBool(true),
+						},
+						{
+							Value:            ptr.ToString("abcde.test"),
+							ForceSSL:         ptr.ToBool(false),
+							IsSystemHostname: ptr.ToBool(false),
+							HasCertificate:   ptr.ToBool(true),
+						},
+					},
+				}),
+			},
+			// change the certificate
+			{
+				Config: fmt.Sprintf(`
+resource "bunny_pullzone" "pz" {
+	name = "%s"
+	origin_url ="https://bunny.net"
+}
+
+resource "bunny_hostname" "h1" {
+	pull_zone_id = bunny_pullzone.pz.id
+	hostname = "abcde.test"
+
+	certificate {
+		certificate_data = file("testdata/ssl1.crt")
+		private_key_data = file("testdata/ssl1.key")
+	}
+}
+`, pzName),
+				Check: checkHostnameState(t, &hostnamesWanted{
+					TerraformPullZoneResourceName: "bunny_pullzone.pz",
+					PullZoneName:                  pzName,
+					Hostnames: []*bunny.Hostname{
+						{
+							Value:            ptr.ToString(defPullZoneHostname(pzName)),
+							ForceSSL:         ptr.ToBool(false),
+							IsSystemHostname: ptr.ToBool(true),
+							HasCertificate:   ptr.ToBool(true),
+						},
+						{
+							Value:            ptr.ToString("abcde.test"),
+							ForceSSL:         ptr.ToBool(false),
+							IsSystemHostname: ptr.ToBool(false),
+							HasCertificate:   ptr.ToBool(true),
+						},
+					},
+				}),
+			},
+
+			// remove the certificate
+			{
+				Config: fmt.Sprintf(`
+resource "bunny_pullzone" "pz" {
+	name = "%s"
+	origin_url ="https://bunny.net"
+}
+
+resource "bunny_hostname" "h1" {
+	pull_zone_id = bunny_pullzone.pz.id
+	hostname = "abcde.test"
+}
+`, pzName),
+
+				Check: checkHostnameState(t, &hostnamesWanted{
+					TerraformPullZoneResourceName: "bunny_pullzone.pz",
+					PullZoneName:                  pzName,
+					Hostnames: []*bunny.Hostname{
+						{
+							Value:            ptr.ToString(defPullZoneHostname(pzName)),
+							ForceSSL:         ptr.ToBool(false),
+							IsSystemHostname: ptr.ToBool(true),
+							HasCertificate:   ptr.ToBool(true),
+						},
+						{
+							Value:            ptr.ToString("abcde.test"),
+							ForceSSL:         ptr.ToBool(false),
+							IsSystemHostname: ptr.ToBool(false),
+							HasCertificate:   ptr.ToBool(false),
+						},
+					},
+				}),
 			},
 		},
 	})

@@ -22,6 +22,7 @@ description: |-
 
 ### Optional
 
+- **certificate** (Block List, Max: 1) Specifies a custom SSL certificate for the hostname. (see [below for nested schema](#nestedblock--certificate))
 - **force_ssl** (Boolean) Determines if the Force SSL feature is enabled.
 - **id** (String) The ID of this resource.
 - **load_free_certificate** (Boolean) Determines if a free SSL certificate should be generated and loaded for the hostname
@@ -30,5 +31,13 @@ description: |-
 
 - **has_certificate** (Boolean) Determines if the hostname has an SSL certificate configured.
 - **is_system_hostname** (Boolean) Determines if this is a system hostname controlled by bunny.net.
+
+<a id="nestedblock--certificate"></a>
+### Nested Schema for `certificate`
+
+Required:
+
+- **certificate_data** (String) The public key.
+- **private_key_data** (String) The private key.
 
 
