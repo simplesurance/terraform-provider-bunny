@@ -1,5 +1,10 @@
 ## 0.6.0 (Unreleased)
 
+BUG FIXES:
+
+* resource/edgerule: changing the `pull_zone_id` of an edgerule resulted in
+                     API errors
+
 IMPROVEMENTS:
 
 * resource/hostname: new block `certificate`, for providing custom SSL

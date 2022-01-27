@@ -48,6 +48,7 @@ func resourceEdgeRule() *schema.Resource {
 				Type:        schema.TypeInt,
 				Description: "The ID of the Pull Zone to that Edge Rule belongs.",
 				Required:    true,
+				ForceNew:    true,
 			},
 			keyEdgeRuleActionType: {
 				Type: schema.TypeString,
