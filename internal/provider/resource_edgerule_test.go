@@ -556,3 +556,53 @@ resource "bunny_edgerule" "er2" {
 		},
 	})
 }
+
+func TestAccEdgeRule_changePullZoneID(t *testing.T) {
+	pzName1 := randPullZoneName()
+	pzName2 := randPullZoneName()
+
+	tfPz := fmt.Sprintf(`
+resource "bunny_pullzone" "pz1" {
+	name = "%s"
+	origin_url ="https://bunny.net"
+}
+
+resource "bunny_pullzone" "pz2" {
+	name = "%s"
+	origin_url ="https://bunny.net"
+} `, pzName1, pzName2)
+
+	resource.Test(t, resource.TestCase{
+		Providers: testProviders,
+		Steps: []resource.TestStep{
+			{
+				Config: tfPz + `
+resource "bunny_edgerule" "er1" {
+	pull_zone_id = bunny_pullzone.pz1.id
+	enabled = false
+	action_type = "block_request"
+	trigger_matching_type = "all"
+	trigger {
+		pattern_matching_type = "any"
+		type = "random_chance"
+		pattern_matches = ["30"]
+	}
+}`,
+			},
+			{
+				Config: tfPz + `
+resource "bunny_edgerule" "er1" {
+	pull_zone_id = bunny_pullzone.pz2.id
+	enabled = false
+	action_type = "block_request"
+	trigger_matching_type = "all"
+	trigger {
+		pattern_matching_type = "any"
+		type = "random_chance"
+		pattern_matches = ["30"]
+	}
+}`,
+			},
+		},
+	})
+}
