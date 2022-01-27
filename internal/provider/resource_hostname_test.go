@@ -442,3 +442,52 @@ resource "bunny_hostname" "h1" {
 		},
 	})
 }
+
+func TestAccHostname_StateIsValidWhenCertUploadFails(t *testing.T) {
+	pzName := randPullZoneName()
+	hostname := randHostname()
+
+	resource.Test(t, resource.TestCase{
+		Providers: testProviders,
+		Steps: []resource.TestStep{
+			{
+				// Provoke a certificate upload error, the
+				// hostname should still have been created on
+				// bunny.net
+				Destroy: false,
+				Config: fmt.Sprintf(`
+resource "bunny_pullzone" "pz" {
+	name = "%s"
+	origin_url ="https://bunny.net"
+}
+
+resource "bunny_hostname" "h1" {
+	pull_zone_id = bunny_pullzone.pz.id
+	hostname = %q
+
+	certificate {
+		certificate_data = "1234"
+		private_key_data = "5678"
+	}
+}
+`, pzName, hostname),
+				ExpectError: regexp.MustCompile(".*uploading certificate failed.*"),
+			},
+			// the local terraform state should not be broken,
+			// applying a change for the hostname must succeed
+			{
+				Config: fmt.Sprintf(`
+resource "bunny_pullzone" "pz" {
+	name = "%s"
+	origin_url ="https://bunny.net"
+}
+
+resource "bunny_hostname" "h1" {
+	pull_zone_id = bunny_pullzone.pz.id
+	hostname = %q
+}
+`, pzName, hostname),
+			},
+		},
+	})
+}
