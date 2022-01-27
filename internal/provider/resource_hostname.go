@@ -107,7 +107,13 @@ func resourceHostnameCreate(ctx context.Context, d *schema.ResourceData, meta in
 
 	if m := structureFromResource(d, keyHostnameCertificate); len(m) != 0 {
 		if err := uploadCertificate(ctx, clt, pullZoneID, *hostnameOpt.Hostname, m); err != nil {
-			return append(diag, diagsErrFromErr("uploading certificate failed", err)...)
+			diag = append(diag, diagsErrFromErr("uploading certificate failed", err)...)
+
+			if err := d.Set(keyHostnameCertificate, nil); err != nil {
+				diag = append(diag, diagsErrFromErr(
+					fmt.Sprintf("could not unset %s, state will be wrong", keyHostnameCertificate), err,
+				)...)
+			}
 		}
 	}
 
