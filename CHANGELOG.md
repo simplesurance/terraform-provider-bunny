@@ -5,6 +5,11 @@ IMPROVEMENTS:
 * resource/hostname: new block `certificate`, for providing custom SSL
                      certificates
 
+BUG FIXES:
+
+* resource/edgerule: changing the `pull_zone_id` of an edgerule resulted in
+                     API errors
+
 ## 0.5.0 (Dezember 03, 2021)
 
 IMPROVEMENTS:
