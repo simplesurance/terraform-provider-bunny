@@ -324,8 +324,7 @@ resource "bunny_hostname" "h1" {
 		Providers: testProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: tf,
-				//ExpectError: regexp.MustCompile(".*only one of `certificate,load_free_certificate` can be specified.*"),
+				Config:      tf,
 				ExpectError: regexp.MustCompile(`.*"certificate": conflicts with load_free_certificate.*`),
 				PlanOnly:    true,
 			},
