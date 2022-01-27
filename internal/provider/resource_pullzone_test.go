@@ -19,7 +19,10 @@ import (
 
 func randPullZoneName() string {
 	return resource.PrefixedUniqueId(resourcePrefix)
+}
 
+func randHostname() string {
+	return resource.PrefixedUniqueId(resourcePrefix) + ".test"
 }
 
 type pullZoneWanted struct {

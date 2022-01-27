@@ -122,6 +122,12 @@ resource "bunny_hostname" "h1" {
 
 func TestAccHostname_addRemove(t *testing.T) {
 	pzName := randPullZoneName()
+	hostname1 := randHostname()
+	hostname2 := randHostname()
+	hostname3 := randHostname()
+	hostname4 := randHostname()
+	hostname5 := randHostname()
+	hostname6 := randHostname()
 
 	tfPz := fmt.Sprintf(`
 resource "bunny_pullzone" "pz" {
@@ -133,23 +139,23 @@ resource "bunny_pullzone" "pz" {
 		Providers: testProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: tfPz + `
+				Config: tfPz + fmt.Sprintf(`
 resource "bunny_hostname" "h1" {
 	pull_zone_id = bunny_pullzone.pz.id
-	hostname = "google.de"
+	hostname = %q
 	force_ssl = true
 }
 
 resource "bunny_hostname" "h2" {
 	pull_zone_id = bunny_pullzone.pz.id
-	hostname = "yahoo.com"
+	hostname = %q
 }
 
 resource "bunny_hostname" "h3" {
 	pull_zone_id = bunny_pullzone.pz.id
-	hostname = "bing.com"
+	hostname = %q
 }
-`,
+`, hostname1, hostname2, hostname3),
 
 				Check: checkHostnameState(t, &hostnamesWanted{
 					TerraformPullZoneResourceName: "bunny_pullzone.pz",
@@ -162,19 +168,19 @@ resource "bunny_hostname" "h3" {
 							HasCertificate:   ptr.ToBool(true),
 						},
 						{
-							Value:            ptr.ToString("google.de"),
+							Value:            &hostname1,
 							ForceSSL:         ptr.ToBool(true),
 							IsSystemHostname: ptr.ToBool(false),
 							HasCertificate:   ptr.ToBool(false),
 						},
 						{
-							Value:            ptr.ToString("yahoo.com"),
+							Value:            &hostname2,
 							ForceSSL:         ptr.ToBool(false),
 							IsSystemHostname: ptr.ToBool(false),
 							HasCertificate:   ptr.ToBool(false),
 						},
 						{
-							Value:            ptr.ToString("bing.com"),
+							Value:            &hostname3,
 							ForceSSL:         ptr.ToBool(false),
 							IsSystemHostname: ptr.ToBool(false),
 							HasCertificate:   ptr.ToBool(false),
@@ -185,24 +191,23 @@ resource "bunny_hostname" "h3" {
 
 			// Change all 3 hostname
 			{
-				Config: tfPz + `
+				Config: tfPz + fmt.Sprintf(`
 resource "bunny_hostname" "h1" {
 	pull_zone_id = bunny_pullzone.pz.id
-	hostname = "google.de"
+	hostname = %q
 }
 
 
 resource "bunny_hostname" "h3" {
 	pull_zone_id = bunny_pullzone.pz.id
-	hostname = "altavista.com"
+	hostname = %q
 }
 
 resource "bunny_hostname" "h2" {
 	pull_zone_id = bunny_pullzone.pz.id
-	hostname = "duckduckgo.com"
+	hostname = %q
 }
-`,
-
+`, hostname4, hostname5, hostname6),
 				Check: checkHostnameState(t, &hostnamesWanted{
 					TerraformPullZoneResourceName: "bunny_pullzone.pz",
 					PullZoneName:                  pzName,
@@ -214,19 +219,19 @@ resource "bunny_hostname" "h2" {
 							HasCertificate:   ptr.ToBool(true),
 						},
 						{
-							Value:            ptr.ToString("google.de"),
+							Value:            &hostname4,
 							ForceSSL:         ptr.ToBool(false),
 							IsSystemHostname: ptr.ToBool(false),
 							HasCertificate:   ptr.ToBool(false),
 						},
 						{
-							Value:            ptr.ToString("altavista.com"),
+							Value:            &hostname5,
 							ForceSSL:         ptr.ToBool(false),
 							IsSystemHostname: ptr.ToBool(false),
 							HasCertificate:   ptr.ToBool(false),
 						},
 						{
-							Value:            ptr.ToString("duckduckgo.com"),
+							Value:            &hostname6,
 							ForceSSL:         ptr.ToBool(false),
 							IsSystemHostname: ptr.ToBool(false),
 							HasCertificate:   ptr.ToBool(false),
@@ -263,6 +268,7 @@ resource "bunny_hostname" "h2" {
 			{
 				Config:      tf,
 				ExpectError: regexp.MustCompile(".*"), // TODO: match a more specific error string :-)
+				PlanOnly:    true,
 			},
 		},
 	})
@@ -361,6 +367,7 @@ resource "bunny_hostname" "h1" {
 
 func TestAccCertificates(t *testing.T) {
 	pzName := randPullZoneName()
+	hostname := randHostname()
 
 	resource.Test(t, resource.TestCase{
 		Providers: testProviders,
@@ -374,14 +381,14 @@ resource "bunny_pullzone" "pz" {
 
 resource "bunny_hostname" "h1" {
 	pull_zone_id = bunny_pullzone.pz.id
-	hostname = "abcde.test"
+	hostname = %q
 
 	certificate {
 		certificate_data = file("testdata/ssl.crt")
 		private_key_data = file("testdata/ssl.key")
 	}
 }
-`, pzName),
+`, pzName, hostname),
 				Check: checkHostnameState(t, &hostnamesWanted{
 					TerraformPullZoneResourceName: "bunny_pullzone.pz",
 					PullZoneName:                  pzName,
@@ -393,7 +400,7 @@ resource "bunny_hostname" "h1" {
 							HasCertificate:   ptr.ToBool(true),
 						},
 						{
-							Value:            ptr.ToString("abcde.test"),
+							Value:            &hostname,
 							ForceSSL:         ptr.ToBool(false),
 							IsSystemHostname: ptr.ToBool(false),
 							HasCertificate:   ptr.ToBool(true),
@@ -411,14 +418,14 @@ resource "bunny_pullzone" "pz" {
 
 resource "bunny_hostname" "h1" {
 	pull_zone_id = bunny_pullzone.pz.id
-	hostname = "abcde.test"
+	hostname = %q
 
 	certificate {
 		certificate_data = file("testdata/ssl1.crt")
 		private_key_data = file("testdata/ssl1.key")
 	}
 }
-`, pzName),
+`, pzName, hostname),
 				Check: checkHostnameState(t, &hostnamesWanted{
 					TerraformPullZoneResourceName: "bunny_pullzone.pz",
 					PullZoneName:                  pzName,
@@ -430,7 +437,7 @@ resource "bunny_hostname" "h1" {
 							HasCertificate:   ptr.ToBool(true),
 						},
 						{
-							Value:            ptr.ToString("abcde.test"),
+							Value:            &hostname,
 							ForceSSL:         ptr.ToBool(false),
 							IsSystemHostname: ptr.ToBool(false),
 							HasCertificate:   ptr.ToBool(true),
@@ -449,9 +456,9 @@ resource "bunny_pullzone" "pz" {
 
 resource "bunny_hostname" "h1" {
 	pull_zone_id = bunny_pullzone.pz.id
-	hostname = "abcde.test"
+	hostname = %q
 }
-`, pzName),
+`, pzName, hostname),
 
 				Check: checkHostnameState(t, &hostnamesWanted{
 					TerraformPullZoneResourceName: "bunny_pullzone.pz",
@@ -464,7 +471,7 @@ resource "bunny_hostname" "h1" {
 							HasCertificate:   ptr.ToBool(true),
 						},
 						{
-							Value:            ptr.ToString("abcde.test"),
+							Value:            &hostname,
 							ForceSSL:         ptr.ToBool(false),
 							IsSystemHostname: ptr.ToBool(false),
 							HasCertificate:   ptr.ToBool(false),
