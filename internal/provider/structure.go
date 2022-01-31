@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	ptr "github.com/AlekSi/pointer"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 // structure represents a nested Terraform block.
@@ -12,12 +11,16 @@ import (
 // represented as a TypeList with with a single map[string]interface{} element.
 type structure map[string]interface{}
 
+type resourceDataGetter interface {
+	Get(string) interface{}
+}
+
 // structureFromResource returns a new structure from the field with the passed
 // key from ResourceData.
 // If the key does not exist in d, the type of the value is not []interface{}
 // with elements of type map[string]interface{} or has not a size of 0 or 1,
 // the function panics.
-func structureFromResource(d *schema.ResourceData, key string) structure {
+func structureFromResource(d resourceDataGetter, key string) structure {
 	v := d.Get(key)
 	if v == nil {
 		panic(fmt.Sprintf("structureFromResource: key %q is nil in ResourceData", key))
@@ -37,6 +40,10 @@ func structureFromElem(e []interface{}) structure {
 	}
 
 	return e[0].(map[string]interface{})
+}
+
+func (m structure) isEmpty() bool {
+	return len(m) == 0
 }
 
 // getBoolPtr returns the value of the passed key as *bool.
