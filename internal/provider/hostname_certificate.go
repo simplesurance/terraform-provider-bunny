@@ -11,7 +11,7 @@ var resourceHostnameCertificate = &schema.Resource{
 	Schema: map[string]*schema.Schema{
 		keyCertificateCertificateData: {
 			Type:        schema.TypeString,
-			Description: "The public key.",
+			Description: "The X.509 certificate.",
 			Required:    true,
 			ForceNew:    true,
 		},

@@ -37,7 +37,7 @@ description: |-
 
 Required:
 
-- **certificate_data** (String) The public key.
-- **private_key_data** (String) The private key.
+- **certificate_data** (String) The X.509 certificate.
+- **private_key_data** (String, Sensitive) The private key.
 
 
