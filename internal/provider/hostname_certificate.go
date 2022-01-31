@@ -20,6 +20,7 @@ var resourceHostnameCertificate = &schema.Resource{
 			Description: "The private key.",
 			Required:    true,
 			ForceNew:    true,
+			Sensitive:   true,
 		},
 	},
 }
