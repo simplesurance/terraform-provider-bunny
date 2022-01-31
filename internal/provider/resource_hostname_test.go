@@ -319,8 +319,41 @@ resource "bunny_hostname" "h1" {
 		Steps: []resource.TestStep{
 			{
 				Config:      tf,
-				ExpectError: regexp.MustCompile(`.*"certificate": conflicts with load_free_certificate.*`),
+				ExpectError: regexp.MustCompile(`only one of "load_free_certificate" or "certificate" can be set`),
 				PlanOnly:    true,
+			},
+		},
+	})
+}
+
+func TestAccCertificateCanBeSetWhenLoadFreeCertIsDisabled(t *testing.T) {
+	pzName := randPullZoneName()
+	tf := fmt.Sprintf(`
+resource "bunny_pullzone" "pz" {
+	name = "%s"
+	origin_url ="https://bunny.net"
+}
+
+resource "bunny_hostname" "h1" {
+	pull_zone_id = bunny_pullzone.pz.id
+	hostname = "abcde.test"
+	load_free_certificate = false
+
+	certificate {
+		certificate_data = "123"
+		private_key_data = "456"
+	}
+
+}
+`, pzName)
+
+	resource.Test(t, resource.TestCase{
+		Providers: testProviders,
+		Steps: []resource.TestStep{
+			{
+				Config:             tf,
+				PlanOnly:           true,
+				ExpectNonEmptyPlan: true,
 			},
 		},
 	})

@@ -36,6 +36,17 @@ func resourceHostname() *schema.Resource {
 		ReadContext:   resourceHostnameRead,
 		DeleteContext: resourceHostnameDelete,
 
+		CustomizeDiff: func(_ context.Context, d *schema.ResourceDiff, _ interface{}) error {
+			loadFreeCert := d.Get(keyHostnameLoadFreeCertificate).(bool)
+
+			if loadFreeCert && !structureFromResource(d, keyHostnameCertificate).isEmpty() {
+				return fmt.Errorf("only one of %q or %q can be set",
+					keyHostnameLoadFreeCertificate, keyHostnameCertificate,
+				)
+			}
+
+			return nil
+		},
 		Schema: map[string]*schema.Schema{
 			keyHostnamePullZoneID: {
 				Type:        schema.TypeInt,
@@ -66,21 +77,19 @@ func resourceHostname() *schema.Resource {
 				Computed:    true,
 			},
 			keyHostnameLoadFreeCertificate: {
-				Type:          schema.TypeBool,
-				Description:   "Determines if a free SSL certificate should be generated and loaded for the hostname",
-				ForceNew:      true,
-				Optional:      true,
-				Default:       false,
-				ConflictsWith: []string{keyHostnameCertificate},
+				Type:        schema.TypeBool,
+				Description: "Determines if a free SSL certificate should be generated and loaded for the hostname",
+				ForceNew:    true,
+				Optional:    true,
+				Default:     false,
 			},
 			keyHostnameCertificate: {
-				Type:          schema.TypeList,
-				Description:   "Specifies a custom SSL certificate for the hostname.",
-				MaxItems:      1,
-				Optional:      true,
-				Elem:          resourceHostnameCertificate,
-				ForceNew:      true,
-				ConflictsWith: []string{keyHostnameLoadFreeCertificate},
+				Type:        schema.TypeList,
+				Description: "Specifies a custom SSL certificate for the hostname.",
+				MaxItems:    1,
+				Optional:    true,
+				Elem:        resourceHostnameCertificate,
+				ForceNew:    true,
 			},
 		},
 	}
