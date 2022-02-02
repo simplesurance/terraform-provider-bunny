@@ -9,6 +9,8 @@ IMPROVEMENTS:
 
 * resource/edgerule: support action types `set_status_code` and
                      `bypass_perma_cache`
+* resource/edgerule: support trigger types `status_code` and
+                     `request_method`
 
 ## 0.6.0 (Januar 31, 2022)
 

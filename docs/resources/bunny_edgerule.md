@@ -43,7 +43,7 @@ Required:
 - **pattern_matching_type** (String) The type of pattern matching.
 Valid values: all, any, none
 - **type** (String) The type of the Trigger.
-Valid values: country_code, query_string, random_chance, remote_ip, request_header, response_header, url, url_extensions
+Valid values: country_code, query_string, random_chance, remote_ip, request_header, request_method, response_header, status_code, url, url_extensions
 
 Optional:
 
