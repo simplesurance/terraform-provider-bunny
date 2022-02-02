@@ -18,7 +18,7 @@ description: |-
 ### Required
 
 - **action_type** (String) The action type of the Edge Rule.
-Valid values: block_request, disable_optimizer, disable_token_auth, enable_token_auth, force_compression, force_download, force_ssl, ignore_quiery_string, origin_url, override_cache_time, override_cache_time_public, redirect, set_request_header, set_response_header
+Valid values: block_request, bypass_perma_cache, disable_optimizer, disable_token_auth, enable_token_auth, force_compression, force_download, force_ssl, ignore_query_string, origin_url, override_cache_time, override_cache_time_public, redirect, set_request_header, set_response_header, set_status_code
 - **pull_zone_id** (Number) The ID of the Pull Zone to that Edge Rule belongs.
 - **trigger** (Block Set, Min: 1, Max: 5) (see [below for nested schema](#nestedblock--trigger))
 

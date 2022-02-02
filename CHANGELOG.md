@@ -5,6 +5,11 @@ BREAKING CHANGES:
 * resource/edgerule: renamed action type `ignore_quiery_string` to
                      `ignore_query_string`
 
+IMPROVEMENTS:
+
+* resource/edgerule: support action types `set_status_code` and
+                     `bypass_perma_cache`
+
 ## 0.6.0 (Januar 31, 2022)
 
 IMPROVEMENTS:
