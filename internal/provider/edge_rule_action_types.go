@@ -19,6 +19,8 @@ var edgeRuleActionTypesStr = map[string]int{
 	"ignore_query_string":        bunny.EdgeRuleActionTypeIgnoreQueryString,
 	"disable_optimizer":          bunny.EdgeRuleActionTypeDisableOptimizer,
 	"force_compression":          bunny.EdgeRuleActionTypeForceCompression,
+	"set_status_code":            bunny.EdgeRuleActionTypeSetStatusCode,
+	"bypass_perma_cache":         bunny.EdgeRuleActionTypeBypassPermaCache,
 }
 
 var edgeRuleActionTypesInt = reverseStrIntMap(edgeRuleActionTypesStr)
