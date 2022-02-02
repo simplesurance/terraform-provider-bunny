@@ -31,7 +31,7 @@ Endpoints](https://docs.bunny.net/reference/bunnynet-api-overview) are supported
     - [ ] Purge Cache
     - [x] Load Free Certificate
     - [x] Add Custom Certificate
-    - [ ] Remove Certificate
+    - [x] Remove Certificate
     - [x] Add Custom Hostname
     - [x] Remove Custom Hostname
     - [x] Set Force SSL

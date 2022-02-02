@@ -19,36 +19,6 @@ const (
 	MatchingTypeNone
 )
 
-// Constants for the ActionType fields of an EdgeRule.
-const (
-	EdgeRuleActionTypeForceSSL int = iota
-	EdgeRuleActionTypeRedirect
-	EdgeRuleActionTypeOriginURL
-	EdgeRuleActionTypeOverrideCacheTime
-	EdgeRuleActionTypeBlockRequest
-	EdgeRuleActionTypeSetResponseHeader
-	EdgeRuleActionTypeSetRequestHeader
-	EdgeRuleActionTypeForceDownload
-	EdgeRuleActionTypeDisableTokenAuthentication
-	EdgeRuleActionTypeEnableTokenAuthentication
-	EdgeRuleActionTypeOverrideCacheTimePublic
-	EdgeRuleActionTypeIgnoreQueryString
-	EdgeRuleActionTypeDisableOptimizer
-	EdgeRuleActionTypeForceCompression
-)
-
-// Constants for the Type field of an EdgeRuleTrigger.
-const (
-	EdgeRuleTriggerTypeURL int = iota
-	EdgeRuleTriggerTypeRequestHeader
-	EdgeRuleTriggerTypeResponseHeader
-	EdgeRuleTriggerTypeURLExtension
-	EdgeRuleTriggerTypeCountryCode
-	EdgeRuleTriggerTypeRemoteIP
-	EdgeRuleTriggerTypeURLQueryString
-	EdgeRuleTriggerTypeRandomChance
-)
-
 // PullZone represents the response of the the List and Get Pull Zone API endpoint.
 //
 // Bunny.net API docs: https://docs.bunny.net/reference/pullzonepublic_index2 https://docs.bunny.net/reference/pullzonepublic_index
@@ -187,14 +157,6 @@ type EdgeRule struct {
 	TriggerMatchingType *int               `json:"TriggerMatchingType,omitempty"`
 	Description         *string            `json:"Description,omitempty"`
 	Enabled             *bool              `json:"Enabled,omitempty"`
-}
-
-// EdgeRuleTrigger represents the values of the Trigger field of an EdgeRule.
-type EdgeRuleTrigger struct {
-	Type                *int     `json:"Type,omitempty"`
-	PatternMatches      []string `json:"PatternMatches,omitempty"`
-	PatternMatchingType *int     `json:"PatternMatchingType,omitempty"`
-	Parameter1          *string  `json:"Parameter1,omitempty"`
 }
 
 // Get retrieves the Pull Zone with the given id.
