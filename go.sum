@@ -354,8 +354,8 @@ github.com/sergi/go-diff v1.0.0/go.mod h1:0CfEIISq7TuYL3j771MWULgwwjU+GofnZX9QAm
 github.com/sergi/go-diff v1.1.0/go.mod h1:STckp+ISIX8hZLjrqAeVduY0gWCT9IjLuqbuNXdaHfM=
 github.com/sergi/go-diff v1.2.0 h1:XU+rvMAioB0UC3q1MFrIQy4Vo5/4VsRDQQXHsEya6xQ=
 github.com/sergi/go-diff v1.2.0/go.mod h1:STckp+ISIX8hZLjrqAeVduY0gWCT9IjLuqbuNXdaHfM=
-github.com/simplesurance/bunny-go v0.0.0-20220104105156-b14fa086f4c9 h1:iifj4swK3ypmyl6BlTldZPMRQyI/OTQG82u01m3vQ9E=
-github.com/simplesurance/bunny-go v0.0.0-20220104105156-b14fa086f4c9/go.mod h1:KU8W9TK70MvqGIrdCS8OfzAo0SaLXqUl0E1N8ZYpwhY=
+github.com/simplesurance/bunny-go v0.0.0-20220202145800-6eafc6db3801 h1:v6SWot2pyXzcYCX2JU5XooR7nX3VEk8xpxPZV3dq2zU=
+github.com/simplesurance/bunny-go v0.0.0-20220202145800-6eafc6db3801/go.mod h1:KU8W9TK70MvqGIrdCS8OfzAo0SaLXqUl0E1N8ZYpwhY=
 github.com/sirupsen/logrus v1.4.1/go.mod h1:ni0Sbl8bgC9z8RoU9G6nDWqqs/fq4eDPysMBDgk/93Q=
 github.com/spaolacci/murmur3 v0.0.0-20180118202830-f09979ecbc72/go.mod h1:JwIasOWyU6f++ZhiEuf87xNszmSA2myDM2Kzu9HwQUA=
 github.com/spf13/pflag v1.0.2/go.mod h1:DYY7MBk1bdzusC3SYhjObp+wFpr4gzcvqqNjLnInEg4=

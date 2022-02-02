@@ -5,7 +5,7 @@ import (
 	"fmt"
 )
 
-// RemoveCustomHostnameOptions  represents the message that is sent to the
+// RemoveCustomHostnameOptions represents the message that is sent to the
 // Remove Custom Hostname API Endpoint.
 //
 // Bunny.net API docs: https://docs.bunny.net/reference/pullzonepublic_removehostname

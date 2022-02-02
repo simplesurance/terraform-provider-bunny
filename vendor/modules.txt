@@ -311,7 +311,7 @@ github.com/posener/complete/match
 # github.com/russross/blackfriday v1.6.0
 ## explicit; go 1.13
 github.com/russross/blackfriday
-# github.com/simplesurance/bunny-go v0.0.0-20220104105156-b14fa086f4c9
+# github.com/simplesurance/bunny-go v0.0.0-20220202145800-6eafc6db3801
 ## explicit; go 1.17
 github.com/simplesurance/bunny-go
 # github.com/ulikunitz/xz v0.5.8

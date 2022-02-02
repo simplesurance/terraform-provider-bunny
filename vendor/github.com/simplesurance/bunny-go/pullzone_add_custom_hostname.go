@@ -5,7 +5,7 @@ import (
 	"fmt"
 )
 
-// AddCustomHostnameOptions  represents the message that is sent to the
+// AddCustomHostnameOptions represents the message that is sent to the
 // Add Custom Hostname API Endpoint.
 //
 // Bunny.net API docs: https://docs.bunny.net/reference/pullzonepublic_addhostname
