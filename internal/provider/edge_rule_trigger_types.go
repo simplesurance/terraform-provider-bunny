@@ -11,6 +11,8 @@ var edgeRuleTriggerTypesStr = map[string]int{
 	"remote_ip":       bunny.EdgeRuleTriggerTypeRemoteIP,
 	"query_string":    bunny.EdgeRuleTriggerTypeURLQueryString,
 	"random_chance":   bunny.EdgeRuleTriggerTypeRandomChance,
+	"status_code":     bunny.EdgeRuleTriggerTypeStatusCode,
+	"request_method":  bunny.EdgeRuleTriggerTypeRequestMethod,
 }
 
 var edgeRuleTriggerTypesInt = reverseStrIntMap(edgeRuleTriggerTypesStr)
