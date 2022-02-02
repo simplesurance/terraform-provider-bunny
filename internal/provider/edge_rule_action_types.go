@@ -16,7 +16,7 @@ var edgeRuleActionTypesStr = map[string]int{
 	"disable_token_auth":         bunny.EdgeRuleActionTypeDisableTokenAuthentication,
 	"enable_token_auth":          bunny.EdgeRuleActionTypeEnableTokenAuthentication,
 	"override_cache_time_public": bunny.EdgeRuleActionTypeOverrideCacheTimePublic,
-	"ignore_quiery_string":       bunny.EdgeRuleActionTypeIgnoreQueryString,
+	"ignore_query_string":        bunny.EdgeRuleActionTypeIgnoreQueryString,
 	"disable_optimizer":          bunny.EdgeRuleActionTypeDisableOptimizer,
 	"force_compression":          bunny.EdgeRuleActionTypeForceCompression,
 }

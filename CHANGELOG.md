@@ -1,4 +1,9 @@
-## 0.6.1 (Unreleased)
+## 0.7.0 (Unreleased)
+
+BREAKING CHANGES:
+
+* resource/edgerule: renamed action type `ignore_quiery_string` to
+                     `ignore_query_string`
 
 ## 0.6.0 (Januar 31, 2022)
 
