@@ -258,6 +258,8 @@ func Serve(name string, serverFactory func() tfprotov5.ProviderServer, opts ...S
 		},
 		Plugins: plugin.PluginSet{
 			"provider": &GRPCProviderPlugin{
+				Name:         name,
+				Opts:         opts,
 				GRPCProvider: serverFactory,
 			},
 		},
@@ -489,19 +491,19 @@ func (s *server) GetSchema(ctx context.Context, req *tfplugin5.GetProviderSchema
 	defer logging.ProtocolTrace(ctx, "Served request")
 	r, err := fromproto.GetProviderSchemaRequest(req)
 	if err != nil {
-		logging.ProtocolError(ctx, "Error converting request from protobuf", "error", err)
+		logging.ProtocolError(ctx, "Error converting request from protobuf", map[string]interface{}{logging.KeyError: err})
 		return nil, err
 	}
 	logging.ProtocolTrace(ctx, "Calling downstream")
 	resp, err := s.downstream.GetProviderSchema(ctx, r)
 	if err != nil {
-		logging.ProtocolError(ctx, "Error from downstream", "error", err)
+		logging.ProtocolError(ctx, "Error from downstream", map[string]interface{}{logging.KeyError: err})
 		return nil, err
 	}
 	logging.ProtocolTrace(ctx, "Called downstream")
 	ret, err := toproto.GetProviderSchema_Response(resp)
 	if err != nil {
-		logging.ProtocolError(ctx, "Error converting response to protobuf", "error", err)
+		logging.ProtocolError(ctx, "Error converting response to protobuf", map[string]interface{}{logging.KeyError: err})
 		return nil, err
 	}
 	return ret, nil
@@ -516,21 +518,21 @@ func (s *server) PrepareProviderConfig(ctx context.Context, req *tfplugin5.Prepa
 	defer logging.ProtocolTrace(ctx, "Served request")
 	r, err := fromproto.PrepareProviderConfigRequest(req)
 	if err != nil {
-		logging.ProtocolError(ctx, "Error converting request from protobuf", "error", err)
+		logging.ProtocolError(ctx, "Error converting request from protobuf", map[string]interface{}{logging.KeyError: err})
 		return nil, err
 	}
 	logging.ProtocolData(ctx, s.protocolDataDir, rpc, "Request", "Config", r.Config)
 	logging.ProtocolTrace(ctx, "Calling downstream")
 	resp, err := s.downstream.PrepareProviderConfig(ctx, r)
 	if err != nil {
-		logging.ProtocolError(ctx, "Error from downstream", "error", err)
+		logging.ProtocolError(ctx, "Error from downstream", map[string]interface{}{logging.KeyError: err})
 		return nil, err
 	}
 	logging.ProtocolTrace(ctx, "Called downstream")
 	logging.ProtocolData(ctx, s.protocolDataDir, rpc, "Response", "PreparedConfig", resp.PreparedConfig)
 	ret, err := toproto.PrepareProviderConfig_Response(resp)
 	if err != nil {
-		logging.ProtocolError(ctx, "Error converting response to protobuf", "error", err)
+		logging.ProtocolError(ctx, "Error converting response to protobuf", map[string]interface{}{logging.KeyError: err})
 		return nil, err
 	}
 	return ret, nil
@@ -545,20 +547,20 @@ func (s *server) Configure(ctx context.Context, req *tfplugin5.Configure_Request
 	defer logging.ProtocolTrace(ctx, "Served request")
 	r, err := fromproto.ConfigureProviderRequest(req)
 	if err != nil {
-		logging.ProtocolError(ctx, "Error converting request from protobuf", "error", err)
+		logging.ProtocolError(ctx, "Error converting request from protobuf", map[string]interface{}{logging.KeyError: err})
 		return nil, err
 	}
 	logging.ProtocolData(ctx, s.protocolDataDir, rpc, "Request", "Config", r.Config)
 	logging.ProtocolTrace(ctx, "Calling downstream")
 	resp, err := s.downstream.ConfigureProvider(ctx, r)
 	if err != nil {
-		logging.ProtocolError(ctx, "Error from downstream", "error", err)
+		logging.ProtocolError(ctx, "Error from downstream", map[string]interface{}{logging.KeyError: err})
 		return nil, err
 	}
 	logging.ProtocolTrace(ctx, "Called downstream")
 	ret, err := toproto.Configure_Response(resp)
 	if err != nil {
-		logging.ProtocolError(ctx, "Error converting response to protobuf", "error", err)
+		logging.ProtocolError(ctx, "Error converting response to protobuf", map[string]interface{}{logging.KeyError: err})
 		return nil, err
 	}
 	return ret, nil
@@ -586,13 +588,13 @@ func (s *server) Stop(ctx context.Context, req *tfplugin5.Stop_Request) (*tfplug
 	defer logging.ProtocolTrace(ctx, "Served request")
 	r, err := fromproto.StopProviderRequest(req)
 	if err != nil {
-		logging.ProtocolError(ctx, "Error converting request from protobuf", "error", err)
+		logging.ProtocolError(ctx, "Error converting request from protobuf", map[string]interface{}{logging.KeyError: err})
 		return nil, err
 	}
 	logging.ProtocolTrace(ctx, "Calling downstream")
 	resp, err := s.downstream.StopProvider(ctx, r)
 	if err != nil {
-		logging.ProtocolError(ctx, "Error from downstream", "error", err)
+		logging.ProtocolError(ctx, "Error from downstream", map[string]interface{}{logging.KeyError: err})
 		return nil, err
 	}
 	logging.ProtocolTrace(ctx, "Called downstream")
@@ -601,7 +603,7 @@ func (s *server) Stop(ctx context.Context, req *tfplugin5.Stop_Request) (*tfplug
 	logging.ProtocolTrace(ctx, "Closed all our contexts")
 	ret, err := toproto.Stop_Response(resp)
 	if err != nil {
-		logging.ProtocolError(ctx, "Error converting response to protobuf", "error", err)
+		logging.ProtocolError(ctx, "Error converting response to protobuf", map[string]interface{}{logging.KeyError: err})
 		return nil, err
 	}
 	return ret, nil
@@ -617,20 +619,20 @@ func (s *server) ValidateDataSourceConfig(ctx context.Context, req *tfplugin5.Va
 	defer logging.ProtocolTrace(ctx, "Served request")
 	r, err := fromproto.ValidateDataSourceConfigRequest(req)
 	if err != nil {
-		logging.ProtocolError(ctx, "Error converting request from protobuf", "error", err)
+		logging.ProtocolError(ctx, "Error converting request from protobuf", map[string]interface{}{logging.KeyError: err})
 		return nil, err
 	}
 	logging.ProtocolData(ctx, s.protocolDataDir, rpc, "Request", "Config", r.Config)
 	logging.ProtocolTrace(ctx, "Calling downstream")
 	resp, err := s.downstream.ValidateDataSourceConfig(ctx, r)
 	if err != nil {
-		logging.ProtocolError(ctx, "Error from downstream", "error", err)
+		logging.ProtocolError(ctx, "Error from downstream", map[string]interface{}{logging.KeyError: err})
 		return nil, err
 	}
 	logging.ProtocolTrace(ctx, "Called downstream")
 	ret, err := toproto.ValidateDataSourceConfig_Response(resp)
 	if err != nil {
-		logging.ProtocolError(ctx, "Error converting response to protobuf", "error", err)
+		logging.ProtocolError(ctx, "Error converting response to protobuf", map[string]interface{}{logging.KeyError: err})
 		return nil, err
 	}
 	return ret, nil
@@ -646,7 +648,7 @@ func (s *server) ReadDataSource(ctx context.Context, req *tfplugin5.ReadDataSour
 	defer logging.ProtocolTrace(ctx, "Served request")
 	r, err := fromproto.ReadDataSourceRequest(req)
 	if err != nil {
-		logging.ProtocolError(ctx, "Error converting request from protobuf", "error", err)
+		logging.ProtocolError(ctx, "Error converting request from protobuf", map[string]interface{}{logging.KeyError: err})
 		return nil, err
 	}
 	logging.ProtocolData(ctx, s.protocolDataDir, rpc, "Request", "Config", r.Config)
@@ -654,14 +656,14 @@ func (s *server) ReadDataSource(ctx context.Context, req *tfplugin5.ReadDataSour
 	logging.ProtocolTrace(ctx, "Calling downstream")
 	resp, err := s.downstream.ReadDataSource(ctx, r)
 	if err != nil {
-		logging.ProtocolError(ctx, "Error from downstream", "error", err)
+		logging.ProtocolError(ctx, "Error from downstream", map[string]interface{}{logging.KeyError: err})
 		return nil, err
 	}
 	logging.ProtocolTrace(ctx, "Called downstream")
 	logging.ProtocolData(ctx, s.protocolDataDir, rpc, "Response", "State", resp.State)
 	ret, err := toproto.ReadDataSource_Response(resp)
 	if err != nil {
-		logging.ProtocolError(ctx, "Error converting response to protobuf", "error", err)
+		logging.ProtocolError(ctx, "Error converting response to protobuf", map[string]interface{}{logging.KeyError: err})
 		return nil, err
 	}
 	return ret, nil
@@ -677,20 +679,20 @@ func (s *server) ValidateResourceTypeConfig(ctx context.Context, req *tfplugin5.
 	defer logging.ProtocolTrace(ctx, "Served request")
 	r, err := fromproto.ValidateResourceTypeConfigRequest(req)
 	if err != nil {
-		logging.ProtocolError(ctx, "Error converting request from protobuf", "error", err)
+		logging.ProtocolError(ctx, "Error converting request from protobuf", map[string]interface{}{logging.KeyError: err})
 		return nil, err
 	}
 	logging.ProtocolData(ctx, s.protocolDataDir, rpc, "Request", "Config", r.Config)
 	logging.ProtocolTrace(ctx, "Calling downstream")
 	resp, err := s.downstream.ValidateResourceTypeConfig(ctx, r)
 	if err != nil {
-		logging.ProtocolError(ctx, "Error from downstream", "error", err)
+		logging.ProtocolError(ctx, "Error from downstream", map[string]interface{}{logging.KeyError: err})
 		return nil, err
 	}
 	logging.ProtocolTrace(ctx, "Called downstream")
 	ret, err := toproto.ValidateResourceTypeConfig_Response(resp)
 	if err != nil {
-		logging.ProtocolError(ctx, "Error converting response to protobuf", "error", err)
+		logging.ProtocolError(ctx, "Error converting response to protobuf", map[string]interface{}{logging.KeyError: err})
 		return nil, err
 	}
 	return ret, nil
@@ -706,20 +708,20 @@ func (s *server) UpgradeResourceState(ctx context.Context, req *tfplugin5.Upgrad
 	defer logging.ProtocolTrace(ctx, "Served request")
 	r, err := fromproto.UpgradeResourceStateRequest(req)
 	if err != nil {
-		logging.ProtocolError(ctx, "Error converting request from protobuf", "error", err)
+		logging.ProtocolError(ctx, "Error converting request from protobuf", map[string]interface{}{logging.KeyError: err})
 		return nil, err
 	}
 	logging.ProtocolTrace(ctx, "Calling downstream")
 	resp, err := s.downstream.UpgradeResourceState(ctx, r)
 	if err != nil {
-		logging.ProtocolError(ctx, "Error from downstream", "error", err)
+		logging.ProtocolError(ctx, "Error from downstream", map[string]interface{}{logging.KeyError: err})
 		return nil, err
 	}
 	logging.ProtocolTrace(ctx, "Called downstream")
 	logging.ProtocolData(ctx, s.protocolDataDir, rpc, "Response", "UpgradedState", resp.UpgradedState)
 	ret, err := toproto.UpgradeResourceState_Response(resp)
 	if err != nil {
-		logging.ProtocolError(ctx, "Error converting response to protobuf", "error", err)
+		logging.ProtocolError(ctx, "Error converting response to protobuf", map[string]interface{}{logging.KeyError: err})
 		return nil, err
 	}
 	return ret, nil
@@ -735,7 +737,7 @@ func (s *server) ReadResource(ctx context.Context, req *tfplugin5.ReadResource_R
 	defer logging.ProtocolTrace(ctx, "Served request")
 	r, err := fromproto.ReadResourceRequest(req)
 	if err != nil {
-		logging.ProtocolError(ctx, "Error converting request from protobuf", "error", err)
+		logging.ProtocolError(ctx, "Error converting request from protobuf", map[string]interface{}{logging.KeyError: err})
 		return nil, err
 	}
 	logging.ProtocolData(ctx, s.protocolDataDir, rpc, "Request", "CurrentState", r.CurrentState)
@@ -743,14 +745,14 @@ func (s *server) ReadResource(ctx context.Context, req *tfplugin5.ReadResource_R
 	logging.ProtocolTrace(ctx, "Calling downstream")
 	resp, err := s.downstream.ReadResource(ctx, r)
 	if err != nil {
-		logging.ProtocolError(ctx, "Error from downstream", "error", err)
+		logging.ProtocolError(ctx, "Error from downstream", map[string]interface{}{logging.KeyError: err})
 		return nil, err
 	}
 	logging.ProtocolTrace(ctx, "Called downstream")
 	logging.ProtocolData(ctx, s.protocolDataDir, rpc, "Response", "NewState", resp.NewState)
 	ret, err := toproto.ReadResource_Response(resp)
 	if err != nil {
-		logging.ProtocolError(ctx, "Error converting response to protobuf", "error", err)
+		logging.ProtocolError(ctx, "Error converting response to protobuf", map[string]interface{}{logging.KeyError: err})
 		return nil, err
 	}
 	return ret, nil
@@ -766,7 +768,7 @@ func (s *server) PlanResourceChange(ctx context.Context, req *tfplugin5.PlanReso
 	defer logging.ProtocolTrace(ctx, "Served request")
 	r, err := fromproto.PlanResourceChangeRequest(req)
 	if err != nil {
-		logging.ProtocolError(ctx, "Error converting request from protobuf", "error", err)
+		logging.ProtocolError(ctx, "Error converting request from protobuf", map[string]interface{}{logging.KeyError: err})
 		return nil, err
 	}
 	logging.ProtocolData(ctx, s.protocolDataDir, rpc, "Request", "Config", r.Config)
@@ -776,14 +778,14 @@ func (s *server) PlanResourceChange(ctx context.Context, req *tfplugin5.PlanReso
 	logging.ProtocolTrace(ctx, "Calling downstream")
 	resp, err := s.downstream.PlanResourceChange(ctx, r)
 	if err != nil {
-		logging.ProtocolError(ctx, "Error from downstream", "error", err)
+		logging.ProtocolError(ctx, "Error from downstream", map[string]interface{}{logging.KeyError: err})
 		return nil, err
 	}
 	logging.ProtocolTrace(ctx, "Called downstream")
 	logging.ProtocolData(ctx, s.protocolDataDir, rpc, "Response", "PlannedState", resp.PlannedState)
 	ret, err := toproto.PlanResourceChange_Response(resp)
 	if err != nil {
-		logging.ProtocolError(ctx, "Error converting response to protobuf", "error", err)
+		logging.ProtocolError(ctx, "Error converting response to protobuf", map[string]interface{}{logging.KeyError: err})
 		return nil, err
 	}
 	return ret, nil
@@ -799,7 +801,7 @@ func (s *server) ApplyResourceChange(ctx context.Context, req *tfplugin5.ApplyRe
 	defer logging.ProtocolTrace(ctx, "Served request")
 	r, err := fromproto.ApplyResourceChangeRequest(req)
 	if err != nil {
-		logging.ProtocolError(ctx, "Error converting request from protobuf", "error", err)
+		logging.ProtocolError(ctx, "Error converting request from protobuf", map[string]interface{}{logging.KeyError: err})
 		return nil, err
 	}
 	logging.ProtocolData(ctx, s.protocolDataDir, rpc, "Request", "Config", r.Config)
@@ -809,14 +811,14 @@ func (s *server) ApplyResourceChange(ctx context.Context, req *tfplugin5.ApplyRe
 	logging.ProtocolTrace(ctx, "Calling downstream")
 	resp, err := s.downstream.ApplyResourceChange(ctx, r)
 	if err != nil {
-		logging.ProtocolError(ctx, "Error from downstream", "error", err)
+		logging.ProtocolError(ctx, "Error from downstream", map[string]interface{}{logging.KeyError: err})
 		return nil, err
 	}
 	logging.ProtocolTrace(ctx, "Called downstream")
 	logging.ProtocolData(ctx, s.protocolDataDir, rpc, "Response", "NewState", resp.NewState)
 	ret, err := toproto.ApplyResourceChange_Response(resp)
 	if err != nil {
-		logging.ProtocolError(ctx, "Error converting response to protobuf", "error", err)
+		logging.ProtocolError(ctx, "Error converting response to protobuf", map[string]interface{}{logging.KeyError: err})
 		return nil, err
 	}
 	return ret, nil
@@ -832,13 +834,13 @@ func (s *server) ImportResourceState(ctx context.Context, req *tfplugin5.ImportR
 	defer logging.ProtocolTrace(ctx, "Served request")
 	r, err := fromproto.ImportResourceStateRequest(req)
 	if err != nil {
-		logging.ProtocolError(ctx, "Error converting request from protobuf", "error", err)
+		logging.ProtocolError(ctx, "Error converting request from protobuf", map[string]interface{}{logging.KeyError: err})
 		return nil, err
 	}
 	logging.ProtocolTrace(ctx, "Calling downstream")
 	resp, err := s.downstream.ImportResourceState(ctx, r)
 	if err != nil {
-		logging.ProtocolError(ctx, "Error from downstream", "error", err)
+		logging.ProtocolError(ctx, "Error from downstream", map[string]interface{}{logging.KeyError: err})
 		return nil, err
 	}
 	logging.ProtocolTrace(ctx, "Called downstream")
@@ -847,7 +849,7 @@ func (s *server) ImportResourceState(ctx context.Context, req *tfplugin5.ImportR
 	}
 	ret, err := toproto.ImportResourceState_Response(resp)
 	if err != nil {
-		logging.ProtocolError(ctx, "Error converting response to protobuf", "error", err)
+		logging.ProtocolError(ctx, "Error converting response to protobuf", map[string]interface{}{logging.KeyError: err})
 		return nil, err
 	}
 	return ret, nil
