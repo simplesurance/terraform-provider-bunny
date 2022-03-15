@@ -1,5 +1,9 @@
 ## 0.7.1 (Unreleased)
 
+IMPROVEMENTS:
+
+* provider: upgrade terraform-plugin-sdk from version 2.10.1 to 2.11.0
+
 ## 0.7.0 (Februar 03, 2022)
 
 BREAKING CHANGES:
