@@ -1,10 +1,8 @@
 package main
 
 import (
-	"context"
 	"flag"
 	"fmt"
-	"log"
 	"os"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/plugin"
@@ -37,14 +35,7 @@ func main() {
 
 	opts := &plugin.ServeOpts{
 		ProviderFunc: provider.New,
-	}
-
-	if debugMode {
-		err := plugin.Debug(context.Background(), "registry.terraform.io/simplesurance/bunny", opts)
-		if err != nil {
-			log.Fatal(err.Error())
-		}
-		return
+		Debug:        debugMode,
 	}
 
 	plugin.Serve(opts)
