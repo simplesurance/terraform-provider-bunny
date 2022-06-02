@@ -17,86 +17,86 @@ description: |-
 
 ### Required
 
-- **name** (String) The name of the Pull Zone.
-- **origin_url** (String) The origin URL of the Pull Zone where the files are fetched from.
+- `name` (String) The name of the Pull Zone.
+- `origin_url` (String) The origin URL of the Pull Zone where the files are fetched from.
 
 ### Optional
 
-- **allowed_referrers** (Set of String) Sets the list of referrer hostnames that are allowed to access the Pull Zone. Requests containing the header Referer: hostname that is not on the list will be rejected. If empty, all the referrers are allowed.
-- **aws_signing_enabled** (Boolean) Determines if the AWS signing should be enabled or not.
-- **aws_signing_key** (String) AWS Signing Key
-- **aws_signing_region_name** (String)
-- **aws_signing_secret** (String, Sensitive)
-- **block_post_requests** (Boolean)
-- **block_root_path_access** (Boolean) Determines if the zone should block requests to the root of the zone.
-- **blocked_countries** (Set of String) Sets the list of two letter Alpha2 country codes that will be blocked from accessing the zone.
-- **blocked_ips** (Set of String) Sets the list of IPs that are blocked from accessing the Pull Zone. Requests coming from the following IPs will be rejected. If empty, all the IPs will be allowed.
-- **blocked_referrers** (Set of String) The list of hostnames that will be blocked from accessing the Pull Zone.
-- **budget_redirected_countries** (Set of String) Sets the list of two letter Alpha2 country codes that will be redirected to the cheapest possible region.
-- **cache_control_browser_max_age_override** (Number) Sets the browser cache control override setting for this zone.
-- **cache_control_max_age_override** (Number) Sets the cache control override setting for this zone.
-- **cache_error_responses** (Boolean) If enabled, bunny.net will temporarily cache error responses (304+ HTTP status codes) from your servers for 5 seconds to prevent DDoS attacks on your origin.
+- `allowed_referrers` (Set of String) Sets the list of referrer hostnames that are allowed to access the Pull Zone. Requests containing the header Referer: hostname that is not on the list will be rejected. If empty, all the referrers are allowed.
+- `aws_signing_enabled` (Boolean) Determines if the AWS signing should be enabled or not.
+- `aws_signing_key` (String) AWS Signing Key
+- `aws_signing_region_name` (String)
+- `aws_signing_secret` (String, Sensitive)
+- `block_post_requests` (Boolean)
+- `block_root_path_access` (Boolean) Determines if the zone should block requests to the root of the zone.
+- `blocked_countries` (Set of String) Sets the list of two letter Alpha2 country codes that will be blocked from accessing the zone.
+- `blocked_ips` (Set of String) Sets the list of IPs that are blocked from accessing the Pull Zone. Requests coming from the following IPs will be rejected. If empty, all the IPs will be allowed.
+- `blocked_referrers` (Set of String) The list of hostnames that will be blocked from accessing the Pull Zone.
+- `budget_redirected_countries` (Set of String) Sets the list of two letter Alpha2 country codes that will be redirected to the cheapest possible region.
+- `cache_control_browser_max_age_override` (Number) Sets the browser cache control override setting for this zone.
+- `cache_control_max_age_override` (Number) Sets the cache control override setting for this zone.
+- `cache_error_responses` (Boolean) If enabled, bunny.net will temporarily cache error responses (304+ HTTP status codes) from your servers for 5 seconds to prevent DDoS attacks on your origin.
 If disabled, error responses will be set to no-cache.
-- **disable_cookies** (Boolean) Determines if the Pull Zone should automatically remove cookies from the responses.
-- **enable_avif_vary** (Boolean) Determines if the AVIF Vary feature should be enabled..
-- **enable_cache_slice** (Boolean) Determines if cache slicing (Optimize for video) should be enabled for this zone.
-- **enable_country_code_vary** (Boolean) Determines if the Country Code Vary feature should be enabled.
-- **enable_hostname_vary** (Boolean) Determines if the Hostname Vary feature should be enabled.
-- **enable_logging** (Boolean) Determines if the logging should be enabled for this zone.
-- **enable_mobile_vary** (Boolean) Determines if the Mobile Vary feature is enabled.
-- **enable_origin_shield** (Boolean) Determines if the origin shield should be enabled.
-- **enable_tls1_1** (Boolean) Determines if the TLS 1.1 should be enabled on this zone.
-- **enable_tlsv1** (Boolean) Determines if the TLS 1 should be enabled on this zone.
-- **enable_webp_vary** (Boolean) Determines if the WebP Vary feature should be enabled.
-- **error_page_custom_code** (String) Contains the custom error page code that will be returned
-- **error_page_enable_custom_code** (Boolean) Determines if custom error page code should be enabled.
-- **error_page_enable_statuspage_widget** (Boolean) Determines if the statuspage widget should be displayed on the error pages.
-- **error_page_statuspage_code** (String) The statuspage code that will be used to build the status widget.
-- **error_page_whitelabel** (Boolean) Determines if the error pages should be whitelabel or not.
-- **follow_redirects** (Boolean) Determines if the zone should follow redirects return by the oprigin and cache the response.
-- **headers** (Block List, Max: 1) (see [below for nested schema](#nestedblock--headers))
-- **id** (String) The ID of this resource.
-- **ignore_query_strings** (Boolean) Determines if the Pull Zone should ignore query strings when serving cached objects (Vary by Query String).
-- **limits** (Block List, Max: 1) (see [below for nested schema](#nestedblock--limits))
-- **log_forwarding_enabled** (Boolean)
-- **log_forwarding_hostname** (String) Sets the log forwarding destination hostname for the zone.
-- **log_forwarding_port** (Number) Sets the log forwarding port for the zone.
-- **log_forwarding_token** (String, Sensitive) Sets the log forwarding token for the zone.
-- **logging_ip_anonymization_enabled** (Boolean) Determines if the log anonoymization should be enabled. The field can only be set if the DPA agreement was set in the webinterface.
-- **logging_save_to_storage** (Boolean) Determines if the logging permanent storage should be enabled.
-- **logging_storage_zone_id** (Number) Sets the Storage Zone id that should contain the logs from this Pull Zone.
-- **optimizer** (Block List, Max: 1) (see [below for nested schema](#nestedblock--optimizer))
-- **origin_shield_zone_code** (String) Determines the zone code where the origin shield should be set up.
-- **perma_cache_storage_zone_id** (Number) The ID of the storage zone that should be used as the Perma-Cache.
-- **safehop** (Block List, Max: 1) (see [below for nested schema](#nestedblock--safehop))
-- **storage_zone_id** (Number) The ID of the storage zone that the Pull Zone is linked to.
-- **type** (Number) The type of the Pull Zone. Standard = 0, Volume = 1.
-- **verify_origin_ssl** (Boolean) Determines if the SSL certificate should be verified when connecting to the origin.
-- **zone_security_enabled** (Boolean)
-- **zone_security_include_hash_remote_ip** (Boolean)
+- `disable_cookies` (Boolean) Determines if the Pull Zone should automatically remove cookies from the responses.
+- `enable_avif_vary` (Boolean) Determines if the AVIF Vary feature should be enabled..
+- `enable_cache_slice` (Boolean) Determines if cache slicing (Optimize for video) should be enabled for this zone.
+- `enable_country_code_vary` (Boolean) Determines if the Country Code Vary feature should be enabled.
+- `enable_hostname_vary` (Boolean) Determines if the Hostname Vary feature should be enabled.
+- `enable_logging` (Boolean) Determines if the logging should be enabled for this zone.
+- `enable_mobile_vary` (Boolean) Determines if the Mobile Vary feature is enabled.
+- `enable_origin_shield` (Boolean) Determines if the origin shield should be enabled.
+- `enable_tls1_1` (Boolean) Determines if the TLS 1.1 should be enabled on this zone.
+- `enable_tlsv1` (Boolean) Determines if the TLS 1 should be enabled on this zone.
+- `enable_webp_vary` (Boolean) Determines if the WebP Vary feature should be enabled.
+- `error_page_custom_code` (String) Contains the custom error page code that will be returned
+- `error_page_enable_custom_code` (Boolean) Determines if custom error page code should be enabled.
+- `error_page_enable_statuspage_widget` (Boolean) Determines if the statuspage widget should be displayed on the error pages.
+- `error_page_statuspage_code` (String) The statuspage code that will be used to build the status widget.
+- `error_page_whitelabel` (Boolean) Determines if the error pages should be whitelabel or not.
+- `follow_redirects` (Boolean) Determines if the zone should follow redirects return by the oprigin and cache the response.
+- `headers` (Block List, Max: 1) (see [below for nested schema](#nestedblock--headers))
+- `ignore_query_strings` (Boolean) Determines if the Pull Zone should ignore query strings when serving cached objects (Vary by Query String).
+- `limits` (Block List, Max: 1) (see [below for nested schema](#nestedblock--limits))
+- `log_forwarding_enabled` (Boolean)
+- `log_forwarding_hostname` (String) Sets the log forwarding destination hostname for the zone.
+- `log_forwarding_port` (Number) Sets the log forwarding port for the zone.
+- `log_forwarding_token` (String, Sensitive) Sets the log forwarding token for the zone.
+- `logging_ip_anonymization_enabled` (Boolean) Determines if the log anonoymization should be enabled. The field can only be set if the DPA agreement was set in the webinterface.
+- `logging_save_to_storage` (Boolean) Determines if the logging permanent storage should be enabled.
+- `logging_storage_zone_id` (Number) Sets the Storage Zone id that should contain the logs from this Pull Zone.
+- `optimizer` (Block List, Max: 1) (see [below for nested schema](#nestedblock--optimizer))
+- `origin_shield_zone_code` (String) Determines the zone code where the origin shield should be set up.
+- `perma_cache_storage_zone_id` (Number) The ID of the storage zone that should be used as the Perma-Cache.
+- `safehop` (Block List, Max: 1) (see [below for nested schema](#nestedblock--safehop))
+- `storage_zone_id` (Number) The ID of the storage zone that the Pull Zone is linked to.
+- `type` (Number) The type of the Pull Zone. Standard = 0, Volume = 1.
+- `verify_origin_ssl` (Boolean) Determines if the SSL certificate should be verified when connecting to the origin.
+- `zone_security_enabled` (Boolean)
+- `zone_security_include_hash_remote_ip` (Boolean)
 
 ### Read-Only
 
-- **cname_domain** (String) The CNAME domain of the Pull Zone for setting up custom hostnames.
-- **enable_geo_zone_af** (Boolean) Serve data from the Middle East & Africa Zone.
-- **enable_geo_zone_asia** (Boolean) Serve data from the Asia & Oceania Zone.
-- **enable_geo_zone_eu** (Boolean) Serve data from the Europe Zone.
-- **enable_geo_zone_sa** (Boolean) Serve data from the South America Zone.
-- **enable_geo_zone_us** (Boolean) Serve data from the US Zone.
-- **enabled** (Boolean)
-- **last_updated** (String)
-- **video_library_id** (Number) The ID of the video library that the zone is linked to.
-- **zone_security_key** (String, Sensitive)
+- `cname_domain` (String) The CNAME domain of the Pull Zone for setting up custom hostnames.
+- `enable_geo_zone_af` (Boolean) Serve data from the Middle East & Africa Zone.
+- `enable_geo_zone_asia` (Boolean) Serve data from the Asia & Oceania Zone.
+- `enable_geo_zone_eu` (Boolean) Serve data from the Europe Zone.
+- `enable_geo_zone_sa` (Boolean) Serve data from the South America Zone.
+- `enable_geo_zone_us` (Boolean) Serve data from the US Zone.
+- `enabled` (Boolean)
+- `id` (String) The ID of this resource.
+- `last_updated` (String)
+- `video_library_id` (Number) The ID of the video library that the zone is linked to.
+- `zone_security_key` (String, Sensitive)
 
 <a id="nestedblock--headers"></a>
 ### Nested Schema for `headers`
 
 Optional:
 
-- **access_control_origin_header_extensions** (String) CORS Headers will be added to all requests of files with the listed extensions.
-- **add_canonical_header** (Boolean) Determines if the canonical header should be added by this zone.
-- **add_host_header** (Boolean) If enabled, the original host header of the request will be forwarded to the origin server.
-- **enable_access_control_origin_header** (Boolean) Determines if the CORS headers listed in the access_control_origin_header_extensions attribute are applied
+- `access_control_origin_header_extensions` (String) CORS Headers will be added to all requests of files with the listed extensions.
+- `add_canonical_header` (Boolean) Determines if the canonical header should be added by this zone.
+- `add_host_header` (Boolean) If enabled, the original host header of the request will be forwarded to the origin server.
+- `enable_access_control_origin_header` (Boolean) Determines if the CORS headers listed in the access_control_origin_header_extensions attribute are applied
 
 
 <a id="nestedblock--limits"></a>
@@ -104,9 +104,9 @@ Optional:
 
 Optional:
 
-- **connection_limit_per_ip_count** (Number) Limit the maximum number of allowed connections to the zone per IP.Set to 0 for unlimited.
-- **monthly_bandwidth_limit** (Number) Limits the allowed bandwidth used in a month, in Bytes. If the limit is reached the zone will be disabled.
-- **request_limit** (Number) Limit the maximum number of requests per second coming from a single IP. Set to 0 for unlimited.
+- `connection_limit_per_ip_count` (Number) Limit the maximum number of allowed connections to the zone per IP.Set to 0 for unlimited.
+- `monthly_bandwidth_limit` (Number) Limits the allowed bandwidth used in a month, in Bytes. If the limit is reached the zone will be disabled.
+- `request_limit` (Number) Limit the maximum number of requests per second coming from a single IP. Set to 0 for unlimited.
 
 
 <a id="nestedblock--optimizer"></a>
@@ -114,24 +114,24 @@ Optional:
 
 Optional:
 
-- **enable_manipulation_engine** (Boolean) Enable on the fly image manipulation engine for dynamic URL based image manipulation.
-- **enable_webp** (Boolean) If enabled, images will be automatically converted into an efficient WebP format when supported by the client to greatly reduce file size and improve load times.
-- **enabled** (Boolean) Determines if the optimizer should be enabled for this zone.
-- **minify_css** (Boolean) If enabled, CSS files will be automatically minified to reduce their file size without modifying the functionality.
-- **minify_javascript** (Boolean) Determines if the JavaScript minifcation should be enabled.
-- **smart_image_optimization** (Block List, Max: 1) (see [below for nested schema](#nestedblock--optimizer--smart_image_optimization))
-- **watermark** (Block List, Max: 1) (see [below for nested schema](#nestedblock--optimizer--watermark))
+- `enable_manipulation_engine` (Boolean) Enable on the fly image manipulation engine for dynamic URL based image manipulation.
+- `enable_webp` (Boolean) If enabled, images will be automatically converted into an efficient WebP format when supported by the client to greatly reduce file size and improve load times.
+- `enabled` (Boolean) Determines if the optimizer should be enabled for this zone.
+- `minify_css` (Boolean) If enabled, CSS files will be automatically minified to reduce their file size without modifying the functionality.
+- `minify_javascript` (Boolean) Determines if the JavaScript minifcation should be enabled.
+- `smart_image_optimization` (Block List, Max: 1) (see [below for nested schema](#nestedblock--optimizer--smart_image_optimization))
+- `watermark` (Block List, Max: 1) (see [below for nested schema](#nestedblock--optimizer--watermark))
 
 <a id="nestedblock--optimizer--smart_image_optimization"></a>
 ### Nested Schema for `optimizer.smart_image_optimization`
 
 Optional:
 
-- **desktop_max_width** (Number) Determines if the automatic image optimization should be enabled.
-- **enabled** (Boolean) If enabled, Bunny Optimizer will automatically resize and compress images for desktop and mobile devices.
-- **image_quality** (Number) Determines the image quality for desktop clients.
-- **mobile_image_quality** (Number) Determines the image quality for mobile clients.
-- **mobile_max_width** (Number) Determines the maximum automatic image size for mobile clients.
+- `desktop_max_width` (Number) Determines if the automatic image optimization should be enabled.
+- `enabled` (Boolean) If enabled, Bunny Optimizer will automatically resize and compress images for desktop and mobile devices.
+- `image_quality` (Number) Determines the image quality for desktop clients.
+- `mobile_image_quality` (Number) Determines the image quality for mobile clients.
+- `mobile_max_width` (Number) Determines the maximum automatic image size for mobile clients.
 
 
 <a id="nestedblock--optimizer--watermark"></a>
@@ -139,11 +139,11 @@ Optional:
 
 Optional:
 
-- **enabled** (Boolean) Determines if image watermarking should be enabled.
-- **min_image_size** (Number) Sets the minimum image size to which the watermark will be added.
-- **offset** (Number) Sets the offset of the watermark image.
-- **position** (Number) Sets the position of the watermark image.
-- **url** (String) Sets the URL of the watermark image.
+- `enabled` (Boolean) Determines if image watermarking should be enabled.
+- `min_image_size` (Number) Sets the minimum image size to which the watermark will be added.
+- `offset` (Number) Sets the offset of the watermark image.
+- `position` (Number) Sets the position of the watermark image.
+- `url` (String) Sets the URL of the watermark image.
 
 
 
@@ -152,14 +152,14 @@ Optional:
 
 Optional:
 
-- **enable** (Boolean) If enabled, SafeHop will attempt to retry failed requests to the origin in case of errors or connection failures in a round-robin fashion.
-- **origin_connect_timeout** (Number) The amount of seconds to wait when connecting to the origin. Otherwise the request will fail or retry.
-- **origin_response_timeout** (Number) The amount of seconds to wait when waiting for the origin reply. Otherwise the request will fail or retry.
-- **origin_retries** (Number) Configure how many times bunny.net will re-attempt to connect to the origin before failing with a 502 or a 504 response.
+- `enable` (Boolean) If enabled, SafeHop will attempt to retry failed requests to the origin in case of errors or connection failures in a round-robin fashion.
+- `origin_connect_timeout` (Number) The amount of seconds to wait when connecting to the origin. Otherwise the request will fail or retry.
+- `origin_response_timeout` (Number) The amount of seconds to wait when waiting for the origin reply. Otherwise the request will fail or retry.
+- `origin_retries` (Number) Configure how many times bunny.net will re-attempt to connect to the origin before failing with a 502 or a 504 response.
 If multiple IPs are set on the origin hostname, the CDN will automatically cycle between them on subsequent attempts.
-- **origin_retry_5xx_response** (Boolean) Determines if we should retry the request in case of a 5XX response.
-- **origin_retry_connection_timeout** (Boolean) Determines if we should retry the request in case of a connection timeout.
-- **origin_retry_delay** (Number) Determines the amount of time that the CDN should wait before retrying an origin request.
-- **origin_retry_response_timeout** (Boolean) Determines if we should retry the request in case of a response timeout.
+- `origin_retry_5xx_response` (Boolean) Determines if we should retry the request in case of a 5XX response.
+- `origin_retry_connection_timeout` (Boolean) Determines if we should retry the request in case of a connection timeout.
+- `origin_retry_delay` (Number) Determines the amount of time that the CDN should wait before retrying an origin request.
+- `origin_retry_response_timeout` (Boolean) Determines if we should retry the request in case of a response timeout.
 
 
