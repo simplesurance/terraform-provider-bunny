@@ -1,5 +1,11 @@
 ## 0.7.1 (Unreleased)
 
+BUG FIXES:
+
+* resource/edgerule: after edge rule creation the plan was not empty, change the
+                     default value of `watermark_enabled` to false, this adapts
+                     it to the changed default of the bunny endpoint
+
 IMPROVEMENTS:
 
 * provider: upgrade terraform-plugin-sdk from version 2.10.1 to 2.11.0
