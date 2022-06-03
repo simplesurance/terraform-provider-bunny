@@ -8,7 +8,8 @@ BUG FIXES:
 
 IMPROVEMENTS:
 
-* provider: upgrade terraform-plugin-sdk from version 2.10.1 to 2.11.0
+* provider: upgrade terraform-plugin-sdk to version 2.17.0
+* provider: upgrade github.com/hashicorp/terraform-plugin-docs to version 0.9.0
 
 ## 0.7.0 (Februar 03, 2022)
 
