@@ -117,7 +117,7 @@ var resourcePullZoneOptimizer = &schema.Resource{
 					keyOptimizerWatermarkEnabled: {
 						Type:        schema.TypeBool,
 						Description: "Determines if image watermarking should be enabled.",
-						Default:     true,
+						Default:     false,
 						Optional:    true,
 					},
 					keyOptimizerWatermarkURL: {
