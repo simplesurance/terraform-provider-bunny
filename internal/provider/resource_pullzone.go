@@ -355,9 +355,10 @@ func resourcePullZone() *schema.Resource {
 				),
 			},
 			keyOriginURL: {
-				Type:        schema.TypeString,
-				Required:    true,
-				Description: "The origin URL of the Pull Zone where the files are fetched from.",
+				Type:         schema.TypeString,
+				Optional:     true,
+				Description:  "The origin URL of the Pull Zone where the files are fetched from.",
+				ExactlyOneOf: []string{keyStorageZoneID},
 			},
 			keyPermaCacheStorageZoneID: {
 				Type:        schema.TypeInt,
@@ -427,10 +428,11 @@ func resourcePullZone() *schema.Resource {
 				Description: "The name of the Pull Zone.",
 			},
 			keyStorageZoneID: {
-				Type:        schema.TypeInt,
-				Optional:    true,
-				ForceNew:    true,
-				Description: "The ID of the storage zone that the Pull Zone is linked to.",
+				Type:         schema.TypeInt,
+				Optional:     true,
+				ForceNew:     true,
+				Description:  "The ID of the storage zone that the Pull Zone is linked to.",
+				ExactlyOneOf: []string{keyOriginURL},
 			},
 			keyZoneSecurityKey: {
 				Type:      schema.TypeString,
