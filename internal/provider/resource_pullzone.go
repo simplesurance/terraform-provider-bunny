@@ -428,11 +428,10 @@ func resourcePullZone() *schema.Resource {
 				Description: "The name of the Pull Zone.",
 			},
 			keyStorageZoneID: {
-				Type:         schema.TypeInt,
-				Optional:     true,
-				ForceNew:     true,
-				Description:  "The ID of the storage zone that the Pull Zone is linked to.",
-				ExactlyOneOf: []string{keyOriginURL},
+				Type:        schema.TypeInt,
+				Optional:    true,
+				ForceNew:    true,
+				Description: "The ID of the storage zone that the Pull Zone is linked to.",
 			},
 			keyZoneSecurityKey: {
 				Type:      schema.TypeString,
