@@ -484,6 +484,8 @@ resource "bunny_hostname" "h1" {
 }
 
 func TestAccHostname_StateIsValidWhenCertUploadFails(t *testing.T) {
+	t.Skip("disabled, because test sends 800kiB of bogus data to bunny api, which is not kind")
+
 	pzName := randPullZoneName()
 	hostname := randHostname()
 
@@ -491,6 +493,8 @@ func TestAccHostname_StateIsValidWhenCertUploadFails(t *testing.T) {
 	// valid certificate.
 	// To cause an API error, we post a big amount of zero bits which
 	// causes a 500 error.
+	// TODO: find a way to generate an error that does not require sending
+	// a lot of bogus data.
 	var bogusCertData [800 * 1024]byte
 
 	resource.Test(t, resource.TestCase{
