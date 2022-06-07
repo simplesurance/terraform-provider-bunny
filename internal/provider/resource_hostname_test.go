@@ -487,6 +487,12 @@ func TestAccHostname_StateIsValidWhenCertUploadFails(t *testing.T) {
 	pzName := randPullZoneName()
 	hostname := randHostname()
 
+	// The bunny API does not return an error if the posted data is not a
+	// valid certificate.
+	// To cause an API error, we post a big amount of zero bits which
+	// causes a 500 error.
+	var bogusCertData [800 * 1024]byte
+
 	resource.Test(t, resource.TestCase{
 		Providers: testProviders,
 		Steps: []resource.TestStep{
@@ -506,11 +512,11 @@ resource "bunny_hostname" "h1" {
 	hostname = %q
 
 	certificate {
-		certificate_data = "1234"
+		certificate_data = "%x"
 		private_key_data = "5678"
 	}
 }
-`, pzName, hostname),
+`, pzName, hostname, bogusCertData),
 				ExpectError: regexp.MustCompile(".*uploading certificate failed.*"),
 			},
 			// the local terraform state should not be broken,
