@@ -18,7 +18,6 @@ description: |-
 ### Required
 
 - `name` (String) The name of the Pull Zone.
-- `origin_url` (String) The origin URL of the Pull Zone where the files are fetched from.
 
 ### Optional
 
@@ -66,6 +65,7 @@ If disabled, error responses will be set to no-cache.
 - `logging_storage_zone_id` (Number) Sets the Storage Zone id that should contain the logs from this Pull Zone.
 - `optimizer` (Block List, Max: 1) (see [below for nested schema](#nestedblock--optimizer))
 - `origin_shield_zone_code` (String) Determines the zone code where the origin shield should be set up.
+- `origin_url` (String) The origin URL of the Pull Zone where the files are fetched from.
 - `perma_cache_storage_zone_id` (Number) The ID of the storage zone that should be used as the Perma-Cache.
 - `safehop` (Block List, Max: 1) (see [below for nested schema](#nestedblock--safehop))
 - `storage_zone_id` (Number) The ID of the storage zone that the Pull Zone is linked to.
