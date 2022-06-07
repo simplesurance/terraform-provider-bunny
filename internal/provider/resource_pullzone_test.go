@@ -2,6 +2,7 @@ package provider
 
 import (
 	"context"
+	"regexp"
 
 	"errors"
 	"fmt"
@@ -755,4 +756,23 @@ var pullZoneDiffIgnoredFields = map[string]struct{}{
 func pzDiff(t *testing.T, a, b interface{}) []string {
 	t.Helper()
 	return diffStructs(t, a, b, pullZoneDiffIgnoredFields)
+}
+
+func TestAccPullZone_OriginURLAndStorageZoneIDAreExclusive(t *testing.T) {
+	pzName := randPullZoneName()
+
+	resource.Test(t, resource.TestCase{
+		Providers: testProviders,
+		Steps: []resource.TestStep{
+			{
+				Config: fmt.Sprintf(`
+resource "bunny_pullzone" "testpz" {
+	name = "%s"
+	origin_url ="http://bunny.net"
+	storage_zone_id = 300
+}`, pzName),
+				ExpectError: regexp.MustCompile("only one of.*can be specified"),
+			},
+		},
+	})
 }
