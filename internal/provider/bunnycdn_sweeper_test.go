@@ -27,7 +27,7 @@ func sweepPullZones(_ string) error {
 	clt := newAPIClient()
 
 	for page := int32(0); ; page++ {
-		pullzones, err := clt.PullZone.List(context.Background(), &bunny.PullZonePaginationOptions{
+		pullzones, err := clt.PullZone.List(context.Background(), &bunny.PaginationOptions{
 			Page:    page,
 			PerPage: 1000,
 		})

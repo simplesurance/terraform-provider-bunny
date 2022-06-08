@@ -11,10 +11,6 @@ import (
 //
 // Bunny.net API docs: https://docs.bunny.net/reference/pullzonepublic_deleteedgerule
 func (s *PullZoneService) DeleteEdgeRule(ctx context.Context, pullZoneID int64, edgeRuleGUID string) error {
-	req, err := s.client.newDeleteRequest(fmt.Sprintf("pullzone/%d/edgerules/%s", pullZoneID, edgeRuleGUID), nil)
-	if err != nil {
-		return err
-	}
-
-	return s.client.sendRequest(ctx, req, nil)
+	path := fmt.Sprintf("pullzone/%d/edgerules/%s", pullZoneID, edgeRuleGUID)
+	return resourceDelete(ctx, s.client, path, nil)
 }

@@ -18,10 +18,6 @@ type RemoveCustomHostnameOptions struct {
 //
 // Bunny.net API docs: https://docs.bunny.net/reference/pullzonepublic_removehostname
 func (s *PullZoneService) RemoveCustomHostname(ctx context.Context, pullZoneID int64, opts *RemoveCustomHostnameOptions) error {
-	req, err := s.client.newDeleteRequest(fmt.Sprintf("pullzone/%d/removeHostname", pullZoneID), opts)
-	if err != nil {
-		return err
-	}
-
-	return s.client.sendRequest(ctx, req, nil)
+	path := fmt.Sprintf("pullzone/%d/removeHostname", pullZoneID)
+	return resourceDelete(ctx, s.client, path, opts)
 }

@@ -26,10 +26,6 @@ type AddOrUpdateEdgeRuleOptions struct {
 //
 // Bunny.net API docs: https://docs.bunny.net/reference/pullzonepublic_addedgerule
 func (s *PullZoneService) AddOrUpdateEdgeRule(ctx context.Context, pullZoneID int64, opts *AddOrUpdateEdgeRuleOptions) error {
-	req, err := s.client.newPostRequest(fmt.Sprintf("pullzone/%d/edgerules/addOrUpdate", pullZoneID), opts)
-	if err != nil {
-		return err
-	}
-
-	return s.client.sendRequest(ctx, req, nil)
+	path := fmt.Sprintf("pullzone/%d/edgerules/addOrUpdate", pullZoneID)
+	return resourcePost(ctx, s.client, path, opts)
 }

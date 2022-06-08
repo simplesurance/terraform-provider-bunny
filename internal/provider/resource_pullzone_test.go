@@ -132,7 +132,7 @@ func checkPullZoneNotExists(pullZoneName string) resource.TestCheckFunc {
 		var page int32
 
 		for {
-			pullzones, err := clt.PullZone.List(context.Background(), &bunny.PullZonePaginationOptions{
+			pullzones, err := clt.PullZone.List(context.Background(), &bunny.PaginationOptions{
 				Page:    page,
 				PerPage: 1000,
 			})

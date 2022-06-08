@@ -28,10 +28,6 @@ func (s *PullZoneService) SetEdgeRuleEnabled(ctx context.Context, pullZoneID int
 		}
 	}
 
-	req, err := s.client.newPostRequest(fmt.Sprintf("pullzone/%d/edgerules/%s/setEdgeRuleEnabled", pullZoneID, edgeRuleGUID), opts)
-	if err != nil {
-		return err
-	}
-
-	return s.client.sendRequest(ctx, req, nil)
+	path := fmt.Sprintf("pullzone/%d/edgerules/%s/setEdgeRuleEnabled", pullZoneID, edgeRuleGUID)
+	return resourcePost(ctx, s.client, path, opts)
 }
