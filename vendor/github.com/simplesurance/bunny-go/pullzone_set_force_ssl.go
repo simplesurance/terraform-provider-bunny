@@ -17,10 +17,6 @@ type SetForceSSLOptions struct {
 //
 // Bunny.net API docs: https://docs.bunny.net/reference/pullzonepublic_setforcessl
 func (s *PullZoneService) SetForceSSL(ctx context.Context, pullzoneID int64, opts *SetForceSSLOptions) error {
-	req, err := s.client.newPostRequest(fmt.Sprintf("pullzone/%d/setForceSSL", pullzoneID), opts)
-	if err != nil {
-		return err
-	}
-
-	return s.client.sendRequest(ctx, req, nil)
+	path := fmt.Sprintf("pullzone/%d/setForceSSL", pullzoneID)
+	return resourcePost(ctx, s.client, path, opts)
 }

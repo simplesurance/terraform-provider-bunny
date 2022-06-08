@@ -16,11 +16,7 @@ type RemoveCertificateOptions struct {
 // RemoveCertificate represents the Remove Certificate API Endpoint.
 //
 // Bunny.net API docs: https://docs.bunny.net/reference/pullzonepublic_removecertificate
-func (s *PullZoneService) RemoveCertificate(ctx context.Context, pullZoneID int64, options *RemoveCertificateOptions) error {
-	req, err := s.client.newDeleteRequest(fmt.Sprintf("/pullzone/%d/removeCertificate", pullZoneID), options)
-	if err != nil {
-		return err
-	}
-
-	return s.client.sendRequest(ctx, req, nil)
+func (s *PullZoneService) RemoveCertificate(ctx context.Context, pullZoneID int64, opts *RemoveCertificateOptions) error {
+	path := fmt.Sprintf("/pullzone/%d/removeCertificate", pullZoneID)
+	return resourceDelete(ctx, s.client, path, opts)
 }

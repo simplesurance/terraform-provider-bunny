@@ -18,10 +18,6 @@ type AddCustomHostnameOptions struct {
 //
 // Bunny.net API docs: https://docs.bunny.net/reference/pullzonepublic_addhostname
 func (s *PullZoneService) AddCustomHostname(ctx context.Context, pullZoneID int64, opts *AddCustomHostnameOptions) error {
-	req, err := s.client.newPostRequest(fmt.Sprintf("pullzone/%d/addHostname", pullZoneID), opts)
-	if err != nil {
-		return err
-	}
-
-	return s.client.sendRequest(ctx, req, nil)
+	path := fmt.Sprintf("pullzone/%d/addHostname", pullZoneID)
+	return resourcePost(ctx, s.client, path, opts)
 }

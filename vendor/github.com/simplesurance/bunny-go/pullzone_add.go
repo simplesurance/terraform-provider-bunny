@@ -23,16 +23,10 @@ type PullZoneAddOptions struct {
 //
 // Bunny.net API docs: https://docs.bunny.net/reference/pullzonepublic_add
 func (s *PullZoneService) Add(ctx context.Context, opts *PullZoneAddOptions) (*PullZone, error) {
-	var res PullZone
-
-	req, err := s.client.newPostRequest("/pullzone", opts)
-	if err != nil {
-		return nil, err
-	}
-
-	if err := s.client.sendRequest(ctx, req, &res); err != nil {
-		return nil, err
-	}
-
-	return &res, nil
+	return resourcePostWithResponse[PullZone](
+		ctx,
+		s.client,
+		"/pullzone",
+		opts,
+	)
 }

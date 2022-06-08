@@ -25,19 +25,19 @@ const (
 type PullZone struct {
 	ID *int64 `json:"Id,omitempty"`
 
-	AWSSigningEnabled                   *bool    `json:"AWSSigningEnabled,omitempty"`
-	AWSSigningKey                       *string  `json:"AWSSigningKey,omitempty"`
-	AWSSigningRegionName                *string  `json:"AWSSigningRegionName,omitempty"`
-	AWSSigningSecret                    *string  `json:"AWSSigningSecret,omitempty"`
 	AccessControlOriginHeaderExtensions []string `json:"AccessControlOriginHeaderExtensions,omitempty"`
 	AddCanonicalHeader                  *bool    `json:"AddCanonicalHeader,omitempty"`
 	AddHostHeader                       *bool    `json:"AddHostHeader,omitempty"`
 	AllowedReferrers                    []string `json:"AllowedReferrers,omitempty"`
-	BlockPostRequests                   *bool    `json:"BlockPostRequests,omitempty"`
-	BlockRootPathAccess                 *bool    `json:"BlockRootPathAccess,omitempty"`
+	AWSSigningEnabled                   *bool    `json:"AWSSigningEnabled,omitempty"`
+	AWSSigningKey                       *string  `json:"AWSSigningKey,omitempty"`
+	AWSSigningRegionName                *string  `json:"AWSSigningRegionName,omitempty"`
+	AWSSigningSecret                    *string  `json:"AWSSigningSecret,omitempty"`
 	BlockedCountries                    []string `json:"BlockedCountries,omitempty"`
 	BlockedIPs                          []string `json:"BlockedIps,omitempty"`
 	BlockedReferrers                    []string `json:"BlockedReferrers,omitempty"`
+	BlockPostRequests                   *bool    `json:"BlockPostRequests,omitempty"`
+	BlockRootPathAccess                 *bool    `json:"BlockRootPathAccess,omitempty"`
 	BudgetRedirectedCountries           []string `json:"BudgetRedirectedCountries,omitempty"`
 	BurstSize                           *int32   `json:"BurstSize,omitempty"`
 	// CacheControlBrowserMaxAgeOverride is called
@@ -49,16 +49,18 @@ type PullZone struct {
 	CnameDomain                           *string     `json:"CnameDomain,omitempty"`
 	ConnectionLimitPerIPCount             *int32      `json:"ConnectionLimitPerIPCount,omitempty"`
 	CookieVaryParameters                  []string    `json:"CookieVaryParameters,omitempty"`
+	DisableCookies                        *bool       `json:"DisableCookies,omitempty"`
 	DNSRecordID                           *int64      `json:"DnsRecordId,omitempty"`
 	DNSRecordValue                        *string     `json:"DnsRecordValue,omitempty"`
 	DNSZoneID                             *int64      `json:"DnsZoneId,omitempty"`
-	DisableCookies                        *bool       `json:"DisableCookies,omitempty"`
 	EdgeRules                             []*EdgeRule `json:"EdgeRules,omitempty"`
 	EnableAccessControlOriginHeader       *bool       `json:"EnableAccessControlOriginHeader,omitempty"`
+	EnableAutoSSL                         *bool       `json:"EnableAutoSSL,omitempty"`
 	EnableAvifVary                        *bool       `json:"EnableAvifVary,omitempty"`
 	EnableCacheSlice                      *bool       `json:"EnableCacheSlice,omitempty"`
 	EnableCookieVary                      *bool       `json:"EnableCookieVary,omitempty"`
 	EnableCountryCodeVary                 *bool       `json:"EnableCountryCodeVary,omitempty"`
+	Enabled                               *bool       `json:"Enabled,omitempty"`
 	EnableGeoZoneAF                       *bool       `json:"EnableGeoZoneAF,omitempty"`
 	EnableGeoZoneAsia                     *bool       `json:"EnableGeoZoneASIA,omitempty"`
 	EnableGeoZoneEU                       *bool       `json:"EnableGeoZoneEU,omitempty"`
@@ -69,10 +71,10 @@ type PullZone struct {
 	EnableMobileVary                      *bool       `json:"EnableMobileVary,omitempty"`
 	EnableOriginShield                    *bool       `json:"EnableOriginShield,omitempty"`
 	EnableSafeHop                         *bool       `json:"EnableSafeHop,omitempty"`
+	EnableSmartCache                      *bool       `json:"EnableSmartCache,omitempty"`
 	EnableTLS1                            *bool       `json:"EnableTLS1,omitempty"`
 	EnableTLS11                           *bool       `json:"EnableTLS1_1,omitempty"`
 	EnableWebPVary                        *bool       `json:"EnableWebPVary,omitempty"`
-	Enabled                               *bool       `json:"Enabled,omitempty"`
 	ErrorPageCustomCode                   *string     `json:"ErrorPageCustomCode,omitempty"`
 	ErrorPageEnableCustomCode             *bool       `json:"ErrorPageEnableCustomCode,omitempty"`
 	ErrorPageEnableStatuspageWidget       *bool       `json:"ErrorPageEnableStatuspageWidget,omitempty"`
@@ -83,9 +85,13 @@ type PullZone struct {
 	IgnoreQueryStrings                    *bool       `json:"IgnoreQueryStrings,omitempty"`
 	LimitRateAfter                        *float64    `json:"LimitRateAfter,omitempty"`
 	LimitRatePerSecond                    *float64    `json:"LimitRatePerSecond,omitempty"`
+	LogAnonymizationType                  *int        `json:"LogAnonymizationType,omitempty"`
+	LogFormat                             *int32      `json:"LogFormat,omitempty"`
 	LogForwardingEnabled                  *bool       `json:"LogForwardingEnabled,omitempty"`
+	LogForwardingFormat                   *int        `json:"LogForwardingFormat,omitempty"`
 	LogForwardingHostname                 *string     `json:"LogForwardingHostname,omitempty"`
 	LogForwardingPort                     *int32      `json:"LogForwardingPort,omitempty"`
+	LogForwardingProtocol                 *int        `json:"LogForwardingProtocol,omitempty"`
 	LogForwardingToken                    *string     `json:"LogForwardingToken,omitempty"`
 	LoggingIPAnonymizationEnabled         *bool       `json:"LoggingIPAnonymizationEnabled,omitempty"`
 	LoggingSaveToStorage                  *bool       `json:"LoggingSaveToStorage,omitempty"`
@@ -96,9 +102,10 @@ type PullZone struct {
 	Name                                  *string     `json:"Name,omitempty"`
 	OptimizerAutomaticOptimizationEnabled *bool       `json:"OptimizerAutomaticOptimizationEnabled,omitempty"`
 	OptimizerDesktopMaxWidth              *int32      `json:"OptimizerDesktopMaxWidth,omitempty"`
+	OptimizerEnabled                      *bool       `json:"OptimizerEnabled,omitempty"`
 	OptimizerEnableManipulationEngine     *bool       `json:"OptimizerEnableManipulationEngine,omitempty"`
 	OptimizerEnableWebP                   *bool       `json:"OptimizerEnableWebP,omitempty"`
-	OptimizerEnabled                      *bool       `json:"OptimizerEnabled,omitempty"`
+	OptimizerForceClasses                 *bool       `json:"OptimizerForceClasses,omitempty"`
 	OptimizerImageQuality                 *int32      `json:"OptimizerImageQuality,omitempty"`
 	OptimizerMinifyCSS                    *bool       `json:"OptimizerMinifyCSS,omitempty"`
 	OptimizerMinifyJavaScript             *bool       `json:"OptimizerMinifyJavaScript,omitempty"`
@@ -110,6 +117,7 @@ type PullZone struct {
 	OptimizerWatermarkPosition            *int        `json:"OptimizerWatermarkPosition,omitempty"`
 	OptimizerWatermarkURL                 *string     `json:"OptimizerWatermarkUrl,omitempty"`
 	OriginConnectTimeout                  *int32      `json:"OriginConnectTimeout,omitempty"`
+	OriginHostHeader                      *string     `json:"OriginHostHeader,omitempty"`
 	OriginResponseTimeout                 *int32      `json:"OriginResponseTimeout,omitempty"`
 	OriginRetries                         *int32      `json:"OriginRetries,omitempty"`
 	OriginRetry5xxResponses               *bool       `json:"OriginRetry5xxResponses,omitempty"`
@@ -121,13 +129,17 @@ type PullZone struct {
 	OriginShieldMaxQueuedRequests         *int32      `json:"OriginShieldMaxQueuedRequests,omitempty"`
 	OriginShieldQueueMaxWaitTime          *int32      `json:"OriginShieldQueueMaxWaitTime,omitempty"`
 	OriginShieldZoneCode                  *string     `json:"OriginShieldZoneCode,omitempty"`
+	OriginType                            *int32      `json:"OriginType,omitempty"`
 	OriginURL                             *string     `json:"OriginUrl,omitempty"`
 	PermaCacheStorageZoneID               *int64      `json:"PermaCacheStorageZoneId,omitempty"`
 	PriceOverride                         *float64    `json:"PriceOverride,omitempty"`
 	QueryStringVaryParameters             []string    `json:"QueryStringVaryParameters,omitempty"`
 	RequestLimit                          *int32      `json:"RequestLimit,omitempty"`
+	ShieldDDosProtectionEnabled           *bool       `json:"ShieldDDosProtectionEnabled,omitempty"`
+	ShieldDDosProtectionType              *int        `json:"ShieldDDosProtectionType,omitempty"`
 	StorageZoneID                         *int64      `json:"StorageZoneId,omitempty"`
 	Type                                  *int        `json:"Type,omitempty"`
+	UseBackgroundUpdate                   *bool       `json:"UseBackgroundUpdate,omitempty"`
 	UseStaleWhileOffline                  *bool       `json:"UseStaleWhileOffline,omitempty"`
 	UseStaleWhileUpdating                 *bool       `json:"UseStaleWhileUpdating,omitempty"`
 	VerifyOriginSSL                       *bool       `json:"VerifyOriginSSL,omitempty"`
@@ -163,16 +175,6 @@ type EdgeRule struct {
 //
 // Bunny.net API docs: https://docs.bunny.net/reference/pullzonepublic_index2
 func (s *PullZoneService) Get(ctx context.Context, id int64) (*PullZone, error) {
-	var res PullZone
-
-	req, err := s.client.newGetRequest(fmt.Sprintf("pullzone/%d", id), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	if err := s.client.sendRequest(ctx, req, &res); err != nil {
-		return nil, err
-	}
-
-	return &res, err
+	path := fmt.Sprintf("pullzone/%d", id)
+	return resourceGet[PullZone](ctx, s.client, path)
 }

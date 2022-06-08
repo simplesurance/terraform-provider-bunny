@@ -215,8 +215,8 @@ github.com/russross/blackfriday
 # github.com/shopspring/decimal v1.3.1
 ## explicit; go 1.13
 github.com/shopspring/decimal
-# github.com/simplesurance/bunny-go v0.0.0-20220202145800-6eafc6db3801
-## explicit; go 1.17
+# github.com/simplesurance/bunny-go v0.0.0-20220608083035-3d98cb9a17da
+## explicit; go 1.18
 github.com/simplesurance/bunny-go
 # github.com/spf13/cast v1.5.0
 ## explicit; go 1.18

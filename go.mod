@@ -7,7 +7,7 @@ require (
 	github.com/google/uuid v1.3.0
 	github.com/hashicorp/terraform-plugin-docs v0.9.0
 	github.com/hashicorp/terraform-plugin-sdk/v2 v2.17.0
-	github.com/simplesurance/bunny-go v0.0.0-20220202145800-6eafc6db3801
+	github.com/simplesurance/bunny-go v0.0.0-20220608083035-3d98cb9a17da
 )
 
 require (

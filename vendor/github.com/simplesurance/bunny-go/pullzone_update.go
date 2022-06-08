@@ -107,17 +107,12 @@ type PullZoneUpdateOptions struct {
 // Update changes the configuration the Pull-Zone with the given ID.
 // The updated Pull Zone is returned.
 // Bunny.net API docs: https://docs.bunny.net/reference/pullzonepublic_updatepullzone
-func (s *PullZoneService) Update(ctx context.Context, id int64, pullZone *PullZoneUpdateOptions) (*PullZone, error) {
-	var res PullZone
-
-	req, err := s.client.newPostRequest(fmt.Sprintf("pullzone/%d", id), pullZone)
-	if err != nil {
-		return nil, err
-	}
-
-	if err := s.client.sendRequest(ctx, req, &res); err != nil {
-		return nil, err
-	}
-
-	return &res, err
+func (s *PullZoneService) Update(ctx context.Context, id int64, opts *PullZoneUpdateOptions) (*PullZone, error) {
+	path := fmt.Sprintf("pullzone/%d", id)
+	return resourcePostWithResponse[PullZone](
+		ctx,
+		s.client,
+		path,
+		opts,
+	)
 }

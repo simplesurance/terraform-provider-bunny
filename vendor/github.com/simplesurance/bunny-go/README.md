@@ -44,7 +44,14 @@ Endpoints](https://docs.bunny.net/reference/bunnynet-api-overview) are supported
     - [ ] Remove Blocked IP
   - [ ] Purge
   - [ ] Statistics
-  - [ ] Storage Zone
+  - [ ] [Storage Zone](https://docs.bunny.net/reference/storagezonepublic_index)
+    - [x] List Storage Zones
+    - [x] Add Storage Zone
+    - [x] Get Storage Zone
+    - [x] Update Storage Zone
+    - [x] Delete Storage Zone
+    - [ ] Reset Password
+    - [ ] Reset Read-Only Password
   - [ ] User
 - [ ] Edge Storage API
 - [ ] Stream API
@@ -58,8 +65,15 @@ See [client_example_test.go](client_example_test.go)
 - URL parameters are always passed by value as method parameter.
 - Data that is sent in the HTTP body is passed as struct
   pointer to API methods.
-- Pointers instead of values are used to represent fields in body messages
-  structs. This allows to represent unset fields correctly.
+- Pointers instead of values are used to represent fields in body message
+  structs. \
+  The bunny.net API does not define which values are assumed if a field
+  is omitted in a request.
+  Using pointers allows to distinguish between empty fields and Golang's default
+  values for types. This prevents discrepancy between the interpretation of
+  missing fields of the bunny.net API and bunny-go.
+  Without using pointers it is for example not possible to distinguish between a
+  missing integer field in a JSON message and an integer that has a `0` value.
 - Message field names should be as close as possible to the JSON message field
   names. Exception are permitted if the field in the JSON messages are
   inconsistent and different names are used in the API for the same setting.

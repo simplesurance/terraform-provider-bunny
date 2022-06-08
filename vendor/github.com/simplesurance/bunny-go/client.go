@@ -44,7 +44,8 @@ type Client struct {
 	logf             Logf
 	userAgent        string
 
-	PullZone *PullZoneService
+	PullZone    *PullZoneService
+	StorageZone *StorageZoneService
 }
 
 var discardLogF = func(string, ...interface{}) {}
@@ -65,6 +66,7 @@ func NewClient(APIKey string, opts ...Option) *Client {
 	}
 
 	clt.PullZone = &PullZoneService{client: &clt}
+	clt.StorageZone = &StorageZoneService{client: &clt}
 
 	for _, opt := range opts {
 		opt(&clt)
@@ -305,7 +307,7 @@ func (c *Client) unmarshalHTTPJSONBody(resp *http.Response, reqURL string, resul
 			return &HTTPError{
 				RequestURL: reqURL,
 				StatusCode: resp.StatusCode,
-				Errors:     []error{fmt.Errorf("response has no body, expected a json %T response bod", result)},
+				Errors:     []error{fmt.Errorf("response has no body, expected a json %T response body", result)},
 			}
 		}
 
