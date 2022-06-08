@@ -35,13 +35,6 @@ jobs:
       - name: Unit Tests
         run: go test -v -race ./...
 
-  golangci-lint:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: golangci-lint
-        run: docker run -v $GITHUB_WORKSPACE:/repo -w /repo golangci/golangci-lint:v1.43 golangci-lint run
-
   gomod-tidy:
     runs-on: ubuntu-latest
     steps:
