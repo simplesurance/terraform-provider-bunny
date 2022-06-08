@@ -718,18 +718,31 @@ var pullZoneDiffIgnoredFields = map[string]struct{}{
 	"LoggingIPAnonymizationEnabled":       {}, // can only bet set if DPA agreement was signed in the webinterface
 	"VideoLibraryID":                      {}, // computed field
 	"ZoneSecurityKey":                     {}, // computed field
+
 	// the following fields are ignored because they are not implemented in the provider
 	"BurstSize":                          {},
 	"CacheErrorResponses":                {},
 	"DNSRecordID":                        {},
 	"DNSZoneID":                          {},
+	"EnableAutoSSL":                      {},
 	"EnableCookieVary":                   {},
+	"EnableSmartCache":                   {},
 	"LimitRateAfter":                     {},
 	"LimitRatePerSecond":                 {},
+	"LogAnonymizationType":               {},
+	"LogFormat":                          {},
+	"LogForwardingFormat":                {},
+	"LogForwardingProtocol":              {},
+	"OptimizerForceClasses":              {},
+	"OriginHostHeader":                   {},
 	"OriginShieldEnableConcurrencyLimit": {},
 	"OriginShieldMaxConcurrentRequests":  {},
 	"OriginShieldMaxQueuedRequests":      {},
 	"OriginShieldQueueMaxWaitTime":       {},
+	"OriginType":                         {},
+	"ShieldDDosProtectionEnabled":        {},
+	"ShieldDDosProtectionType":           {},
+	"UseBackgroundUpdate":                {},
 	"UseStaleWhileOffline":               {},
 	"UseStaleWhileUpdating":              {},
 
