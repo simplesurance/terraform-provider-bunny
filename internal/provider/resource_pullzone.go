@@ -86,6 +86,9 @@ func resourcePullZone() *schema.Resource {
 		ReadContext:   resourcePullZoneRead,
 		UpdateContext: resourcePullZoneUpdate,
 		DeleteContext: resourcePullZoneDelete,
+		Importer: &schema.ResourceImporter{
+			StateContext: schema.ImportStatePassthroughContext,
+		},
 
 		Schema: map[string]*schema.Schema{
 			keyAWSSigningEnabled: {
@@ -443,7 +446,6 @@ func resourcePullZone() *schema.Resource {
 				Elem:        &schema.Schema{Type: schema.TypeString},
 				Optional:    true,
 				Computed:    true, // must be updated via Add/Remove Blocked Referrer API Endpoint, not implemented
-				ForceNew:    true,
 				Description: "The list of hostnames that will be blocked from accessing the Pull Zone.",
 			},
 
@@ -718,6 +720,9 @@ func pullZoneToResource(pz *bunny.PullZone, d *schema.ResourceData) error {
 		return err
 	}
 	if err := d.Set(keyPermaCacheStorageZoneID, pz.PermaCacheStorageZoneID); err != nil {
+		return err
+	}
+	if err := d.Set(keyStorageZoneID, pz.StorageZoneID); err != nil {
 		return err
 	}
 	if err := d.Set(keyType, pz.Type); err != nil {

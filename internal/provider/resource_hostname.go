@@ -35,6 +35,9 @@ func resourceHostname() *schema.Resource {
 		UpdateContext: resourceHostnameUpdate,
 		ReadContext:   resourceHostnameRead,
 		DeleteContext: resourceHostnameDelete,
+		Importer: &schema.ResourceImporter{
+			StateContext: resourceHostnameImport,
+		},
 
 		CustomizeDiff: func(_ context.Context, d *schema.ResourceDiff, _ interface{}) error {
 			loadFreeCert := d.Get(keyHostnameLoadFreeCertificate).(bool)
@@ -281,6 +284,38 @@ func resourceHostnameGetByID(ctx context.Context, clt *bunny.Client, pullZoneID,
 	}
 
 	return nil, fmt.Errorf("pull zone with id %d, has no hostname with id: %d", pullZoneID, hostnameID)
+}
+
+func resourceHostnameImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+	// split the id so we can lookup
+	idAttr := strings.SplitN(d.Id(), "/", 2)
+	var zoneID int64
+	var hostnameID int64
+	if len(idAttr) == 2 {
+		zID, err := strconv.ParseInt(idAttr[0], 10, 64)
+		if err != nil {
+			return nil, fmt.Errorf("invalid id (\"%s\") specified, pullZoneID should be an integer", idAttr[0])
+		}
+		zoneID = zID
+
+		hID, err := strconv.ParseInt(idAttr[1], 10, 64)
+		if err != nil {
+			return nil, fmt.Errorf("invalid id (\"%s\") specified, hostnameID should be an integer", idAttr[1])
+		}
+		hostnameID = hID
+
+	} else {
+		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"pullZoneID/hostnameID\"", d.Id())
+	}
+
+	if err := d.Set(keyHostnamePullZoneID, zoneID); err != nil {
+		return nil, err
+	}
+	d.SetId(strconv.FormatInt(hostnameID, 10))
+
+	resourceHostnameRead(ctx, d, meta)
+
+	return []*schema.ResourceData{d}, nil
 }
 
 func hostnameToResource(hostname *bunny.Hostname, d *schema.ResourceData) error {
