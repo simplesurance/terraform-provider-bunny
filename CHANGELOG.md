@@ -1,4 +1,4 @@
-## 0.7.1 (Unreleased)
+## 0.7.1 (Juni 08, 2022)
 
 BUG FIXES:
 
