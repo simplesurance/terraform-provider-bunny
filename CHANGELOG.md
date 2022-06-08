@@ -11,6 +11,7 @@ IMPROVEMENTS:
 * resource/edgerule: allow specifying only `origin_url` or `storage_zone_id`
 * provider: upgrade terraform-plugin-sdk to version 2.17.0
 * provider: upgrade github.com/hashicorp/terraform-plugin-docs to version 0.9.0
+* provider: upgrade Golang to version 1.18
 
 ## 0.7.0 (Februar 03, 2022)
 
