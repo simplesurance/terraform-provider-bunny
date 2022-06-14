@@ -1,5 +1,14 @@
 ## 0.7.2 (Unreleased)
 
+BUG FIXES:
+
+* docs: fix: provider-name in resource page was `terraform-provider-bunnycdn`
+        instead of `bunny`
+
+IMPROVEMENTS:
+
+* provider: upgrade github.com/hashicorp/terraform-plugin-docs to version 0.10.1
+
 ## 0.7.1 (Juni 08, 2022)
 
 BUG FIXES:
