@@ -8,6 +8,7 @@ BUG FIXES:
 IMPROVEMENTS:
 
 * provider: upgrade github.com/hashicorp/terraform-plugin-docs to version 0.10.1
+* resource/storagezone: add the ability to manage storagezone resources
 
 ## 0.7.1 (Juni 08, 2022)
 
