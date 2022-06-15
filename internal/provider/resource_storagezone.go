@@ -166,6 +166,10 @@ func validateImmutableStringProperty(key string, old interface{}, new interface{
 	o := old.(string)
 	n, nok := new.(string)
 
+	if o == "" {
+		return nil
+	}
+
 	if new == nil || !nok {
 		return immutableStringPropertyError(key, o, "")
 	}
