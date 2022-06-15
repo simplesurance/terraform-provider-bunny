@@ -75,11 +75,13 @@ func resourceStorageZone() *schema.Resource {
 				Type:        schema.TypeString,
 				Description: "The path to the custom file that will be returned in a case of 404.",
 				Optional:    true,
+				Default:     "/bunnycdn_errors/404.html",
 			},
 			keyRewrite404To200: {
 				Type:        schema.TypeBool,
 				Description: "Rewrite 404 status code to 200 for URLs without extension.",
 				Optional:    true,
+				Default:     false,
 			},
 
 			// computed properties
@@ -251,6 +253,14 @@ func resourceStorageZoneUpdate(ctx context.Context, d *schema.ResourceData, meta
 
 	updateErr := clt.StorageZone.Update(ctx, id, storageZone)
 	if updateErr != nil {
+		// if our update failed then revert our values to their original
+		// state so that we can run an apply again.
+		revertErr := revertUpdateValues(d)
+
+		if revertErr != nil {
+			return diagsErrFromErr("updating storage zone via API failed", revertErr)
+		}
+
 		return diagsErrFromErr("updating storage zone via API failed", updateErr)
 	}
 
@@ -335,6 +345,23 @@ func storageZoneToResource(sz *bunny.StorageZone, d *schema.ResourceData) error 
 		return err
 	}
 	if err := setStrSet(d, keyReplicationRegions, sz.ReplicationRegions, ignoreOrderOpt, caseInsensitiveOpt); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func revertUpdateValues(d *schema.ResourceData) error {
+	o, _ := d.GetChange(keyOriginURL)
+	if err := d.Set(keyOriginURL, o); err != nil {
+		return err
+	}
+	o, _ = d.GetChange(keyCustom404FilePath)
+	if err := d.Set(keyCustom404FilePath, o); err != nil {
+		return err
+	}
+	o, _ = d.GetChange(keyRewrite404To200)
+	if err := d.Set(keyRewrite404To200, o); err != nil {
 		return err
 	}
 
