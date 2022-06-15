@@ -17,10 +17,6 @@ import (
 	bunny "github.com/simplesurance/bunny-go"
 )
 
-func randStorageZoneName() string {
-	return resource.PrefixedUniqueId(resourcePrefix)
-}
-
 type storageZoneWanted struct {
 	TerraformResourceName string
 	bunny.StorageZone
@@ -96,7 +92,7 @@ func checkStorageZoneNotExists(storageZoneName string) resource.TestCheckFunc {
 func TestAccStorageZone_basic(t *testing.T) {
 	attrs := storageZoneWanted{
 		TerraformResourceName: "bunny_storagezone.mytest1",
-		Name:                  randStorageZoneName(),
+		Name:                  randResourceName(),
 		Region:                "DE",
 	}
 
@@ -132,7 +128,7 @@ func TestAccStorageZone_full(t *testing.T) {
 
 	// set fields to different values then their defaults, to be able to test if the settings are applied
 	attrs := bunny.StorageZone{
-		Name:               ptr.ToString(randStorageZoneName()),
+		Name:               ptr.ToString(randResourceName()),
 		Region:             ptr.ToString("DE"),
 		ReplicationRegions: []string{"NY", "LA"},
 	}
@@ -176,7 +172,7 @@ resource "bunny_storagezone" "%s" {
 func TestChangingImmutableFieldsFails(t *testing.T) {
 	const resourceName = "mytest1"
 	const fullResourceName = "bunny_storagezone." + resourceName
-	storageZoneName := randStorageZoneName()
+	storageZoneName := randResourceName()
 
 	attrs := bunny.StorageZone{
 		Name:               ptr.ToString(storageZoneName),
