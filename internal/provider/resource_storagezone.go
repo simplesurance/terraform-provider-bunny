@@ -16,7 +16,6 @@ import (
 const (
 	keyUserID             = "user_id"
 	keyPassword           = "password"
-	keyDateModified       = "date_modified"
 	keyDeleted            = "deleted"
 	keyStorageUsed        = "storage_used"
 	keyFilesStored        = "files_stored"
@@ -93,11 +92,6 @@ func resourceStorageZone() *schema.Resource {
 				Description: "The password granting read/write access to the storage zone.",
 				Computed:    true,
 				Sensitive:   true,
-			},
-			keyDateModified: {
-				Type:        schema.TypeString,
-				Description: "The last modified date of the storage zone.",
-				Computed:    true,
 			},
 			keyDeleted: {
 				Type:     schema.TypeBool,
@@ -334,9 +328,6 @@ func storageZoneToResource(sz *bunny.StorageZone, d *schema.ResourceData) error 
 		return err
 	}
 	if err := d.Set(keyPassword, sz.Password); err != nil {
-		return err
-	}
-	if err := d.Set(keyDateModified, sz.DateModified); err != nil {
 		return err
 	}
 	if err := d.Set(keyDeleted, sz.Deleted); err != nil {

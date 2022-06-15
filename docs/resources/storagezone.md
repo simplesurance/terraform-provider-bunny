@@ -29,7 +29,6 @@ description: |-
 
 ### Read-Only
 
-- `date_modified` (String) The last modified date of the storage zone.
 - `deleted` (Boolean)
 - `files_stored` (Number) The number of files stored in the storage zone.
 - `id` (String) The ID of this resource.
