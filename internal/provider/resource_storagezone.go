@@ -182,16 +182,16 @@ func validateImmutableStringProperty(key string, old interface{}, new interface{
 }
 
 func immutableStringPropertyError(key string, old string, new string) error {
-	message := "'%s' is immutable and cannot be changed from '%s' to '%s'. " +
-		"If you must change the '%s' of our region you must first delete your resource and then redefine it. " +
+	const message = "'%s' is immutable and cannot be changed from '%s' to '%s'.\n" +
+		"If you must change the '%s' of our region, first delete your resource and then redefine it.\n" +
 		"WARNING: deleting a 'bunny_storagezone' will also delete all the data it contains!"
 	return fmt.Errorf(message, key, old, new, key)
 }
 
 func immutableReplicationRegionError(key string, removed []interface{}) error {
-	message := "'%s' can be added to but not be removed once the zone has been created. " +
-		"This error occurred when attempting to remove values %+q from '%s'. " +
-		"To remove an existing '%s' the 'bunny_storagezone' must be deleted and recreated. " +
+	const message = "'%s' can be added but not removed once the zone has been created.\n" +
+		"This error occurred when attempting to remove values %+q from '%s'.\n" +
+		"To remove an existing '%s' the 'bunny_storagezone' must be deleted and recreated.\n" +
 		"WARNING: deleting a 'bunny_storagezone' will also delete all the data it contains!"
 	return fmt.Errorf(
 		message,
