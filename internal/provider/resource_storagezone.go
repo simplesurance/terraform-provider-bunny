@@ -242,10 +242,7 @@ func resourceStorageZoneCreate(ctx context.Context, d *schema.ResourceData, meta
 func resourceStorageZoneUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	clt := meta.(*bunny.Client)
 
-	storageZone, err := storageZoneFromResource(d)
-	if err != nil {
-		return diagsErrFromErr("converting resource to API type failed", err)
-	}
+	storageZone := storageZoneFromResource(d)
 
 	id, err := getIDAsInt64(d)
 	if err != nil {
@@ -346,22 +343,11 @@ func storageZoneToResource(sz *bunny.StorageZone, d *schema.ResourceData) error 
 
 // storageZoneFromResource returns a StorageZoneUpdateOptions API type that
 // has fields set to the values in d.
-func storageZoneFromResource(d *schema.ResourceData) (*bunny.StorageZoneUpdateOptions, error) {
-	var res bunny.StorageZoneUpdateOptions
-
-	res.ReplicationRegions = getStrSetAsSlice(d, keyReplicationRegions)
-
-	if d.HasChange(keyOriginURL) {
-		res.OriginURL = getStrPtr(d, keyOriginURL)
+func storageZoneFromResource(d *schema.ResourceData) *bunny.StorageZoneUpdateOptions {
+	return &bunny.StorageZoneUpdateOptions{
+		ReplicationRegions: getStrSetAsSlice(d, keyReplicationRegions),
+		OriginURL:          getOkStrPtr(d, keyOriginURL),
+		Custom404FilePath:  getOkStrPtr(d, keyCustom404FilePath),
+		Rewrite404To200:    getBoolPtr(d, keyRewrite404To200),
 	}
-
-	if d.HasChange(keyCustom404FilePath) {
-		res.Custom404FilePath = getStrPtr(d, keyCustom404FilePath)
-	}
-
-	if d.HasChange(keyRewrite404To200) {
-		res.Rewrite404To200 = getBoolPtr(d, keyRewrite404To200)
-	}
-
-	return &res, nil
 }
