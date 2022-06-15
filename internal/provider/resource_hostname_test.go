@@ -76,7 +76,7 @@ func sortHostnames(hostnames []*bunny.Hostname) {
 }
 
 func TestAccHostname_basic(t *testing.T) {
-	pzName := randPullZoneName()
+	pzName := randResourceName()
 	tf := fmt.Sprintf(`
 resource "bunny_pullzone" "pz" {
 	name = "%s"
@@ -121,7 +121,7 @@ resource "bunny_hostname" "h1" {
 }
 
 func TestAccHostname_addRemove(t *testing.T) {
-	pzName := randPullZoneName()
+	pzName := randResourceName()
 	hostname1 := randHostname()
 	hostname2 := randHostname()
 	hostname3 := randHostname()
@@ -244,7 +244,7 @@ resource "bunny_hostname" "h2" {
 }
 
 func TestAccHostname_DefiningDuplicateHostnamesFails(t *testing.T) {
-	pzName := randPullZoneName()
+	pzName := randResourceName()
 	tf := fmt.Sprintf(`
 resource "bunny_pullzone" "pz" {
 	name = "%s"
@@ -275,7 +275,7 @@ resource "bunny_hostname" "h2" {
 }
 
 func TestAccHostname_DefiningDefPullZoneHostnameFails(t *testing.T) {
-	pzName := randPullZoneName()
+	pzName := randResourceName()
 	tf := fmt.Sprintf(`
 resource "bunny_pullzone" "pz" {
 	name = "%s"
@@ -300,7 +300,7 @@ resource "bunny_hostname" "h1" {
 }
 
 func TestAccCertificateOneof(t *testing.T) {
-	pzName := randPullZoneName()
+	pzName := randResourceName()
 	tf := fmt.Sprintf(`
 resource "bunny_pullzone" "pz" {
 	name = "%s"
@@ -333,7 +333,7 @@ resource "bunny_hostname" "h1" {
 }
 
 func TestAccCertificateCanBeSetWhenLoadFreeCertIsDisabled(t *testing.T) {
-	pzName := randPullZoneName()
+	pzName := randResourceName()
 	tf := fmt.Sprintf(`
 resource "bunny_pullzone" "pz" {
 	name = "%s"
@@ -366,7 +366,7 @@ resource "bunny_hostname" "h1" {
 }
 
 func TestAccCertificates(t *testing.T) {
-	pzName := randPullZoneName()
+	pzName := randResourceName()
 	hostname := randHostname()
 
 	resource.Test(t, resource.TestCase{
@@ -486,7 +486,7 @@ resource "bunny_hostname" "h1" {
 func TestAccHostname_StateIsValidWhenCertUploadFails(t *testing.T) {
 	t.Skip("disabled, because test sends 800kiB of bogus data to bunny api, which is not kind")
 
-	pzName := randPullZoneName()
+	pzName := randResourceName()
 	hostname := randHostname()
 
 	// The bunny API does not return an error if the posted data is not a

@@ -98,7 +98,7 @@ func defPullZoneHostname(pullzoneName string) string {
 }
 
 func TestAccEdgeRule_full(t *testing.T) {
-	pzName := randPullZoneName()
+	pzName := randResourceName()
 
 	tfPz := fmt.Sprintf(`
 resource "bunny_pullzone" "mypz" {
@@ -311,7 +311,7 @@ resource "bunny_edgerule" "er3" {
 }
 
 func TestAccEdgeRule_basic(t *testing.T) {
-	pzName := randPullZoneName()
+	pzName := randResourceName()
 	tf := fmt.Sprintf(`
 resource "bunny_pullzone" "mypz" {
 	name = "%s"
@@ -363,7 +363,7 @@ resource "bunny_edgerule" "myer" {
 }
 
 func TestAccEdgeRule_delete(t *testing.T) {
-	pzName := randPullZoneName()
+	pzName := randResourceName()
 
 	tfPz := fmt.Sprintf(`
 resource "bunny_pullzone" "mypz" {
@@ -421,7 +421,7 @@ resource "bunny_pullzone" "mypz" {
 }
 
 func TestAccEdgeRule_enable_disable(t *testing.T) {
-	pzName := randPullZoneName()
+	pzName := randResourceName()
 
 	tfPz := fmt.Sprintf(`
 resource "bunny_pullzone" "mypz" {
@@ -558,8 +558,8 @@ resource "bunny_edgerule" "er2" {
 }
 
 func TestAccEdgeRule_changePullZoneID(t *testing.T) {
-	pzName1 := randPullZoneName()
-	pzName2 := randPullZoneName()
+	pzName1 := randResourceName()
+	pzName2 := randResourceName()
 
 	tfPz := fmt.Sprintf(`
 resource "bunny_pullzone" "pz1" {

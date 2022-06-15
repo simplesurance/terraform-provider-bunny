@@ -16,7 +16,6 @@ import (
 const (
 	keyUserID             = "user_id"
 	keyPassword           = "password"
-	keyDateModified       = "date_modified"
 	keyDeleted            = "deleted"
 	keyStorageUsed        = "storage_used"
 	keyFilesStored        = "files_stored"
@@ -94,11 +93,6 @@ func resourceStorageZone() *schema.Resource {
 				Computed:    true,
 				Sensitive:   true,
 			},
-			keyDateModified: {
-				Type:        schema.TypeString,
-				Description: "The last modified date of the storage zone.",
-				Computed:    true,
-			},
 			keyDeleted: {
 				Type:     schema.TypeBool,
 				Computed: true,
@@ -166,6 +160,10 @@ func validateImmutableStringProperty(key string, old interface{}, new interface{
 	o := old.(string)
 	n, nok := new.(string)
 
+	if o == "" {
+		return nil
+	}
+
 	if new == nil || !nok {
 		return immutableStringPropertyError(key, o, "")
 	}
@@ -178,16 +176,16 @@ func validateImmutableStringProperty(key string, old interface{}, new interface{
 }
 
 func immutableStringPropertyError(key string, old string, new string) error {
-	message := "'%s' is immutable and cannot be changed from '%s' to '%s'. " +
-		"If you must change the '%s' of our region you must first delete your resource and then redefine it. " +
+	const message = "'%s' is immutable and cannot be changed from '%s' to '%s'.\n" +
+		"If you must change the '%s' of our region, first delete your resource and then redefine it.\n" +
 		"WARNING: deleting a 'bunny_storagezone' will also delete all the data it contains!"
 	return fmt.Errorf(message, key, old, new, key)
 }
 
 func immutableReplicationRegionError(key string, removed []interface{}) error {
-	message := "'%s' can be added to but not be removed once the zone has been created. " +
-		"This error occurred when attempting to remove values %+q from '%s'. " +
-		"To remove an existing '%s' the 'bunny_storagezone' must be deleted and recreated. " +
+	const message = "'%s' can be added but not removed once the zone has been created.\n" +
+		"This error occurred when attempting to remove values %+q from '%s'.\n" +
+		"To remove an existing '%s' the 'bunny_storagezone' must be deleted and recreated.\n" +
 		"WARNING: deleting a 'bunny_storagezone' will also delete all the data it contains!"
 	return fmt.Errorf(
 		message,
@@ -244,10 +242,7 @@ func resourceStorageZoneCreate(ctx context.Context, d *schema.ResourceData, meta
 func resourceStorageZoneUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	clt := meta.(*bunny.Client)
 
-	storageZone, err := storageZoneFromResource(d)
-	if err != nil {
-		return diagsErrFromErr("converting resource to API type failed", err)
-	}
+	storageZone := storageZoneFromResource(d)
 
 	id, err := getIDAsInt64(d)
 	if err != nil {
@@ -256,14 +251,6 @@ func resourceStorageZoneUpdate(ctx context.Context, d *schema.ResourceData, meta
 
 	updateErr := clt.StorageZone.Update(ctx, id, storageZone)
 	if updateErr != nil {
-		// if our update failed then revert our values to their original
-		// state so that we can run an apply again.
-		revertErr := revertUpdateValues(d)
-
-		if revertErr != nil {
-			return diagsErrFromErr("updating storage zone via API failed", revertErr)
-		}
-
 		return diagsErrFromErr("updating storage zone via API failed", updateErr)
 	}
 
@@ -332,9 +319,6 @@ func storageZoneToResource(sz *bunny.StorageZone, d *schema.ResourceData) error 
 	if err := d.Set(keyPassword, sz.Password); err != nil {
 		return err
 	}
-	if err := d.Set(keyDateModified, sz.DateModified); err != nil {
-		return err
-	}
 	if err := d.Set(keyDeleted, sz.Deleted); err != nil {
 		return err
 	}
@@ -357,41 +341,13 @@ func storageZoneToResource(sz *bunny.StorageZone, d *schema.ResourceData) error 
 	return nil
 }
 
-func revertUpdateValues(d *schema.ResourceData) error {
-	o, _ := d.GetChange(keyOriginURL)
-	if err := d.Set(keyOriginURL, o); err != nil {
-		return err
-	}
-	o, _ = d.GetChange(keyCustom404FilePath)
-	if err := d.Set(keyCustom404FilePath, o); err != nil {
-		return err
-	}
-	o, _ = d.GetChange(keyRewrite404To200)
-	if err := d.Set(keyRewrite404To200, o); err != nil {
-		return err
-	}
-
-	return nil
-}
-
 // storageZoneFromResource returns a StorageZoneUpdateOptions API type that
 // has fields set to the values in d.
-func storageZoneFromResource(d *schema.ResourceData) (*bunny.StorageZoneUpdateOptions, error) {
-	var res bunny.StorageZoneUpdateOptions
-
-	res.ReplicationRegions = getStrSetAsSlice(d, keyReplicationRegions)
-
-	if d.HasChange(keyOriginURL) {
-		res.OriginURL = getStrPtr(d, keyOriginURL)
+func storageZoneFromResource(d *schema.ResourceData) *bunny.StorageZoneUpdateOptions {
+	return &bunny.StorageZoneUpdateOptions{
+		ReplicationRegions: getStrSetAsSlice(d, keyReplicationRegions),
+		OriginURL:          getOkStrPtr(d, keyOriginURL),
+		Custom404FilePath:  getOkStrPtr(d, keyCustom404FilePath),
+		Rewrite404To200:    getBoolPtr(d, keyRewrite404To200),
 	}
-
-	if d.HasChange(keyCustom404FilePath) {
-		res.Custom404FilePath = getStrPtr(d, keyCustom404FilePath)
-	}
-
-	if d.HasChange(keyRewrite404To200) {
-		res.Rewrite404To200 = getBoolPtr(d, keyRewrite404To200)
-	}
-
-	return &res, nil
 }

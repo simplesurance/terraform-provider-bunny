@@ -2,6 +2,7 @@ package provider
 
 import (
 	"context"
+	"regexp"
 
 	"errors"
 	"fmt"
@@ -15,10 +16,6 @@ import (
 
 	bunny "github.com/simplesurance/bunny-go"
 )
-
-func randStorageZoneName() string {
-	return resource.PrefixedUniqueId(resourcePrefix)
-}
 
 type storageZoneWanted struct {
 	TerraformResourceName string
@@ -95,7 +92,7 @@ func checkStorageZoneNotExists(storageZoneName string) resource.TestCheckFunc {
 func TestAccStorageZone_basic(t *testing.T) {
 	attrs := storageZoneWanted{
 		TerraformResourceName: "bunny_storagezone.mytest1",
-		Name:                  randStorageZoneName(),
+		Name:                  randResourceName(),
 		Region:                "DE",
 	}
 
@@ -131,7 +128,7 @@ func TestAccStorageZone_full(t *testing.T) {
 
 	// set fields to different values then their defaults, to be able to test if the settings are applied
 	attrs := bunny.StorageZone{
-		Name:               ptr.ToString(randStorageZoneName()),
+		Name:               ptr.ToString(randResourceName()),
 		Region:             ptr.ToString("DE"),
 		ReplicationRegions: []string{"NY", "LA"},
 	}
@@ -166,6 +163,94 @@ resource "bunny_storagezone" "%s" {
 			{
 				Config:  tf,
 				Destroy: true,
+			},
+		},
+		CheckDestroy: checkStorageZoneNotExists(fullResourceName),
+	})
+}
+
+func TestChangingImmutableFieldsFails(t *testing.T) {
+	const resourceName = "mytest1"
+	const fullResourceName = "bunny_storagezone." + resourceName
+	storageZoneName := randResourceName()
+
+	attrs := bunny.StorageZone{
+		Name:               ptr.ToString(storageZoneName),
+		Region:             ptr.ToString("NY"),
+		ReplicationRegions: []string{"DE"},
+	}
+
+	resource.Test(t, resource.TestCase{
+		Providers: testProviders,
+		Steps: []resource.TestStep{
+			// create storagezone
+			{
+				Config: fmt.Sprintf(`
+resource "bunny_storagezone" "mytest1" {
+	name = "%s"
+	region = "%s"
+	replication_regions = %s
+}
+`,
+					storageZoneName,
+					*attrs.Region,
+					tfStrList(attrs.ReplicationRegions),
+				),
+				Check: checkSzState(t, fullResourceName, &attrs),
+			},
+			// change region
+			{
+				Config: fmt.Sprintf(`
+resource "bunny_storagezone" "mytest1" {
+	name = "%s"
+	region = "LA"
+	replication_regions = ["DE"]
+}
+`,
+					storageZoneName,
+				),
+				ExpectError: regexp.MustCompile(".*'region' is immutable.*"),
+			},
+			// change name
+			{
+				Config: fmt.Sprintf(`
+resource "bunny_storagezone" "mytest1" {
+	name = "%s"
+	region = "LA"
+	replication_regions = ["DE"]
+}
+`,
+					storageZoneName+resource.UniqueId(),
+				),
+				Check:       checkSzState(t, fullResourceName, &attrs),
+				ExpectError: regexp.MustCompile(".*'name' is immutable.*"),
+			},
+			// replace a replication_region
+			{
+				Config: fmt.Sprintf(`
+resource "bunny_storagezone" "mytest1" {
+	name = "%s"
+	region = "NY"
+	replication_regions = ["LA"]
+}
+`,
+					storageZoneName,
+				),
+				Check:       checkSzState(t, fullResourceName, &attrs),
+				ExpectError: regexp.MustCompile(".*'replication_regions' can be added but not removed.*"),
+			},
+			// remove replication_region
+			{
+				Config: fmt.Sprintf(`
+resource "bunny_storagezone" "mytest1" {
+	name = "%s"
+	region = "NY"
+}
+`,
+					storageZoneName,
+				),
+				Check:       checkSzState(t, fullResourceName, &attrs),
+				ExpectError: regexp.MustCompile(".*'replication_regions' can be added but not removed.*"),
 			},
 		},
 		CheckDestroy: checkStorageZoneNotExists(fullResourceName),
