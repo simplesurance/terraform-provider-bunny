@@ -4,7 +4,7 @@
 
 This repository provides a [Terraform](https://terraform.io) provider for the
 [Bunny.net CDN platform](https://bunny.net/). \
-It currently only supports to manage Pull Zones.
+It supports to manage Pull and Storage Zones.
 
 ## Development
 
