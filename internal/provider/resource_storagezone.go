@@ -253,14 +253,11 @@ func resourceStorageZoneUpdate(ctx context.Context, d *schema.ResourceData, meta
 
 	updateErr := clt.StorageZone.Update(ctx, id, storageZone)
 	if updateErr != nil {
-		// if our update failed then revert our values to their original
-		// state so that we can run an apply again.
-		revertErr := revertUpdateValues(d)
-
-		if revertErr != nil {
-			return diagsErrFromErr("updating storage zone via API failed", revertErr)
-		}
-
+		// The storagezone contains fields /custom_404_file_path) that are only updated by the
+		// provider and not retrieved via ReadContext(). This causes that we run into the bug
+		// https://github.com/hashicorp/terraform-plugin-sdk/issues/476.
+		// As workaround d.Partial(true) is called.
+		d.Partial(true)
 		return diagsErrFromErr("updating storage zone via API failed", updateErr)
 	}
 
@@ -345,23 +342,6 @@ func storageZoneToResource(sz *bunny.StorageZone, d *schema.ResourceData) error 
 		return err
 	}
 	if err := setStrSet(d, keyReplicationRegions, sz.ReplicationRegions, ignoreOrderOpt, caseInsensitiveOpt); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func revertUpdateValues(d *schema.ResourceData) error {
-	o, _ := d.GetChange(keyOriginURL)
-	if err := d.Set(keyOriginURL, o); err != nil {
-		return err
-	}
-	o, _ = d.GetChange(keyCustom404FilePath)
-	if err := d.Set(keyCustom404FilePath, o); err != nil {
-		return err
-	}
-	o, _ = d.GetChange(keyRewrite404To200)
-	if err := d.Set(keyRewrite404To200, o); err != nil {
 		return err
 	}
 
