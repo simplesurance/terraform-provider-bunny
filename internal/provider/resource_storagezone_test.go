@@ -295,6 +295,61 @@ func checkSzState(t *testing.T, resourceName string, wanted *bunny.StorageZone) 
 	}
 }
 
+// TestAccFailedUpdateDoesNotApplychanges tests the scenario described in
+// https://github.com/5-stones/terraform-provider-bunny/pull/1#discussion_r898134629
+func TestAccFailedUpdateDoesNotApplychanges(t *testing.T) {
+	attrs := storageZoneWanted{
+		TerraformResourceName: "bunny_storagezone.mytest1",
+		Name:                  randResourceName(),
+		Region:                "DE",
+	}
+
+	resource.Test(t, resource.TestCase{
+		Providers: testProviders,
+		Steps: []resource.TestStep{
+			{
+				Config: fmt.Sprintf(`
+resource "bunny_storagezone" "mytest1" {
+	name = "%s"
+	region = "%s"
+	custom_404_file_path = "/error.html"
+}`,
+					attrs.Name,
+					attrs.Region,
+				),
+				Check: checkBasicStorageZoneAPIState(&attrs),
+			},
+			// change custom_404_file_path to a value that spawns a generation error on bunny side
+			{
+				Config: fmt.Sprintf(`
+resource "bunny_storagezone" "mytest1" {
+	name = "%s"
+	region = "%s"
+	custom_404_file_path = "abc"
+}`,
+					attrs.Name,
+					attrs.Region,
+				),
+				Check:       checkBasicStorageZoneAPIState(&attrs),
+				ExpectError: regexp.MustCompile(".*updating storage zone via API failed.*"),
+			},
+			{
+				Config: fmt.Sprintf(`
+resource "bunny_storagezone" "mytest1" {
+	name = "%s"
+	region = "%s"
+	custom_404_file_path = "/error.html"
+}`,
+					attrs.Name,
+					attrs.Region,
+				),
+				PlanOnly: true,
+			},
+		},
+		CheckDestroy: checkStorageZoneNotExists(attrs.Name),
+	})
+}
+
 // storageZoneDiffIgnoredFields contains a list of fieldsnames in a bunny.StorageZone struct that are ignored by szDiff.
 var storageZoneDiffIgnoredFields = map[string]struct{}{
 	"ID":               {}, // computed field
