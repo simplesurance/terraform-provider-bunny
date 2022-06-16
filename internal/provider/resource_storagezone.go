@@ -179,7 +179,7 @@ func validateImmutableStringProperty(key string, old interface{}, new interface{
 
 func immutableStringPropertyError(key string, old string, new string) error {
 	const message = "'%s' is immutable and cannot be changed from '%s' to '%s'.\n" +
-		"If you must change the '%s' of our region, first delete your resource and then redefine it.\n" +
+		"To change the existing '%s' the 'bunny_storagezone' must be deleted and recreated.\n" +
 		"WARNING: deleting a 'bunny_storagezone' will also delete all the data it contains!"
 	return fmt.Errorf(message, key, old, new, key)
 }
