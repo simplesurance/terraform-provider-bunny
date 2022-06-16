@@ -261,15 +261,6 @@ func resourceStorageZoneUpdate(ctx context.Context, d *schema.ResourceData, meta
 		return diagsErrFromErr("updating storage zone via API failed", updateErr)
 	}
 
-	updatedStorageZone, err := clt.StorageZone.Get(ctx, id)
-	if err != nil {
-		return diagsErrFromErr("fetching updated storage zone via API failed", err)
-	}
-
-	if err := storageZoneToResource(updatedStorageZone, d); err != nil {
-		return diagsErrFromErr("converting api type to resource data after successful update failed", err)
-	}
-
 	return nil
 }
 
