@@ -8,6 +8,18 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
+// getOkStrPtr returns the value of the string field keyName in d.
+// If the field is not it returns nil.
+func getOkStrPtr(d *schema.ResourceData, keyName string) *string {
+	val, isSet := d.GetOk(keyName)
+	if !isSet || val == nil {
+		return nil
+	}
+
+	v := val.(string)
+	return &v
+}
+
 func getStrPtr(d *schema.ResourceData, keyName string) *string {
 	val := d.Get(keyName)
 	if val == nil {

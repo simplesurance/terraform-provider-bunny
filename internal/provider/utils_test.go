@@ -6,8 +6,13 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
+
+func randResourceName() string {
+	return resource.PrefixedUniqueId(resourcePrefix)
+}
 
 func idFromState(s *terraform.State, resourceName string) (string, error) {
 	resourceState := s.Modules[0].Resources[resourceName]

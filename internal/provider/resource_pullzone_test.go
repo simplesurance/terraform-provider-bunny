@@ -18,10 +18,6 @@ import (
 	bunny "github.com/simplesurance/bunny-go"
 )
 
-func randPullZoneName() string {
-	return resource.PrefixedUniqueId(resourcePrefix)
-}
-
 func randHostname() string {
 	return resource.PrefixedUniqueId(resourcePrefix) + ".test"
 }
@@ -173,7 +169,7 @@ func TestAccPullZone_basic(t *testing.T) {
 	*/
 	attrs := pullZoneWanted{
 		TerraformResourceName: "bunny_pullzone.mytest1",
-		Name:                  randPullZoneName(),
+		Name:                  randResourceName(),
 		OriginURL:             "https://tabletennismap.de",
 		EnableGeoZoneAsia:     true,
 		EnableGeoZoneEU:       true,
@@ -285,7 +281,7 @@ func TestAccPullZone_full(t *testing.T) {
 		VerifyOriginSSL:                 ptr.ToBool(true),
 		ZoneSecurityEnabled:             ptr.ToBool(true),
 		ZoneSecurityIncludeHashRemoteIP: ptr.ToBool(false),
-		Name:                            ptr.ToString(randPullZoneName()),
+		Name:                            ptr.ToString(randResourceName()),
 		// TODO: Test StorageZoneID
 		ZoneSecurityKey: ptr.ToString("xyz"),
 
@@ -523,7 +519,7 @@ resource "bunny_pullzone" "%s" {
 }
 
 func TestAccPullZone_CaseInsensitiveOrderIndependentFields(t *testing.T) {
-	pzName := randPullZoneName()
+	pzName := randResourceName()
 
 	resource.Test(t, resource.TestCase{
 		Providers: testProviders,
@@ -772,7 +768,7 @@ func pzDiff(t *testing.T, a, b interface{}) []string {
 }
 
 func TestAccPullZone_OriginURLAndStorageZoneIDAreExclusive(t *testing.T) {
-	pzName := randPullZoneName()
+	pzName := randResourceName()
 
 	resource.Test(t, resource.TestCase{
 		Providers: testProviders,
