@@ -256,7 +256,7 @@ func resourceHostnameRead(ctx context.Context, d *schema.ResourceData, meta inte
 
 	hostname, err := resourceHostnameGetByID(ctx, clt, pullZoneID, hostnameID)
 	if err != nil {
-		diagsErrFromErr("could not fetch hostname from provider", err)
+		return diagsErrFromErr("could not fetch hostname from provider", err)
 	}
 
 	if err := hostnameToResource(hostname, d); err != nil {
