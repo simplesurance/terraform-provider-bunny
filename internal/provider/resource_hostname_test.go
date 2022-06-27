@@ -113,6 +113,24 @@ resource "bunny_hostname" "h1" {
 				}),
 			},
 			{
+				ResourceName:            "bunny_hostname.h1",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"load_free_certificate"},
+				ImportStateIdFunc: func(s *terraform.State) (string, error) {
+					pzID, err := idFromState(s, "bunny_pullzone.pz")
+					if err != nil {
+						return "", fmt.Errorf("could not get pull zone id from state: %w", err)
+					}
+					hostnameID, err := idFromState(s, "bunny_hostname.h1")
+					if err != nil {
+						return "", fmt.Errorf("could not get hostname id from state: %w", err)
+					}
+
+					return fmt.Sprintf("%s/%s", pzID, hostnameID), nil
+				},
+			},
+			{
 				Config:  tf,
 				Destroy: true,
 			},

@@ -161,6 +161,12 @@ resource "bunny_storagezone" "%s" {
 				Check:  checkSzState(t, fullResourceName, &attrs),
 			},
 			{
+				ResourceName:            fullResourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"custom_404_file_path", "origin_url", "rewrite_404_to_200"},
+			},
+			{
 				Config:  tf,
 				Destroy: true,
 			},

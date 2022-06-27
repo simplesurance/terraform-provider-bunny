@@ -510,6 +510,12 @@ resource "bunny_pullzone" "%s" {
 				Check:  checkPzState(t, fullResourceName, &attrs),
 			},
 			{
+				ResourceName:            fullResourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"last_updated"},
+			},
+			{
 				Config:  tf,
 				Destroy: true,
 			},
