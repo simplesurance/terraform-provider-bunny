@@ -4,6 +4,7 @@ IMPROVEMENTS:
 
 * resource/storagezone: add the ability to manage storagezone resources
 * provider: upgrade github.com/hashicorp/terraform-plugin-docs to version 0.10.1
+* provider: upgrade github.com/simplesurance/bunny-go to version 3d98cb9a17da
 
 BUG FIXES:
 
