@@ -1,14 +1,14 @@
-## 0.7.2 (Unreleased)
-
-BUG FIXES:
-
-* docs: fix: provider-name in resource page was `terraform-provider-bunnycdn`
-        instead of `bunny`
+## 0.8.0 (Unreleased)
 
 IMPROVEMENTS:
 
-* provider: upgrade github.com/hashicorp/terraform-plugin-docs to version 0.10.1
 * resource/storagezone: add the ability to manage storagezone resources
+* provider: upgrade github.com/hashicorp/terraform-plugin-docs to version 0.10.1
+
+BUG FIXES:
+
+* docs: provider-name in resource page was `terraform-provider-bunnycdn`
+        instead of `bunny`
 
 ## 0.7.1 (Juni 08, 2022)
 
