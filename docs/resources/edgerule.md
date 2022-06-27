@@ -68,4 +68,10 @@ Optional:
 - `parameter_1` (String) The trigger parameter 1. The value depends on the type of trigger.
 - `pattern_matches` (Set of String) The list of pattern matches that will trigger the edge rule.
 
+## Import
 
+Import is supported using the following syntax:
+
+```shell
+terraform import bunny_edgerule.example <PULLZONE-ID>/<EDGERULE-GUID>
+```

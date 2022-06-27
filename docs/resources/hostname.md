@@ -40,4 +40,10 @@ Required:
 - `certificate_data` (String) The X.509 certificate.
 - `private_key_data` (String, Sensitive) The private key.
 
+## Import
 
+Import is supported using the following syntax:
+
+```shell
+terraform import bunny_hostname.example <PULLZONE-ID>/<HOSTNAME-ID>
+```
