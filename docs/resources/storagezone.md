@@ -44,4 +44,10 @@ resource "bunny_storagezone" "mysz" {
 - `storage_used` (Number) The amount of storage used in the storage zone in bytes.
 - `user_id` (String)
 
+## Import
 
+Import is supported using the following syntax:
+
+```shell
+terraform import bunny_storagezone.example <STORAGEZONE-ID>
+```

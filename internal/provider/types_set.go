@@ -28,8 +28,6 @@ func caseInsensitiveOpt(opts *strSetOpts) {
 }
 
 // setStrSet converts strSlice to a *schema.Set with strings elements and sets the field key in d to the set.
-// If the slices are unset or empty, d.Set() will not be called, to prevent
-// that terraform shows differences between empty and nil slices.
 // opts can be passed to further customize suppressing differences between the
 // current set and the new value.
 func setStrSet(d *schema.ResourceData, key string, strSlice []string, opts ...setStrSetOpt) error {
@@ -39,25 +37,28 @@ func setStrSet(d *schema.ResourceData, key string, strSlice []string, opts ...se
 		opt(&options)
 	}
 
-	curSet := d.Get(key).(*schema.Set)
-	curStrSlice := interfaceSlicetoStrSlice(curSet.List())
-
+	curISet, isSet := d.GetOk(key)
+	curSet := curISet.(*schema.Set)
 	newSet := schema.NewSet(schema.HashString, strSliceAsInterfaceSlice(strSlice))
-	newStrSlice := interfaceSlicetoStrSlice(newSet.List())
 
-	if options.caseInsensitive {
-		strSliceToLower(curStrSlice)
-		strSliceToLower(newStrSlice)
-	}
+	if isSet {
+		curStrSlice := interfaceSlicetoStrSlice(curSet.List())
+		newStrSlice := interfaceSlicetoStrSlice(newSet.List())
 
-	if options.ignoreOrder {
-		sort.Strings(curStrSlice)
-		sort.Strings(newStrSlice)
-	}
+		if options.caseInsensitive {
+			strSliceToLower(curStrSlice)
+			strSliceToLower(newStrSlice)
+		}
 
-	if strSliceEqual(curStrSlice, newStrSlice) {
-		logger.Debugf("setStrSet: %s %+v and +%v are equal, not setting value", key, curSet.GoString(), newSet.GoString())
-		return nil
+		if options.ignoreOrder {
+			sort.Strings(curStrSlice)
+			sort.Strings(newStrSlice)
+		}
+
+		if strSliceEqual(curStrSlice, newStrSlice) {
+			logger.Debugf("setStrSet: %s %+v and +%v are equal, not setting value", key, curSet.GoString(), newSet.GoString())
+			return nil
+		}
 	}
 
 	logger.Debugf("setStrSet: %s %+v and +%v are not equal, setting value", key, curSet.GoString(), newSet.GoString())

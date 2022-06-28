@@ -169,4 +169,10 @@ If multiple IPs are set on the origin hostname, the CDN will automatically cycle
 - `origin_retry_delay` (Number) Determines the amount of time that the CDN should wait before retrying an origin request.
 - `origin_retry_response_timeout` (Boolean) Determines if we should retry the request in case of a response timeout.
 
+## Import
 
+Import is supported using the following syntax:
+
+```shell
+terraform import bunny_pullzone.example <PULLZONE-ID>
+```

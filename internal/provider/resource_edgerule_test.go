@@ -300,7 +300,6 @@ resource "bunny_edgerule" "er3" {
 					},
 				}),
 			},
-
 			{
 				Config:  tfPz,
 				Destroy: true,
@@ -353,6 +352,23 @@ resource "bunny_edgerule" "myer" {
 						},
 					},
 				}),
+			},
+			{
+				ResourceName:      "bunny_edgerule.myer",
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateIdFunc: func(s *terraform.State) (string, error) {
+					pzID, err := idFromState(s, "bunny_pullzone.mypz")
+					if err != nil {
+						return "", fmt.Errorf("could not get pull zone id from state: %w", err)
+					}
+					edgeruleID, err := idFromState(s, "bunny_edgerule.myer")
+					if err != nil {
+						return "", fmt.Errorf("could not get edgerule id from state: %w", err)
+					}
+
+					return fmt.Sprintf("%s/%s", pzID, edgeruleID), nil
+				},
 			},
 			{
 				Config:  tf,

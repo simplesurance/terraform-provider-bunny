@@ -87,7 +87,6 @@ make docs
 
 ### Missing Features
 
-- `terraform import` support
 - unsupported Pull Zone features:
   - `burst_size`
   - `dns_record_id`

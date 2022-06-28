@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strconv"
 	"strings"
 	"sync"
 
@@ -43,6 +44,10 @@ func resourceEdgeRule() *schema.Resource {
 		ReadContext:   resourceEdgeRuleRead,
 		DeleteContext: resourceEdgeRuleDelete,
 		UpdateContext: resourceEdgeRuleUpdate,
+		Importer: &schema.ResourceImporter{
+			StateContext: resourceEdgeRuleImport,
+		},
+
 		Schema: map[string]*schema.Schema{
 			keyEdgeRulePullZoneID: {
 				Type:        schema.TypeInt,
@@ -209,6 +214,34 @@ func resourceEdgeRuleUpdate(ctx context.Context, d *schema.ResourceData, meta in
 	}
 
 	return nil
+}
+
+func resourceEdgeRuleImport(ctx context.Context, d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+	// split the id so we can lookup
+	idAttr := strings.SplitN(d.Id(), "/", 2)
+	var zoneID int64
+	var guid string
+	if len(idAttr) == 2 {
+		zID, err := strconv.ParseInt(idAttr[0], 10, 64)
+		if err != nil {
+			return nil, fmt.Errorf("invalid id (\"%s\") specified, pullZoneID should be an integer", idAttr[0])
+		}
+		zoneID = zID
+
+		guid = idAttr[1]
+
+	} else {
+		return nil, fmt.Errorf("invalid id (\"%s\") specified, should be in format \"pullZoneID/GUID\"", d.Id())
+	}
+
+	if err := d.Set(keyEdgeRulePullZoneID, zoneID); err != nil {
+		return nil, err
+	}
+	d.SetId(guid)
+
+	resourceEdgeRuleRead(ctx, d, meta)
+
+	return []*schema.ResourceData{d}, nil
 }
 
 func edgeRuleTriggerTypeToInt(triggerType string) (int, error) {

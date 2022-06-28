@@ -1,5 +1,9 @@
 ## 0.8.1 (Unreleased)
 
+IMPROVEMENTS:
+
+* resource/{edgerule, hostname, pullzone, storagezone}: support importing
+
 ## 0.8.0 (Juni 27, 2022)
 
 IMPROVEMENTS:

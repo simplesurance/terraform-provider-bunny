@@ -32,6 +32,9 @@ func resourceStorageZone() *schema.Resource {
 		ReadContext:   resourceStorageZoneRead,
 		UpdateContext: resourceStorageZoneUpdate,
 		DeleteContext: resourceStorageZoneDelete,
+		Importer: &schema.ResourceImporter{
+			StateContext: schema.ImportStatePassthroughContext,
+		},
 
 		Schema: map[string]*schema.Schema{
 			// immutable properties
