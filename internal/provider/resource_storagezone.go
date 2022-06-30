@@ -71,7 +71,7 @@ func resourceStorageZone() *schema.Resource {
 			// mutable properties
 			keyOriginURL: {
 				Type:        schema.TypeString,
-				Description: "The origin URL of the storage zone.",
+				Description: "A URL to which a request is proxied, if a file does not exist in the the storage zone.",
 				Optional:    true,
 			},
 			keyCustom404FilePath: {
