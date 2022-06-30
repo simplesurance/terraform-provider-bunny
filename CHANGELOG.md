@@ -1,8 +1,10 @@
-## 0.8.1 (Unreleased)
+## 0.9.0 (Unreleased)
 
 IMPROVEMENTS:
 
 * resource/{edgerule, hostname, pullzone, storagezone}: support importing
+* resource/storagezone: improve origin_url documentation
+* provider: upgrade github.com/hashicorp/terraform-plugin-docs to version 0.12.0
 
 ## 0.8.0 (Juni 27, 2022)
 
