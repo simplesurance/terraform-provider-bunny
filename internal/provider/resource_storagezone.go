@@ -16,6 +16,7 @@ import (
 const (
 	keyUserID             = "user_id"
 	keyPassword           = "password"
+	keyRegionException    = "RegionException"
 	keyDeleted            = "deleted"
 	keyStorageUsed        = "storage_used"
 	keyFilesStored        = "files_stored"
@@ -47,9 +48,16 @@ func resourceStorageZone() *schema.Resource {
 				Description: "The name of the storage zone.",
 				Required:    true,
 			},
+			keyRegionException: {
+				Type:        schema.TypeString,
+				Description: "The list of regions that must have at least one of replication regions",
+				ValidateDiagFunc: validation.ToDiagFunc(
+					validation.StringInSlice([]string{"SYD", "SG", "BR"}, false),
+				),
+			},
 			keyRegion: {
 				Type:        schema.TypeString,
-				Description: "The code of the main storage zone region (Possible values: DE, NY, LA, SG).",
+				Description: "The code of the main storage zone region (Possible values: DE, NY, LA, SG, SYD, UK, SE, BR).",
 				Optional:    true,
 				Default:     "DE",
 				ValidateDiagFunc: validation.ToDiagFunc(
@@ -58,7 +66,7 @@ func resourceStorageZone() *schema.Resource {
 			},
 			keyReplicationRegions: {
 				Type:        schema.TypeSet,
-				Description: "The list of replication zones for the storage zone (Possible values: DE, NY, LA, SG, SYD). Replication zones cannot be removed once the zone has been created.",
+				Description: "The list of replication zones for the storage zone (Possible values: DE, NY, LA, SG, SYD, UK, SE, BR). Replication zones cannot be removed once the zone has been created.",
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 					ValidateDiagFunc: validation.ToDiagFunc(
@@ -201,12 +209,31 @@ func immutableReplicationRegionError(key string, removed []interface{}) error {
 	)
 }
 
+func creatingRegionWithoutReplicationRegionError(region string,  allRegions []string) error {
+	const message = "'%s' region needs to have at least one replication region.\n" +
+		"Please add one of the available replication region %s.\n"
+	return fmt.Errorf(message, region, allRegions)
+}
+
+func stringInSlice(a string, list []string) bool {
+	for _, b := range list {
+			if b == a {
+					return true
+			}
+	}
+	return false
+}
+
 func resourceStorageZoneCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	clt := meta.(*bunny.Client)
 
 	originURL := getStrPtr(d, keyOriginURL)
 	if !d.HasChange(keyOriginURL) {
 		originURL = nil
+	}
+
+	if stringInSlice(getStrPtr(d, keyRegion), getStrPtr(d, keyRegionException)) {
+		return creatingRegionWithoutReplicationRegionError(getStrPtr(d, keyRegion), getStrPtr(d, keyRegionException))
 	}
 
 	sz, err := clt.StorageZone.Add(ctx, &bunny.StorageZoneAddOptions{
