@@ -20,12 +20,13 @@ const (
 	keyStorageUsed        = "storage_used"
 	keyFilesStored        = "files_stored"
 	keyRegion             = "region"
-	keyRegionException    = "region_exception"
 	keyReplicationRegions = "replication_regions"
 	keyReadOnlyPassword   = "read_only_password"
 	keyCustom404FilePath  = "custom_404_file_path"
 	keyRewrite404To200    = "rewrite_404_to_200"
 )
+
+	var RegionException		= []string{"SYD", "SG", "BR"}
 
 func resourceStorageZone() *schema.Resource {
 	return &schema.Resource{
@@ -47,13 +48,6 @@ func resourceStorageZone() *schema.Resource {
 				Type:        schema.TypeString,
 				Description: "The name of the storage zone.",
 				Required:    true,
-			},
-			keyRegionException: {
-				Type:        schema.TypeString,
-				Description: "The list of regions that must have at least one of replication regions",
-				ValidateDiagFunc: validation.ToDiagFunc(
-					validation.StringInSlice([]string{"SYD", "SG", "BR"}, false),
-				),
 			},
 			keyRegion: {
 				Type:        schema.TypeString,
@@ -209,15 +203,18 @@ func immutableReplicationRegionError(key string, removed []interface{}) error {
 	)
 }
 
-func creatingRegionWithoutReplicationRegionError(region string,  allRegions []string) error {
+func creatingRegionWithoutReplicationRegionError(region *string,  allRegions []string) error {
 	const message = "'%s' region needs to have at least one replication region.\n" +
 		"Please add one of the available replication region %s.\n"
-	return fmt.Errorf(message, region, allRegions)
+	return fmt.Errorf(message, *region, allRegions)
 }
 
-func stringInSlice(a string, list []string) bool {
+func stringInSlice(a *string, list []string) bool {
+	if a == nil {
+		return false
+	}
 	for _, b := range list {
-			if b == a {
+			if b == *a {
 					return true
 			}
 	}
@@ -232,8 +229,8 @@ func resourceStorageZoneCreate(ctx context.Context, d *schema.ResourceData, meta
 		originURL = nil
 	}
 
-	if stringInSlice(getStrPtr(d, keyRegion), getStrPtr(d, keyRegionException)) {
-		return creatingRegionWithoutReplicationRegionError(getStrPtr(d, keyRegion), getStrPtr(d, keyRegionException))
+	if stringInSlice(getStrPtr(d, keyRegion), RegionException) {
+		return diag.FromErr(creatingRegionWithoutReplicationRegionError(getStrPtr(d, keyRegion), RegionException))
 	}
 
 	sz, err := clt.StorageZone.Add(ctx, &bunny.StorageZoneAddOptions{
