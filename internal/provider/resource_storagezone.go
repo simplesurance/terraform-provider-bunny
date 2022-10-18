@@ -53,7 +53,7 @@ func resourceStorageZone() *schema.Resource {
 				Optional:    true,
 				Default:     "DE",
 				ValidateDiagFunc: validation.ToDiagFunc(
-					validation.StringInSlice([]string{"DE", "NY", "LA", "SG"}, false),
+					validation.StringInSlice([]string{"DE", "NY", "LA", "SG", "SYD", "UK", "SE", "BR"}, false),
 				),
 			},
 			keyReplicationRegions: {
@@ -62,7 +62,7 @@ func resourceStorageZone() *schema.Resource {
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 					ValidateDiagFunc: validation.ToDiagFunc(
-						validation.StringInSlice([]string{"DE", "NY", "LA", "SG", "SYD"}, false),
+						validation.StringInSlice([]string{"DE", "NY", "LA", "SG", "SYD", "UK", "SE", "BR"}, false),
 					),
 				},
 				Optional: true,
