@@ -16,11 +16,11 @@ import (
 const (
 	keyUserID             = "user_id"
 	keyPassword           = "password"
-	keyRegionException    = "RegionException"
 	keyDeleted            = "deleted"
 	keyStorageUsed        = "storage_used"
 	keyFilesStored        = "files_stored"
 	keyRegion             = "region"
+	keyRegionException    = "region_exception"
 	keyReplicationRegions = "replication_regions"
 	keyReadOnlyPassword   = "read_only_password"
 	keyCustom404FilePath  = "custom_404_file_path"
