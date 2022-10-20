@@ -1,4 +1,4 @@
-package provider
+package provider //nolint:revive //ignore missing package comment
 
 import (
 	"context"
