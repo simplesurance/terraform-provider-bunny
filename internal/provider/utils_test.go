@@ -95,44 +95,37 @@ func diffSimpleVal(a, b reflect.Value) (string, error) {
 	valFieldA := a.Interface()
 	valFieldB := b.Interface()
 
-	switch valFieldA.(type) {
+	switch valA := valFieldA.(type) {
 	case *string:
-		valA := valFieldA.(*string)
 		valB := valFieldB.(*string)
 
 		return strDiff(valA, valB), nil
 
 	case *bool:
-		valA := valFieldA.(*bool)
 		valB := valFieldB.(*bool)
 
 		return boolDiff(valA, valB), nil
 
 	case *int:
-		valA := valFieldA.(*int)
 		valB := valFieldB.(*int)
 
 		return intDiff(valA, valB), nil
 
 	case *int64:
-		valA := valFieldA.(*int64)
 		valB := valFieldB.(*int64)
 
 		return int64Diff(valA, valB), nil
 
 	case *int32:
-		valA := valFieldA.(*int32)
 		valB := valFieldB.(*int32)
 
 		return int32Diff(valA, valB), nil
 
 	case *float64:
-		valA := valFieldA.(*float64)
 		valB := valFieldB.(*float64)
 
 		return float64Diff(valA, valB), nil
 	case []string:
-		valA := valFieldA.([]string)
 		valB := valFieldB.([]string)
 
 		return strSliceDiff(valA, valB), nil
