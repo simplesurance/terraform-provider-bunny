@@ -1,7 +1,6 @@
 linters:
   disable-all: true
   enable:
-    - deadcode
     - errcheck
     - exportloopref
     - gocritic
@@ -15,13 +14,11 @@ linters:
     - prealloc
     - revive
     - staticcheck
-    - structcheck
     - typecheck
     - tenv
     - unconvert
     - unused
     - usestdlibvars
-    - varcheck
 
 linters-settings:
   goimports:
