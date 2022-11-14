@@ -408,7 +408,7 @@ func storageZoneFromResource(d *schema.ResourceData) *bunny.StorageZoneUpdateOpt
 }
 
 func removeValueFromStringSlice(values []string, value string) []string {
-	var result []string
+	result := make([]string, 0, len(values))
 
 	for _, v := range values {
 		if v != value {
