@@ -30,8 +30,8 @@ resource "bunny_storagezone" "mysz" {
 
 - `custom_404_file_path` (String) The path to the custom file that will be returned in a case of 404.
 - `origin_url` (String) A URL to which a request is proxied, if a file does not exist in the the storage zone.
-- `region` (String) The code of the main storage zone region (Possible values: DE, NY, LA, SG, SYD, UK, SE, BR).
-- `replication_regions` (Set of String) The list of replication zones for the storage zone (Possible values: DE, NY, LA, SG, SYD, UK, SE, BR). Replication zones cannot be removed once the zone has been created.
+- `region` (String) The code of the main storage zone region (Possible values: AZ, BR, DE, LA, NY, SE, SG, SYD, UK).
+- `replication_regions` (Set of String) The list of replication zones for the storage zone (Possible values: AZ, BR, DE, LA, NY, SE, SG, SYD, UK). Replication zones cannot be removed once the zone has been created.
 - `rewrite_404_to_200` (Boolean) Rewrite 404 status code to 200 for URLs without extension.
 
 ### Read-Only
