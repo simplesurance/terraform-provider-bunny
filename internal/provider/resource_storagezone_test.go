@@ -263,15 +263,7 @@ resource "bunny_storagezone" "mytest1" {
 }
 
 func TestRegionsRequiringReplicationWithoutReplicationFails(t *testing.T) {
-	const resourceName = "mytest1"
-	const fullResourceName = "bunny_storagezone." + resourceName
 	storageZoneName := randResourceName()
-
-	attrs := bunny.StorageZone{
-		Name:               ptr.ToString(storageZoneName),
-		Region:             ptr.ToString("SYD"),
-		ReplicationRegions: []string{},
-	}
 
 	resource.Test(t, resource.TestCase{
 		Providers: testProviders,
@@ -280,13 +272,10 @@ func TestRegionsRequiringReplicationWithoutReplicationFails(t *testing.T) {
 				Config: fmt.Sprintf(`
 resource "bunny_storagezone" "mytest1" {
 	name = "%s"
-	region = "%s"
-	replication_regions = %s
+	region = "SYD"
 }
 `,
 					storageZoneName,
-					*attrs.Region,
-					tfStrList(attrs.ReplicationRegions),
 				),
 				PlanOnly:    true,
 				ExpectError: regexp.MustCompile(`.*"SYD" region needs to have at least one replication region.*`),
@@ -296,15 +285,7 @@ resource "bunny_storagezone" "mytest1" {
 }
 
 func TestReplicaRegionSameAsMainFails(t *testing.T) {
-	const resourceName = "mytest1"
-	const fullResourceName = "bunny_storagezone." + resourceName
 	storageZoneName := randResourceName()
-
-	attrs := bunny.StorageZone{
-		Name:               ptr.ToString(storageZoneName),
-		Region:             ptr.ToString("SG"),
-		ReplicationRegions: []string{"SG"},
-	}
 
 	resource.Test(t, resource.TestCase{
 		Providers: testProviders,
@@ -313,13 +294,11 @@ func TestReplicaRegionSameAsMainFails(t *testing.T) {
 				Config: fmt.Sprintf(`
 resource "bunny_storagezone" "mytest1" {
 	name = "%s"
-	region = "%s"
-	replication_regions = %s
+	region = "SG"
+	replication_regions = ["SG"]
 }
 `,
 					storageZoneName,
-					*attrs.Region,
-					tfStrList(attrs.ReplicationRegions),
 				),
 				PlanOnly:    true,
 				ExpectError: regexp.MustCompile(`.*"SG" was specified as primary and replication region.*`),
