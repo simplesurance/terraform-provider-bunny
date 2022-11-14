@@ -1,4 +1,10 @@
-## 0.9.1 (Unreleased)
+## 0.10.0 (Unreleased)
+
+IMPROVEMENTS:
+
+* resource/storagezone: support SYD, UK, SE, BR regions
+* resource/storagezone: fail in planning phase if same primary and replication
+                        regions are specified
 
 ## 0.9.0 (Juni 30, 2022)
 
