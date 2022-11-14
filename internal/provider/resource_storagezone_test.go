@@ -288,10 +288,10 @@ resource "bunny_storagezone" "mytest1" {
 					*attrs.Region,
 					tfStrList(attrs.ReplicationRegions),
 				),
+				PlanOnly:    true,
 				ExpectError: regexp.MustCompile(".*'SYD' region needs to have at least one replication region.*"),
 			},
 		},
-		CheckDestroy: checkStorageZoneNotExists(fullResourceName),
 	})
 }
 
@@ -321,10 +321,10 @@ resource "bunny_storagezone" "mytest1" {
 					*attrs.Region,
 					tfStrList(attrs.ReplicationRegions),
 				),
+				PlanOnly:    true,
 				ExpectError: regexp.MustCompile(".*'SG' region selected as main and can't be used as replica.*"),
 			},
 		},
-		CheckDestroy: checkStorageZoneNotExists(fullResourceName),
 	})
 }
 
