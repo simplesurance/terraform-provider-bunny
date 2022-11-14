@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"strconv"
+	"strings"
 
 	"github.com/google/go-cmp/cmp"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -57,21 +58,27 @@ func resourceStorageZone() *schema.Resource {
 				Required:    true,
 			},
 			keyRegion: {
-				Type:        schema.TypeString,
-				Description: "The code of the main storage zone region (Possible values: DE, NY, LA, SG, SYD, UK, SE, BR).",
-				Optional:    true,
-				Default:     "DE",
+				Type: schema.TypeString,
+				Description: fmt.Sprintf(
+					"The code of the main storage zone region (Possible values: %s).",
+					strings.Join(storageZoneAllRegions, ", "),
+				),
+				Optional: true,
+				Default:  "DE",
 				ValidateDiagFunc: validation.ToDiagFunc(
 					validation.StringInSlice(storageZoneAllRegions, false),
 				),
 			},
 			keyReplicationRegions: {
-				Type:        schema.TypeSet,
-				Description: "The list of replication zones for the storage zone (Possible values: DE, NY, LA, SG, SYD, UK, SE, BR). Replication zones cannot be removed once the zone has been created.",
+				Type: schema.TypeSet,
+				Description: fmt.Sprintf(
+					"The list of replication zones for the storage zone (Possible values: %s). Replication zones cannot be removed once the zone has been created.",
+					strings.Join(storageZoneAllRegions, ", "),
+				),
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 					ValidateDiagFunc: validation.ToDiagFunc(
-						validation.StringInSlice([]string{"DE", "NY", "LA", "SG", "SYD", "UK", "SE", "BR"}, false),
+						validation.StringInSlice(storageZoneAllRegions, false),
 					),
 				},
 				Optional: true,
