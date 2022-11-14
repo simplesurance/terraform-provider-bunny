@@ -28,8 +28,9 @@ const (
 )
 
 var (
-	storageZoneAllRegions                  = []string{"DE", "NY", "LA", "SG", "SYD", "UK", "SE", "BR"}
+	storageZoneAllRegions                  = []string{"DE", "NY", "LA", "SG", "SYD", "UK", "SE", "BR", "AZ"}
 	storageZoneRegionsRequiringReplication = map[string]struct{}{
+		"AZ":  {},
 		"SYD": {},
 		"SG":  {},
 		"BR":  {},
