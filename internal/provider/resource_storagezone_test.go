@@ -2,10 +2,9 @@ package provider
 
 import (
 	"context"
-	"regexp"
-
 	"errors"
 	"fmt"
+	"regexp"
 	"strconv"
 	"strings"
 	"testing"
@@ -263,6 +262,72 @@ resource "bunny_storagezone" "mytest1" {
 	})
 }
 
+func TestRegionsRequiringReplicationWithoutReplicationFails(t *testing.T) {
+	const resourceName = "mytest1"
+	const fullResourceName = "bunny_storagezone." + resourceName
+	storageZoneName := randResourceName()
+
+	attrs := bunny.StorageZone{
+		Name:               ptr.ToString(storageZoneName),
+		Region:             ptr.ToString("SYD"),
+		ReplicationRegions: []string{},
+	}
+
+	resource.Test(t, resource.TestCase{
+		Providers: testProviders,
+		Steps: []resource.TestStep{
+			{
+				Config: fmt.Sprintf(`
+resource "bunny_storagezone" "mytest1" {
+	name = "%s"
+	region = "%s"
+	replication_regions = %s
+}
+`,
+					storageZoneName,
+					*attrs.Region,
+					tfStrList(attrs.ReplicationRegions),
+				),
+				ExpectError: regexp.MustCompile(".*'SYD' region needs to have at least one replication region.*"),
+			},
+		},
+		CheckDestroy: checkStorageZoneNotExists(fullResourceName),
+	})
+}
+
+func TestReplicaRegionSameAsMainFails(t *testing.T) {
+	const resourceName = "mytest1"
+	const fullResourceName = "bunny_storagezone." + resourceName
+	storageZoneName := randResourceName()
+
+	attrs := bunny.StorageZone{
+		Name:               ptr.ToString(storageZoneName),
+		Region:             ptr.ToString("SG"),
+		ReplicationRegions: []string{"SG"},
+	}
+
+	resource.Test(t, resource.TestCase{
+		Providers: testProviders,
+		Steps: []resource.TestStep{
+			{
+				Config: fmt.Sprintf(`
+resource "bunny_storagezone" "mytest1" {
+	name = "%s"
+	region = "%s"
+	replication_regions = %s
+}
+`,
+					storageZoneName,
+					*attrs.Region,
+					tfStrList(attrs.ReplicationRegions),
+				),
+				ExpectError: regexp.MustCompile(".*'SG' region selected as main and can't be used as replica.*"),
+			},
+		},
+		CheckDestroy: checkStorageZoneNotExists(fullResourceName),
+	})
+}
+
 func checkSzState(t *testing.T, resourceName string, wanted *bunny.StorageZone) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		clt := newAPIClient()
@@ -303,7 +368,7 @@ func checkSzState(t *testing.T, resourceName string, wanted *bunny.StorageZone) 
 
 // TestAccFailedUpdateDoesNotApplychanges tests the scenario described in
 // https://github.com/5-stones/terraform-provider-bunny/pull/1#discussion_r898134629
-func TestAccFailedUpdateDoesNotApplychanges(t *testing.T) {
+func TestAccFailedUpdateDoesNotApplyChanges(t *testing.T) {
 	attrs := storageZoneWanted{
 		TerraformResourceName: "bunny_storagezone.mytest1",
 		Name:                  randResourceName(),

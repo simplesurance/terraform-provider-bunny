@@ -26,6 +26,15 @@ const (
 	keyRewrite404To200    = "rewrite_404_to_200"
 )
 
+var (
+	storageZoneAllRegions                  = []string{"DE", "NY", "LA", "SG", "SYD", "UK", "SE", "BR"}
+	storageZoneRegionsRequiringReplication = map[string]struct{}{
+		"SYD": {},
+		"SG":  {},
+		"BR":  {},
+	}
+)
+
 func resourceStorageZone() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceStorageZoneCreate,
@@ -49,20 +58,20 @@ func resourceStorageZone() *schema.Resource {
 			},
 			keyRegion: {
 				Type:        schema.TypeString,
-				Description: "The code of the main storage zone region (Possible values: DE, NY, LA, SG).",
+				Description: "The code of the main storage zone region (Possible values: DE, NY, LA, SG, SYD, UK, SE, BR).",
 				Optional:    true,
 				Default:     "DE",
 				ValidateDiagFunc: validation.ToDiagFunc(
-					validation.StringInSlice([]string{"DE", "NY", "LA", "SG"}, false),
+					validation.StringInSlice(storageZoneAllRegions, false),
 				),
 			},
 			keyReplicationRegions: {
 				Type:        schema.TypeSet,
-				Description: "The list of replication zones for the storage zone (Possible values: DE, NY, LA, SG, SYD). Replication zones cannot be removed once the zone has been created.",
+				Description: "The list of replication zones for the storage zone (Possible values: DE, NY, LA, SG, SYD, UK, SE, BR). Replication zones cannot be removed once the zone has been created.",
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 					ValidateDiagFunc: validation.ToDiagFunc(
-						validation.StringInSlice([]string{"DE", "NY", "LA", "SG", "SYD"}, false),
+						validation.StringInSlice([]string{"DE", "NY", "LA", "SG", "SYD", "UK", "SE", "BR"}, false),
 					),
 				},
 				Optional: true,
@@ -157,6 +166,32 @@ func resourceStorageZone() *schema.Resource {
 
 				return nil
 			}),
+			customdiff.IfValue(
+				keyReplicationRegions,
+				func(ctx context.Context, value, meta interface{}) bool {
+					var regions *schema.Set = value.(*schema.Set)
+					return regions.Len() == 0
+				},
+				customdiff.ValidateValue(keyRegion, func(_ context.Context, value interface{}, meta interface{}) error {
+					region := value.(string)
+					if _, ok := storageZoneRegionsRequiringReplication[region]; ok {
+						return creatingRegionWithoutReplicationRegionError(region, removeValueFromStringSlice(storageZoneAllRegions, region))
+					}
+
+					return nil
+				}),
+			),
+			customdiff.If(
+				func(ctx context.Context, d *schema.ResourceDiff, meta interface{}) bool {
+					region := d.Get(keyRegion).(string)
+					regions := d.Get(keyReplicationRegions).(*schema.Set)
+
+					return regions.Contains(region)
+				},
+				customdiff.ValidateValue(keyRegion, func(_ context.Context, value interface{}, meta interface{}) error {
+					return creatingRegionWithReplicationInSameRegionError(value.(string))
+				}),
+			),
 		),
 	}
 }
@@ -199,6 +234,17 @@ func immutableReplicationRegionError(key string, removed []interface{}) error {
 		key,
 		key,
 	)
+}
+
+func creatingRegionWithoutReplicationRegionError(region string, allRegions []string) error {
+	const message = "'%s' region needs to have at least one replication region.\n" +
+		"Please add one of the available replication region %s.\n"
+	return fmt.Errorf(message, region, allRegions)
+}
+
+func creatingRegionWithReplicationInSameRegionError(region string) error {
+	const message = "'%s' region selected as main and can't be used as replica.\n"
+	return fmt.Errorf(message, region)
 }
 
 func resourceStorageZoneCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -351,4 +397,16 @@ func storageZoneFromResource(d *schema.ResourceData) *bunny.StorageZoneUpdateOpt
 		Custom404FilePath:  getOkStrPtr(d, keyCustom404FilePath),
 		Rewrite404To200:    getBoolPtr(d, keyRewrite404To200),
 	}
+}
+
+func removeValueFromStringSlice(values []string, value string) []string {
+	var result []string
+
+	for _, v := range values {
+		if v != value {
+			result = append(result, v)
+		}
+	}
+
+	return result
 }
