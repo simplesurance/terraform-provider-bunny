@@ -2,7 +2,7 @@
 
 IMPROVEMENTS:
 
-* resource/storagezone: support SYD, UK, SE, BR regions
+* resource/storagezone: support AZ, BR, SE, SYD, SE, UK regions
 * resource/storagezone: fail in planning phase if same primary and replication
                         regions are specified
 
