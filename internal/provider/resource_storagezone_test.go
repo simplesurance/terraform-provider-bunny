@@ -289,7 +289,7 @@ resource "bunny_storagezone" "mytest1" {
 					tfStrList(attrs.ReplicationRegions),
 				),
 				PlanOnly:    true,
-				ExpectError: regexp.MustCompile(".*'SYD' region needs to have at least one replication region.*"),
+				ExpectError: regexp.MustCompile(`.*"SYD" region needs to have at least one replication region.*`),
 			},
 		},
 	})
@@ -322,7 +322,7 @@ resource "bunny_storagezone" "mytest1" {
 					tfStrList(attrs.ReplicationRegions),
 				),
 				PlanOnly:    true,
-				ExpectError: regexp.MustCompile(".*'SG' region selected as main and can't be used as replica.*"),
+				ExpectError: regexp.MustCompile(`.*"SG" was specified as primary and replication region.*`),
 			},
 		},
 	})
