@@ -5,6 +5,9 @@ IMPROVEMENTS:
 * resource/storagezone: support AZ, BR, SE, SYD, SE, UK regions
 * resource/storagezone: fail in planning phase if same primary and replication
                         regions are specified
+* provider: upgrade terraform-plugin-sdk to version 2.24.0
+* provider: upgrade github.com/hashicorp/terraform-plugin-docs to version 0.13.0
+* provider: upgrade github.com/google/go-cmp to version 0.5.9
 
 ## 0.9.0 (Juni 30, 2022)
 
