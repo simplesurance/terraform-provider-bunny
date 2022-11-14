@@ -243,14 +243,15 @@ func immutableReplicationRegionError(key string, removed []interface{}) error {
 	)
 }
 
-func creatingRegionWithoutReplicationRegionError(region string, allRegions []string) error {
-	const message = "'%s' region needs to have at least one replication region.\n" +
+func creatingRegionWithoutReplicationRegionError(region string, availRegions []string) error {
+	const message = "%q region needs to have at least one replication region.\n" +
 		"Please add one of the available replication region %s.\n"
-	return fmt.Errorf(message, region, allRegions)
+	return fmt.Errorf(message, region, strings.Join(availRegions, ", "))
 }
 
 func creatingRegionWithReplicationInSameRegionError(region string) error {
-	const message = "'%s' region selected as main and can't be used as replica.\n"
+	const message = "%q was specified as primary and replication region. " +
+		"The same region can not be both. Please specify different regions."
 	return fmt.Errorf(message, region)
 }
 
