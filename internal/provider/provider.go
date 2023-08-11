@@ -32,6 +32,9 @@ func New() *schema.Provider {
 				Description: "The bunny.net API Key.",
 			},
 		},
+		DataSourcesMap: map[string]*schema.Resource{
+			"bunny_pullzone": dataSourcePullZone(),
+		},
 		ResourcesMap: map[string]*schema.Resource{
 			"bunny_pullzone":    resourcePullZone(),
 			"bunny_edgerule":    resourceEdgeRule(),

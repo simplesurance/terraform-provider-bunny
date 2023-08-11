@@ -531,17 +531,14 @@ func resourcePullZoneUpdate(ctx context.Context, d *schema.ResourceData, meta in
 	return nil
 }
 
-func resourcePullZoneRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	clt := meta.(*bunny.Client)
-
-	id, err := getIDAsInt64(d)
+func resourcePullZoneRead(
+	ctx context.Context,
+	d *schema.ResourceData,
+	meta interface{},
+) diag.Diagnostics {
+	pz, err := readPullZone(ctx, d, meta)
 	if err != nil {
-		return diag.FromErr(err)
-	}
-
-	pz, err := clt.PullZone.Get(ctx, id)
-	if err != nil {
-		return diagsErrFromErr("could not retrieve pull zone", err)
+		return err
 	}
 
 	if err := pullZoneToResource(pz, d); err != nil {
@@ -549,6 +546,26 @@ func resourcePullZoneRead(ctx context.Context, d *schema.ResourceData, meta inte
 	}
 
 	return nil
+}
+
+func readPullZone(
+	ctx context.Context,
+	d *schema.ResourceData,
+	meta interface{},
+) (*bunny.PullZone, diag.Diagnostics) {
+	clt := meta.(*bunny.Client)
+
+	id, err := getIDAsInt64(d)
+	if err != nil {
+		return nil, diag.FromErr(err)
+	}
+
+	pz, err := clt.PullZone.Get(ctx, id)
+	if err != nil {
+		return nil, diagsErrFromErr("could not retrieve pull zone", err)
+	}
+
+	return pz, nil
 }
 
 func resourcePullZoneDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -569,14 +586,11 @@ func resourcePullZoneDelete(ctx context.Context, d *schema.ResourceData, meta in
 	return nil
 }
 
-// pullZoneToResource sets fields in d to the values in pz.
-func pullZoneToResource(pz *bunny.PullZone, d *schema.ResourceData) error {
+// pullZoneToResource sets shared fields in d to the values in pz.
+func pullZoneToResourceShared(pz *bunny.PullZone, d *schema.ResourceData) error {
+	// shared
 	if pz.ID != nil {
 		d.SetId(strconv.FormatInt(*pz.ID, 10))
-	}
-
-	if err := d.Set(keyAWSSigningEnabled, pz.AWSSigningEnabled); err != nil {
-		return err
 	}
 	if err := d.Set(keyAWSSigningKey, pz.AWSSigningKey); err != nil {
 		return err
@@ -585,6 +599,38 @@ func pullZoneToResource(pz *bunny.PullZone, d *schema.ResourceData) error {
 		return err
 	}
 	if err := d.Set(keyAWSSigningSecret, pz.AWSSigningSecret); err != nil {
+		return err
+	}
+	if err := d.Set(keyCnameDomain, pz.CnameDomain); err != nil {
+		return err
+	}
+	if err := d.Set(keyName, pz.Name); err != nil {
+		return err
+	}
+	if err := d.Set(keyStorageZoneID, pz.StorageZoneID); err != nil {
+		return err
+	}
+	if err := d.Set(keyZoneSecurityEnabled, pz.ZoneSecurityEnabled); err != nil {
+		return err
+	}
+	if err := d.Set(keyZoneSecurityIncludeHashRemoteIP, pz.ZoneSecurityIncludeHashRemoteIP); err != nil {
+		return err
+	}
+	if err := d.Set(keyZoneSecurityKey, pz.ZoneSecurityKey); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// pullZoneToResource sets fields in d to the values in pz.
+func pullZoneToResource(pz *bunny.PullZone, d *schema.ResourceData) error {
+	// map shared values
+	if err := pullZoneToResourceShared(pz, d); err != nil {
+		return err
+	}
+
+	if err := d.Set(keyAWSSigningEnabled, pz.AWSSigningEnabled); err != nil {
 		return err
 	}
 	if err := setStrSet(d, keyAllowedReferrers, pz.AllowedReferrers, ignoreOrderOpt, caseInsensitiveOpt); err != nil {
@@ -642,9 +688,6 @@ func pullZoneToResource(pz *bunny.PullZone, d *schema.ResourceData) error {
 		return err
 	}
 	if err := d.Set(keyEnableHostnameVary, pz.EnableHostnameVary); err != nil {
-		return err
-	}
-	if err := d.Set(keyCnameDomain, pz.CnameDomain); err != nil {
 		return err
 	}
 	if err := d.Set(keyEnableLogging, pz.EnableLogging); err != nil {
@@ -722,19 +765,10 @@ func pullZoneToResource(pz *bunny.PullZone, d *schema.ResourceData) error {
 	if err := d.Set(keyPermaCacheStorageZoneID, pz.PermaCacheStorageZoneID); err != nil {
 		return err
 	}
-	if err := d.Set(keyStorageZoneID, pz.StorageZoneID); err != nil {
-		return err
-	}
 	if err := d.Set(keyType, pz.Type); err != nil {
 		return err
 	}
 	if err := d.Set(keyVerifyOriginSSL, pz.VerifyOriginSSL); err != nil {
-		return err
-	}
-	if err := d.Set(keyZoneSecurityEnabled, pz.ZoneSecurityEnabled); err != nil {
-		return err
-	}
-	if err := d.Set(keyZoneSecurityIncludeHashRemoteIP, pz.ZoneSecurityIncludeHashRemoteIP); err != nil {
 		return err
 	}
 	if err := setStrSet(d, keyBlockedReferrers, pz.BlockedReferrers, ignoreOrderOpt, caseInsensitiveOpt); err != nil {
@@ -743,13 +777,6 @@ func pullZoneToResource(pz *bunny.PullZone, d *schema.ResourceData) error {
 	if err := d.Set(keyEnabled, pz.Enabled); err != nil {
 		return err
 	}
-	if err := d.Set(keyName, pz.Name); err != nil {
-		return err
-	}
-	if err := d.Set(keyZoneSecurityKey, pz.ZoneSecurityKey); err != nil {
-		return err
-	}
-
 	if err := safeHopToResource(pz, d); err != nil {
 		return err
 	}
